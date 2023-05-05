@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">BookwormApp</string>
+
+    <!-- Content desc -->
+    <string name="app_logo_desc">Bookworm logo</string>
+    <string name="password_visibility_icon_desc">Show Password</string>
+
+    <!-- Login Screen -->
+    <string name="app_title_label">Bookworm!</string>
+    <string name="email_field_label">Email</string>
+    <string name="password_field_label">Password</string>
+    <string name="sign_in_button_label">Sign In</string>
+    <string name="sign_up_button_label">Sign Up</string>
+    <string name="new_user_label">New user?</string>
 </resources>
