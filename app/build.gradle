@@ -49,7 +49,7 @@ android {
 }
 
 dependencies {
-    // UI
+    // Android - UI
     implementation ui.core_ktx
     implementation ui.activity_compose
     implementation ui.compose
