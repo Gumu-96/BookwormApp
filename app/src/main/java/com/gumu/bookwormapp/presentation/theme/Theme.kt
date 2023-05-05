@@ -1,4 +1,4 @@
-package com.gumu.bookwormapp.ui.theme
+package com.gumu.bookwormapp.presentation.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

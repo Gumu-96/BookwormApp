@@ -1,4 +1,4 @@
-package com.gumu.bookwormapp.ui.theme
+package com.gumu.bookwormapp.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
