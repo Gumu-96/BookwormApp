@@ -35,6 +35,7 @@ fun CustomOutlinedTextField(
     onValueChange: (String) -> Unit,
     singleLine: Boolean = false,
     label: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
     isPassword: Boolean = false,
     maxLines: Int = Int.MAX_VALUE,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
@@ -68,7 +69,7 @@ fun CustomOutlinedTextField(
                         contentDescription = stringResource(id = R.string.password_visibility_icon_desc)
                     )
                 }
-            }
+            } else trailingIcon?.let { it() }
         },
         shape = RoundedCornerShape(if (singleLine) 50 else 35),
         maxLines = maxLines,
