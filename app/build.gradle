@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'com.google.dagger.hilt.android'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -80,6 +81,12 @@ dependencies {
 
     // Datastore
     implementation datastore.datastore_preferences
+
+    // Firebase
+    implementation platform(firebase.firebase_bom)
+    implementation firebase.firebase_analytics
+    implementation firebase.firebase_auth
+    implementation firebase.firebase_firestore
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
