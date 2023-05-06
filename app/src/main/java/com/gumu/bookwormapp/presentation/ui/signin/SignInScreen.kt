@@ -44,7 +44,7 @@ import com.gumu.bookwormapp.presentation.theme.BookwormAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen() {
+fun SignInScreen() {
     Scaffold { padding ->
         Surface(modifier = Modifier.padding(padding)) {
             Column(
@@ -162,6 +162,6 @@ fun SignUpSection() {
 @Composable
 fun LoginScreenPreview() {
     BookwormAppTheme {
-        LoginScreen()
+        SignInScreen()
     }
 }
