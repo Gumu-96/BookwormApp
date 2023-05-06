@@ -44,7 +44,10 @@ import com.gumu.bookwormapp.presentation.theme.BookwormAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignInScreen() {
+fun SignInScreen(
+    onNavigateToSignUpScreen: () -> Unit,
+    onNavigateToHomeScreen: () -> Unit
+) {
     Scaffold { padding ->
         Surface(modifier = Modifier.padding(padding)) {
             Column(
@@ -57,10 +60,13 @@ fun SignInScreen() {
                 LoginSection(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = 16.dp),
+                    onSignInClick = onNavigateToHomeScreen
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                SignUpSection()
+                SignUpSection(
+                    onSignUpClick = onNavigateToSignUpScreen
+                )
             }
         }
     }
@@ -90,7 +96,8 @@ fun LogoSection() {
 
 @Composable
 fun LoginSection(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onSignInClick: () -> Unit
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -132,7 +139,7 @@ fun LoginSection(
         )
         Spacer(modifier = Modifier.height(16.dp))
         Button(
-            onClick = { /*TODO*/ },
+            onClick = onSignInClick,
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = stringResource(id = R.string.sign_in_button_label))
@@ -141,7 +148,9 @@ fun LoginSection(
 }
 
 @Composable
-fun SignUpSection() {
+fun SignUpSection(
+    onSignUpClick: () -> Unit
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -150,7 +159,7 @@ fun SignUpSection() {
         Text(
             text = stringResource(id = R.string.sign_up_button_label),
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.clickable {  }
+            modifier = Modifier.clickable(onClick = onSignUpClick)
         )
 //        TextButton(onClick = { }) {
 //            Text(text = stringResource(id = R.string.sign_up_button_label))
@@ -162,6 +171,9 @@ fun SignUpSection() {
 @Composable
 fun LoginScreenPreview() {
     BookwormAppTheme {
-        SignInScreen()
+        SignInScreen(
+            onNavigateToHomeScreen = {},
+            onNavigateToSignUpScreen = {}
+        )
     }
 }

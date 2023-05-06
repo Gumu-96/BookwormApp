@@ -34,12 +34,14 @@ import com.gumu.bookwormapp.presentation.component.NavigateBackTopAppBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignUpScreen() {
+fun SignUpScreen(
+    onNavigateBack: () -> Unit
+) {
     Scaffold(
         topBar = {
             NavigateBackTopAppBar(
                 title = stringResource(id = R.string.sign_up_screen_title_label),
-                onBackClick = { /*TODO*/ }
+                onBackClick = onNavigateBack
             )
         }
     ) { padding ->
