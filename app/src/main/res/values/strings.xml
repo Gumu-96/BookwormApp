@@ -3,8 +3,10 @@
 
     <!-- Content desc -->
     <string name="app_logo_desc">Bookworm logo</string>
+    <string name="empty_desc" />
     <string name="password_visibility_icon_desc">Show Password</string>
     <string name="arrow_back_icon_desc">Back</string>
+    <string name="account_icon_desc">Account Stats</string>
 
     <!-- SignIn Screen -->
     <string name="app_title_label">Bookworm!</string>
@@ -22,4 +24,8 @@
     <string name="sign_up_password_field_label">Password</string>
     <string name="sign_up_confirm_password_field_label">Confirm Password</string>
     <string name="create_account_button_label">Create account</string>
+
+    <!-- Home Screen -->
+    <string name="current_reading_activity_label">Your reading activity right now…</string>
+    <string name="reading_list_label">Your reading list</string>
 </resources>

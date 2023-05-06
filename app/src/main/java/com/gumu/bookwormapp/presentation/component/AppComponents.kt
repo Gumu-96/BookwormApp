@@ -1,7 +1,17 @@
 package com.gumu.bookwormapp.presentation.component
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -9,12 +19,17 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -24,11 +39,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.dp
 import com.gumu.bookwormapp.R
 import kotlinx.coroutines.launch
 
@@ -104,3 +126,72 @@ fun NavigateBackTopAppBar(
         actions = actions
     )
 }
+
+@Composable
+fun PillShapedText(
+    modifier: Modifier = Modifier,
+    text: String,
+    wrapContent: Boolean = false,
+    color: Color = MaterialTheme.colorScheme.primaryContainer
+) {
+    Surface(
+        shape = RoundedCornerShape(percent = 50),
+        color = color,
+        modifier = modifier
+    ) {
+        Text(
+            text = text,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier
+                .padding(
+                    horizontal = if (wrapContent) 8.dp else 32.dp,
+                    vertical = if(wrapContent) 4.dp else 8.dp
+                )
+        )
+    }
+}
+
+@Composable
+fun BookStatusItem() {
+    ElevatedCard(
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
+        )
+    ) {
+        Column {
+            Box {
+                Image(
+                    painter = painterResource(id = R.drawable.bookworm),
+                    contentDescription = "",
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .size(width = 150.dp, height = 200.dp)
+                        .aspectRatio(3f / 4f)
+                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .clip(RoundedCornerShape(50))
+                        .background(MaterialTheme.colorScheme.tertiary)
+                        .padding(vertical = 4.dp, horizontal = 8.dp)
+                ) {
+                    Text(
+                        text = "5",
+                        color = MaterialTheme.colorScheme.onTertiary
+                    )
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = "",
+                        tint = MaterialTheme.colorScheme.onTertiary
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = "Hello. Android")
+            Text(text = "[Ed Burnette]")
+            PillShapedText(text = "Reading")
+        }
+    }
+}
+
