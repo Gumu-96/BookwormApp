@@ -1,4 +1,4 @@
-package com.gumu.bookwormapp.presentation.ui.login
+package com.gumu.bookwormapp.presentation.ui.signin
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.Image
