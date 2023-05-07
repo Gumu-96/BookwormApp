@@ -1,6 +1,6 @@
 package com.gumu.bookwormapp.presentation.ui.signin
 
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,10 +22,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -36,37 +32,47 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gumu.bookwormapp.R
+import com.gumu.bookwormapp.domain.common.ValidationUtils
 import com.gumu.bookwormapp.presentation.component.CustomOutlinedTextField
-import com.gumu.bookwormapp.presentation.theme.BookwormAppTheme
+import com.gumu.bookwormapp.presentation.component.LoadingOverlay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignInScreen(
-    onNavigateToSignUpScreen: () -> Unit,
-    onNavigateToHomeScreen: () -> Unit
+    state: SignInState,
+    onEvent: (SignInEvent) -> Unit
 ) {
     Scaffold { padding ->
         Surface(modifier = Modifier.padding(padding)) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxSize()
-            ) {
-                LogoSection()
-                Spacer(modifier = Modifier.height(32.dp))
-                LoginSection(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    onSignInClick = onNavigateToHomeScreen
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                SignUpSection(
-                    onSignUpClick = onNavigateToSignUpScreen
-                )
+            if (state.isLoading) {
+                LoadingOverlay()
+            } else {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    LogoSection()
+                    Spacer(modifier = Modifier.height(32.dp))
+                    SignInSection(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        email = state.email,
+                        onEmailChange = { onEvent(SignInEvent.OnEmailChange(it)) },
+                        emailError = state.emailError,
+                        password = state.password,
+                        onPasswordChange = { onEvent(SignInEvent.OnPasswordChange(it)) },
+                        passwordError = state.passwordError,
+                        onSignInClick = { onEvent(SignInEvent.OnSignInClick) }
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    SignUpSection(
+                        onSignUpClick = { onEvent(SignInEvent.OnSignUpClick) }
+                    )
+                }
             }
         }
     }
@@ -95,12 +101,16 @@ fun LogoSection() {
 }
 
 @Composable
-fun LoginSection(
+fun SignInSection(
     modifier: Modifier = Modifier,
+    email: String,
+    onEmailChange: (String) -> Unit,
+    @StringRes emailError: Int?,
+    password: String,
+    onPasswordChange: (String) -> Unit,
+    @StringRes passwordError: Int?,
     onSignInClick: () -> Unit
 ) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
     val localFocusManager = LocalFocusManager.current
 
     Column(
@@ -109,7 +119,7 @@ fun LoginSection(
     ) {
         CustomOutlinedTextField(
             value = email,
-            onValueChange = { email = it },
+            onValueChange = onEmailChange,
             singleLine = true,
             label = { Text(text = stringResource(id = R.string.email_field_label)) },
             keyboardOptions = KeyboardOptions(
@@ -119,12 +129,14 @@ fun LoginSection(
             keyboardActions = KeyboardActions(
                 onNext = { localFocusManager.moveFocus(FocusDirection.Down) }
             ),
+            isError = emailError != null,
+            errorMessage = emailError?.let { stringResource(id = it) },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
         CustomOutlinedTextField(
             value = password,
-            onValueChange = { password = it },
+            onValueChange = onPasswordChange,
             singleLine = true,
             label = { Text(text = stringResource(id = R.string.password_field_label)) },
             isPassword = true,
@@ -135,11 +147,17 @@ fun LoginSection(
             keyboardActions = KeyboardActions(
                 onDone = { localFocusManager.clearFocus() }
             ),
+            isError = passwordError != null,
+            errorMessage = passwordError?.let { stringResource(
+                id = it,
+                ValidationUtils.MINIMUM_PASSWORD_LENGTH
+            ) },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = onSignInClick,
+            enabled = email.isNotBlank() and password.isNotBlank() and (emailError == null) and (passwordError == null),
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = stringResource(id = R.string.sign_in_button_label))
@@ -159,21 +177,8 @@ fun SignUpSection(
         Text(
             text = stringResource(id = R.string.sign_up_button_label),
             color = MaterialTheme.colorScheme.primary,
+            fontWeight = FontWeight.SemiBold,
             modifier = Modifier.clickable(onClick = onSignUpClick)
-        )
-//        TextButton(onClick = { }) {
-//            Text(text = stringResource(id = R.string.sign_up_button_label))
-//        }
-    }
-}
-
-@Preview(uiMode = UI_MODE_NIGHT_YES)
-@Composable
-fun LoginScreenPreview() {
-    BookwormAppTheme {
-        SignInScreen(
-            onNavigateToHomeScreen = {},
-            onNavigateToSignUpScreen = {}
         )
     }
 }

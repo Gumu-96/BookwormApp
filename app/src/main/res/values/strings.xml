@@ -25,6 +25,13 @@
     <string name="sign_up_confirm_password_field_label">Confirm Password</string>
     <string name="create_account_button_label">Create account</string>
 
+    <!-- Sign In/Up Errors -->
+    <string name="required_field_error">Required field. Cannot be empty</string>
+    <string name="not_valid_email_error">Not a valid email address</string>
+    <string name="minimum_characters_error">Must be at least %s characters</string>
+    <string name="passwords_do_not_match_error">The passwords do not match</string>
+    <string name="authentication_error">Authentication failed</string>
+
     <!-- Home Screen -->
     <string name="current_reading_activity_label">Your reading activity right now…</string>
     <string name="reading_list_label">Your reading list</string>
