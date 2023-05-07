@@ -31,6 +31,8 @@
     <string name="minimum_characters_error">Must be at least %s characters</string>
     <string name="passwords_do_not_match_error">The passwords do not match</string>
     <string name="authentication_error">Authentication failed</string>
+    <string name="registration_error">Failed to register user</string>
+    <string name="registration_data_error">Failed to save user data</string>
 
     <!-- Home Screen -->
     <string name="current_reading_activity_label">Your reading activity right now…</string>

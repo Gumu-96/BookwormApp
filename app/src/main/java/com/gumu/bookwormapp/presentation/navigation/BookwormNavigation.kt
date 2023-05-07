@@ -12,6 +12,7 @@ import com.gumu.bookwormapp.presentation.ui.home.HomeScreen
 import com.gumu.bookwormapp.presentation.ui.signin.SignInScreen
 import com.gumu.bookwormapp.presentation.ui.signin.SignInViewModel
 import com.gumu.bookwormapp.presentation.ui.signup.SignUpScreen
+import com.gumu.bookwormapp.presentation.ui.signup.SignUpViewModel
 
 @Composable
 fun BookwormNavigation() {
@@ -30,9 +31,15 @@ fun BookwormNavigation() {
             }
         }
         composable(route = Screen.SignUpScreen.route) {
-            SignUpScreen(
-                onNavigateBack = { navController.popBackStack() }
-            )
+            val viewModel: SignUpViewModel = hiltViewModel()
+            val state by viewModel.uiState.collectAsState()
+
+            ScreenWrapper(viewModel = viewModel, navController = navController) {
+                SignUpScreen(
+                    state = state,
+                    onEvent = viewModel::onEvent
+                )
+            }
         }
         composable(route = Screen.HomeScreen.route) {
             HomeScreen()
