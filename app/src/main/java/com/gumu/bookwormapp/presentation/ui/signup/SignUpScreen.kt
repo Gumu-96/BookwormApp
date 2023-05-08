@@ -44,7 +44,7 @@ fun SignUpScreen(
     Scaffold(
         topBar = {
             NavigateBackTopAppBar(
-                title = stringResource(id = R.string.sign_up_screen_title_label),
+                title = { Text(text = stringResource(id = R.string.sign_up_screen_title_label)) },
                 onBackClick = { onEvent(SignUpEvent.OnBackClick) }
             )
         }

@@ -130,15 +130,13 @@ fun CustomOutlinedTextField(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavigateBackTopAppBar(
-    title: String,
+    title: @Composable () -> Unit,
     onBackClick: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior? = null,
     actions: @Composable RowScope.() -> Unit = {}
 ) {
     TopAppBar(
-        title = {
-            Text(text = title)
-        },
+        title = title,
         navigationIcon = {
             IconButton(onClick = onBackClick) {
                 Icon(imageVector = Icons.Default.ArrowBack, contentDescription = stringResource(id = R.string.arrow_back_icon_desc))
