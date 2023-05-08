@@ -7,6 +7,7 @@
     <string name="password_visibility_icon_desc">Show Password</string>
     <string name="arrow_back_icon_desc">Back</string>
     <string name="account_icon_desc">Account Stats</string>
+    <string name="add_book_icon_desc">Add Book</string>
 
     <!-- SignIn Screen -->
     <string name="app_title_label">Bookworm!</string>
