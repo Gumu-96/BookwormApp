@@ -75,6 +75,16 @@ dependencies {
     implementation dagger_hilt.android
     kapt dagger_hilt.compiler
 
+    // Retrofit
+    implementation retrofit.retrofit
+    implementation retrofit.converter_gson
+    implementation retrofit.okhttp
+
+    // Room
+    implementation room_db.room_ktx
+    implementation room_db.room_paging
+    kapt room_db.room_compiler
+
     // Paging
     implementation paging.paging_runtime
     implementation paging.paging_compose
