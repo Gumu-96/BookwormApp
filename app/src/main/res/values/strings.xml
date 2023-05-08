@@ -8,6 +8,7 @@
     <string name="arrow_back_icon_desc">Back</string>
     <string name="account_icon_desc">Account Stats</string>
     <string name="add_book_icon_desc">Add Book</string>
+    <string name="search_icon_desc">Search</string>
 
     <!-- SignIn Screen -->
     <string name="app_title_label">Bookworm!</string>
@@ -38,4 +39,7 @@
     <!-- Home Screen -->
     <string name="current_reading_activity_label">Your reading activity right now…</string>
     <string name="reading_list_label">Your reading list</string>
+
+    <!-- Search Screen -->
+    <string name="search_field_placeholder">Search books</string>
 </resources>
