@@ -2,7 +2,7 @@ package com.gumu.bookwormapp.presentation.component
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,9 +10,11 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -52,6 +54,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gumu.bookwormapp.R
@@ -150,65 +154,108 @@ fun PillShapedText(
     modifier: Modifier = Modifier,
     text: String,
     wrapContent: Boolean = false,
-    color: Color = MaterialTheme.colorScheme.primaryContainer
+    color: Color = MaterialTheme.colorScheme.primaryContainer,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null
 ) {
     Surface(
         shape = RoundedCornerShape(percent = 50),
         color = color,
         modifier = modifier
     ) {
-        Text(
-            text = text,
-            fontWeight = FontWeight.SemiBold,
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .padding(
                     horizontal = if (wrapContent) 8.dp else 32.dp,
                     vertical = if(wrapContent) 4.dp else 8.dp
                 )
-        )
+        ) {
+            leadingIcon?.let { it() }
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = text,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier
+
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            trailingIcon?.let { it() }
+        }
     }
 }
 
 @Composable
 fun BookStatusItem() {
     ElevatedCard(
-        colors = CardDefaults.elevatedCardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer
-        )
+//        colors = CardDefaults.elevatedCardColors(
+//            containerColor = MaterialTheme.colorScheme.primary
+//        ),
+        modifier = Modifier
+            .clip(CardDefaults.elevatedShape)
+            .clickable(onClick = {})
     ) {
-        Column {
+        Column(
+            modifier = Modifier.width(160.dp)
+        ) {
             Box {
                 Image(
                     painter = painterResource(id = R.drawable.bookworm),
                     contentDescription = "",
                     contentScale = ContentScale.Fit,
                     modifier = Modifier
-                        .size(width = 150.dp, height = 200.dp)
+                        .size(width = 160.dp, height = 200.dp)
                         .aspectRatio(3f / 4f)
                 )
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
+                PillShapedText(
+                    text = "5",
+                    color = MaterialTheme.colorScheme.tertiary,
+                    wrapContent = true,
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = ""
+                        )
+                    },
                     modifier = Modifier
+                        .padding(8.dp)
                         .align(Alignment.BottomEnd)
-                        .clip(RoundedCornerShape(50))
-                        .background(MaterialTheme.colorScheme.tertiary)
-                        .padding(vertical = 4.dp, horizontal = 8.dp)
-                ) {
-                    Text(
-                        text = "5",
-                        color = MaterialTheme.colorScheme.onTertiary
-                    )
-                    Icon(
-                        imageVector = Icons.Default.Star,
-                        contentDescription = "",
-                        tint = MaterialTheme.colorScheme.onTertiary
-                    )
-                }
+                )
             }
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "Hello. Android")
-            Text(text = "[Ed Burnette]")
-            PillShapedText(text = "Reading")
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
+            ) {
+                Text(
+                    text = "Hello. Android",
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = "[Ed Burnette]",
+                    fontSize = 12.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Surface(
+                color = MaterialTheme.colorScheme.primaryContainer,
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    text = "Reading",
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 12.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                )
+            }
         }
     }
 }
