@@ -90,6 +90,7 @@ fun CustomOutlinedTextField(
             singleLine = singleLine,
             label = label,
             modifier = modifier
+                .fillMaxWidth()
                 .bringIntoViewRequester(bringIntoViewRequester)
                 .onFocusChanged {
                     if (it.isFocused) {
