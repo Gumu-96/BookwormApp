@@ -10,5 +10,8 @@ fun BookItemDto.toDomain() =
         authors = volumeInfo.authors,
         publishedDate = volumeInfo.publishedDate,
         categories = volumeInfo.categories,
-        thumbnail = volumeInfo.imageLinks?.thumbnail
+        thumbnail = volumeInfo.imageLinks?.thumbnail?.let {
+            if (it.startsWith("http:")) it.replaceFirst("http:", "https:")
+            else it
+        }
     )
