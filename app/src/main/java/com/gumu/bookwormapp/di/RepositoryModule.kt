@@ -24,12 +24,12 @@ abstract class RepositoryModule {
     @Singleton
     @Binds
     abstract fun bindBooksRemoteDataSource(
-        booksRemoteDataSource: BooksRemoteDataSource
-    ): BooksRemoteDataSourceImpl
+        booksRemoteDataSource: BooksRemoteDataSourceImpl
+    ): BooksRemoteDataSource
 
     @Singleton
     @Binds
     abstract fun bindBooksRepository(
-        booksRepository: BooksRepository
-    ): BooksRepositoryImpl
+        booksRepository: BooksRepositoryImpl
+    ): BooksRepository
 }
