@@ -10,5 +10,5 @@ fun BookItemDto.toDomain() =
         authors = volumeInfo.authors,
         publishedDate = volumeInfo.publishedDate,
         categories = volumeInfo.categories,
-        thumbnail = volumeInfo.imageLinks.thumbnail
+        thumbnail = volumeInfo.imageLinks?.thumbnail
     )

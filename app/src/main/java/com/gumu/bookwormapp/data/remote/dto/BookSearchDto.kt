@@ -13,10 +13,10 @@ data class BookItemDto(
 
 data class BookItemInfoDto(
     val title: String,
-    val authors: List<String>,
-    val publishedDate: String,
-    val categories: List<String>,
-    val imageLinks: BookImageLinksDto
+    val authors: List<String>?,
+    val publishedDate: String?,
+    val categories: List<String>?,
+    val imageLinks: BookImageLinksDto?
 )
 
 data class BookImageLinksDto(
