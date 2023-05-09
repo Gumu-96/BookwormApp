@@ -12,6 +12,7 @@ object RemoteConstants {
     const val BOOK_STATS_COLLECTION = "book_stats"
 
     // Google's Books API
-    const val DEFAULT_PAGE_SIZE = 20 // Max allowed value is 40 according to Google's docs
+    const val DEFAULT_PAGE_SIZE = 20
+    const val MAX_PAGE_SIZE = 40 // Max allowed value to retrieve on a single request
     const val BOOKS_BASE_URL = "https://www.googleapis.com/books/v1/"
 }

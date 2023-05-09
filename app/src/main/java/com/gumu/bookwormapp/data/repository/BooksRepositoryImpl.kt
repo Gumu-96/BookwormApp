@@ -16,7 +16,10 @@ class BooksRepositoryImpl @Inject constructor(
 ) : BooksRepository {
     override fun findBooks(query: String): Flow<PagingData<Book>> {
         return Pager(
-            config = PagingConfig(pageSize = RemoteConstants.DEFAULT_PAGE_SIZE),
+            config = PagingConfig(
+                pageSize = RemoteConstants.DEFAULT_PAGE_SIZE,
+                initialLoadSize = RemoteConstants.MAX_PAGE_SIZE
+            ),
             pagingSourceFactory = { BooksPagingSource(
                 booksRemoteDataSource = booksRemoteDataSource,
                 query = query
