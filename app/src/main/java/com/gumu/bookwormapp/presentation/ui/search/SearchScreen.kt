@@ -26,6 +26,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -34,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -56,6 +59,7 @@ fun SearchScreen(
 ) {
     val context = LocalContext.current
     val books = state.books?.collectAsLazyPagingItems()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     LaunchedEffect(key1 = books?.loadState) {
         if (books?.loadState?.refresh is LoadState.Error) {
@@ -73,9 +77,11 @@ fun SearchScreen(
                 onSearchQueryChange = { onEvent(SearchEvent.OnSearchQueryChange(it)) },
                 onBackClick = { onEvent(SearchEvent.OnBackClick) },
                 onPerformSearch = { onEvent(SearchEvent.OnPerformSearch) },
-                onClearQuery = { onEvent(SearchEvent.OnClearQuery) }
+                onClearQuery = { onEvent(SearchEvent.OnClearQuery) },
+                scrollBehavior = scrollBehavior
             )
-        }
+        },
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { padding ->
         Surface(modifier = Modifier.padding(padding)) {
             if (books?.loadState?.refresh is LoadState.Loading) {
@@ -125,7 +131,8 @@ fun SearchTopAppBar(
     onSearchQueryChange: (String) -> Unit,
     onBackClick: () -> Unit,
     onPerformSearch: () -> Unit,
-    onClearQuery: () -> Unit
+    onClearQuery: () -> Unit,
+    scrollBehavior: TopAppBarScrollBehavior? = null
 ) {
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
@@ -187,6 +194,7 @@ fun SearchTopAppBar(
                     .padding(end = 16.dp)
                     .focusRequester(focusRequester)
             )
-        }
+        },
+        scrollBehavior = scrollBehavior
     )
 }
