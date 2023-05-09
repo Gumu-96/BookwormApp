@@ -22,7 +22,11 @@ class BooksRemoteDataSourceImpl @Inject constructor(
     ): AppResult<BookSearchDto> {
         return withContext(dispatchersProvider.io) {
             try {
-                val response = booksApi.findBooks(query, page * pageSize, pageSize).execute()
+                val response = booksApi.findBooks(
+                    query = query,
+                    startIndex = page.minus(1) * pageSize,
+                    pageSize = pageSize
+                ).execute()
                 if (response.isSuccessful) {
                     response.body()?.let { data ->
                         AppResult.Success(data)
