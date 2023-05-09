@@ -1,6 +1,5 @@
 package com.gumu.bookwormapp.presentation.ui.home
 
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -26,19 +25,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gumu.bookwormapp.R
 import com.gumu.bookwormapp.presentation.component.BookStatusItem
-import com.gumu.bookwormapp.presentation.theme.BookwormAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    state: HomeState,
+    onEvent: (HomeEvent) -> Unit
+) {
     Scaffold(
-        topBar = { HomeTopAppBar() },
+        topBar = { HomeTopAppBar(
+            onAccountClick = { onEvent(HomeEvent.OnAccountClick) }
+        ) },
         floatingActionButton = {
-            FloatingActionButton(onClick = { /*TODO*/ }) {
+            FloatingActionButton(onClick = { onEvent(HomeEvent.OnAddBookClick) }) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = stringResource(id = R.string.add_book_icon_desc)
@@ -88,6 +90,7 @@ fun HomeScreen() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeTopAppBar(
+    onAccountClick: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior? = null
 ) {
     TopAppBar(
@@ -102,7 +105,7 @@ fun HomeTopAppBar(
             )
         },
         actions = {
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = onAccountClick) {
                 Icon(
                     imageVector = Icons.Default.AccountCircle,
                     contentDescription = stringResource(id = R.string.account_icon_desc)
@@ -113,10 +116,3 @@ fun HomeTopAppBar(
     )
 }
 
-@Preview(uiMode = UI_MODE_NIGHT_YES)
-@Composable
-fun HomeScreenPreview() {
-    BookwormAppTheme {
-        HomeScreen()
-    }
-}

@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.gumu.bookwormapp.presentation.ui.common.ScreenWrapper
 import com.gumu.bookwormapp.presentation.ui.home.HomeScreen
+import com.gumu.bookwormapp.presentation.ui.home.HomeViewModel
 import com.gumu.bookwormapp.presentation.ui.signin.SignInScreen
 import com.gumu.bookwormapp.presentation.ui.signin.SignInViewModel
 import com.gumu.bookwormapp.presentation.ui.signup.SignUpScreen
@@ -42,7 +43,15 @@ fun BookwormNavigation() {
             }
         }
         composable(route = Screen.HomeScreen.route) {
-            HomeScreen()
+            val viewModel: HomeViewModel = hiltViewModel()
+            val state by viewModel.uiState.collectAsState()
+
+            ScreenWrapper(viewModel = viewModel, navController = navController) {
+                HomeScreen(
+                    state = state,
+                    onEvent = viewModel::onEvent
+                )
+            }
         }
     }
 }
