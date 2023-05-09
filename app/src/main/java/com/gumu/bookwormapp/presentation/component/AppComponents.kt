@@ -23,6 +23,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.BrokenImage
+import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -51,6 +53,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -60,7 +63,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImagePainter
+import coil.compose.SubcomposeAsyncImage
+import coil.compose.SubcomposeAsyncImageContent
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import com.gumu.bookwormapp.R
+import com.gumu.bookwormapp.domain.model.Book
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -263,7 +272,9 @@ fun BookStatusItem() {
 
 @Composable
 fun BookItem(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    book: Book,
+    onClick: (Book) -> Unit
 ) {
     OutlinedCard(
         colors = CardDefaults.outlinedCardColors(
@@ -271,7 +282,7 @@ fun BookItem(
         ),
         modifier = modifier
             .clip(CardDefaults.shape)
-            .clickable(onClick = {})
+            .clickable(onClick = { onClick(book) })
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -279,10 +290,9 @@ fun BookItem(
                 .fillMaxWidth()
                 .height(150.dp)
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.bookworm),
-                contentDescription = "",
-                contentScale = ContentScale.Fit,
+            CustomAsyncImage(
+                model = book.thumbnail,
+                contentDescription = book.title,
                 modifier = Modifier
                     .size(width = 110.dp, height = 150.dp)
             )
@@ -293,7 +303,7 @@ fun BookItem(
                     .padding(vertical = 8.dp, horizontal = 16.dp)
             ) {
                 Text(
-                    text = "Android for Dummies",
+                    text = book.title,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     fontWeight = FontWeight.SemiBold,
@@ -301,24 +311,59 @@ fun BookItem(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Author: [Ed Burnette]",
+                    text = stringResource(id = R.string.book_author_label, book.authors ?: "[]"),
                     fontSize = 12.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = "Date: 2020-09-09",
+                    text = stringResource(
+                        id = R.string.book_published_date_label,
+                        book.publishedDate ?: stringResource(id = R.string.book_unknown_data)
+                    ),
                     fontSize = 12.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = "[Computers]",
+                    text = book.categories?.toString() ?: "[]",
                     fontSize = 12.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun CustomAsyncImage(
+    modifier: Modifier = Modifier,
+    model: Any?,
+    contentDescription: String?
+) {
+    SubcomposeAsyncImage(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(model)
+            .crossfade(true)
+            .diskCachePolicy(CachePolicy.ENABLED)
+            .build(),
+        contentDescription = contentDescription,
+        contentScale = ContentScale.Crop,
+        modifier = modifier
+    ) {
+        when (painter.state) {
+            is AsyncImagePainter.State.Loading -> Icon(
+                imageVector = Icons.Default.Image,
+                contentDescription = stringResource(id = R.string.empty_desc),
+                modifier = Modifier.size(40.dp)
+            )
+            is AsyncImagePainter.State.Success -> SubcomposeAsyncImageContent()
+            else -> Icon(
+                imageVector = Icons.Default.BrokenImage,
+                contentDescription = stringResource(id = R.string.empty_desc),
+                modifier = Modifier.size(40.dp)
+            )
         }
     }
 }

@@ -1,17 +1,21 @@
 package com.gumu.bookwormapp.presentation.ui.search
 
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -23,39 +27,91 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
 import com.gumu.bookwormapp.R
 import com.gumu.bookwormapp.presentation.component.BookItem
-import com.gumu.bookwormapp.presentation.theme.BookwormAppTheme
+import com.gumu.bookwormapp.presentation.component.LoadingOverlay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen() {
+fun SearchScreen(
+    state: SearchState,
+    onEvent: (SearchEvent) -> Unit
+) {
+    val context = LocalContext.current
+    val books = state.books?.collectAsLazyPagingItems()
+
+    LaunchedEffect(key1 = books?.loadState) {
+        if (books?.loadState?.refresh is LoadState.Error) {
+            Toast.makeText(context, R.string.search_error_message, Toast.LENGTH_SHORT).show()
+        }
+        if (books?.loadState?.append is LoadState.Error) {
+            Toast.makeText(context, R.string.search_error_message, Toast.LENGTH_SHORT).show()
+        }
+    }
+
     Scaffold(
         topBar = {
-            SearchTopAppBar()
+            SearchTopAppBar(
+                searchQuery = state.searchQuery,
+                onSearchQueryChange = { onEvent(SearchEvent.OnSearchQueryChange(it)) },
+                onBackClick = { onEvent(SearchEvent.OnBackClick) },
+                onPerformSearch = { onEvent(SearchEvent.OnPerformSearch) },
+                onClearQuery = { onEvent(SearchEvent.OnClearQuery) }
+            )
         }
     ) { padding ->
         Surface(modifier = Modifier.padding(padding)) {
-            LazyColumn(
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                item { BookItem() }
-                item { BookItem() }
-                item { BookItem() }
-                item { BookItem() }
-                item { BookItem() }
-                item { BookItem() }
-                item { BookItem() }
-                item { BookItem() }
-                item { BookItem() }
-                item { BookItem() }
+            if (books?.loadState?.refresh is LoadState.Loading) {
+                LoadingOverlay()
+            } else {
+                LazyColumn(
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    books?.let { items ->
+                        items(items = items) { bookItem ->
+                            bookItem?.let { book ->
+                                BookItem(
+                                    book = book,
+                                    onClick = { onEvent(SearchEvent.OnBookClick(it)) }
+                                )
+                            }
+                        }
+                    } ?: item {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 16.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = stringResource(id = R.string.search_icon_desc)
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Text(text = stringResource(id = R.string.search_field_placeholder))
+                        }
+                    }
+                }
             }
         }
     }
@@ -64,19 +120,36 @@ fun SearchScreen() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchTopAppBar() {
+fun SearchTopAppBar(
+    searchQuery: String,
+    onSearchQueryChange: (String) -> Unit,
+    onBackClick: () -> Unit,
+    onPerformSearch: () -> Unit,
+    onClearQuery: () -> Unit
+) {
+    val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(key1 = Unit) {
+        focusRequester.requestFocus()
+    }
+
     TopAppBar(
         title = {
+            // TODO replace with `SearchBar` composable when available
             TextField(
-                value = "",
-                onValueChange = {},
+                value = searchQuery,
+                onValueChange = onSearchQueryChange,
                 placeholder = { Text(text = stringResource(id = R.string.search_field_placeholder)) },
                 colors = TextFieldDefaults.textFieldColors(
                     focusedIndicatorColor =  Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent
                 ),
                 leadingIcon = {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = {
+                        focusManager.clearFocus()
+                        onBackClick()
+                    }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = stringResource(id = R.string.arrow_back_icon_desc)
@@ -84,33 +157,36 @@ fun SearchTopAppBar() {
                     }
                 },
                 trailingIcon = {
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = stringResource(id = R.string.search_icon_desc)
-                        )
+                    if (searchQuery.isNotBlank()) {
+                        IconButton(onClick = {
+                            onClearQuery()
+                            focusRequester.requestFocus()
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.Clear,
+                                contentDescription = stringResource(id = R.string.clear_query_icon_desc)
+                            )
+                        }
                     }
                 },
                 shape = CircleShape,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-                    .padding(end = 16.dp),
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Search
                 ),
                 keyboardActions = KeyboardActions(
-                    onSearch = {}
-                )
+                    onSearch = {
+                        focusManager.clearFocus()
+                        onPerformSearch()
+                    }
+                ),
+                textStyle = TextStyle(fontSize = 16.sp),
+                singleLine = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .padding(end = 16.dp)
+                    .focusRequester(focusRequester)
             )
         }
     )
-}
-
-@Preview(uiMode = UI_MODE_NIGHT_YES)
-@Composable
-fun SearchScreenPreview() {
-    BookwormAppTheme {
-        SearchScreen()
-    }
 }

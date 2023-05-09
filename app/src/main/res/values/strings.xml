@@ -9,6 +9,7 @@
     <string name="account_icon_desc">Account Stats</string>
     <string name="add_book_icon_desc">Add Book</string>
     <string name="search_icon_desc">Search</string>
+    <string name="clear_query_icon_desc">Clear search query</string>
 
     <!-- SignIn Screen -->
     <string name="app_title_label">Bookworm!</string>
@@ -42,4 +43,10 @@
 
     <!-- Search Screen -->
     <string name="search_field_placeholder">Search books</string>
+    <string name="search_error_message">Something went wrong</string>
+
+    <!-- Book info -->
+    <string name="book_author_label">Author: %s</string>
+    <string name="book_published_date_label">Date: %s</string>
+    <string name="book_unknown_data">Unknown</string>
 </resources>
