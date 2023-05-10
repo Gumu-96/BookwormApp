@@ -92,51 +92,42 @@ fun CustomOutlinedTextField(
     val coroutineScope = rememberCoroutineScope()
     var isPasswordVisible by remember { mutableStateOf(false) }
 
-    Column(modifier = modifier) {
-        OutlinedTextField(
-            value = value,
-            onValueChange = onValueChange,
-            singleLine = singleLine,
-            label = label,
-            modifier = modifier
-                .fillMaxWidth()
-                .bringIntoViewRequester(bringIntoViewRequester)
-                .onFocusChanged {
-                    if (it.isFocused) {
-                        coroutineScope.launch {
-                            bringIntoViewRequester.bringIntoView()
-                        }
+    OutlinedTextField(
+        modifier = modifier
+            .fillMaxWidth()
+            .bringIntoViewRequester(bringIntoViewRequester)
+            .onFocusChanged {
+                if (it.isFocused) {
+                    coroutineScope.launch {
+                        bringIntoViewRequester.bringIntoView()
                     }
-                },
-            visualTransformation = if (isPassword and isPasswordVisible.not()) PasswordVisualTransformation()
-            else VisualTransformation.None,
-            trailingIcon = {
-                if (isPassword) {
-                    IconButton(onClick = { isPasswordVisible = isPasswordVisible.not() }) {
-                        Icon(
-                            imageVector = if (isPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                            contentDescription = stringResource(id = R.string.password_visibility_icon_desc)
-                        )
-                    }
-                } else trailingIcon?.let { it() }
+                }
             },
-            shape = RoundedCornerShape(if (singleLine) 50 else 35),
-            maxLines = maxLines,
-            keyboardOptions = keyboardOptions,
-            keyboardActions = keyboardActions,
-            isError = isError
-        )
-        if (isError) {
-            errorMessage?.let {
-                Text(
-                    text = it,
-                    color = MaterialTheme.colorScheme.error,
-                    fontSize = 14.sp,
-                    modifier = Modifier.padding(start = 16.dp)
-                )
-            }
+        value = value,
+        onValueChange = onValueChange,
+        singleLine = singleLine,
+        label = label,
+        visualTransformation = if (isPassword and isPasswordVisible.not()) PasswordVisualTransformation()
+            else VisualTransformation.None,
+        trailingIcon = {
+            if (isPassword) {
+                IconButton(onClick = { isPasswordVisible = isPasswordVisible.not() }) {
+                    Icon(
+                        imageVector = if (isPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                        contentDescription = stringResource(id = R.string.password_visibility_icon_desc)
+                    )
+                }
+            } else trailingIcon?.let { it() }
+        },
+        shape = RoundedCornerShape(if (singleLine) 50 else 35),
+        maxLines = maxLines,
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
+        isError = isError,
+        supportingText = {
+            if (isError) errorMessage?.let { Text(text = it, fontSize = 14.sp) }
         }
-    }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
