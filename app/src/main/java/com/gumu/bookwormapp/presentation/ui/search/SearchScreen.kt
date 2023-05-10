@@ -47,9 +47,11 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.gumu.bookwormapp.R
+import com.gumu.bookwormapp.domain.model.Book
 import com.gumu.bookwormapp.presentation.component.BookItem
 import com.gumu.bookwormapp.presentation.component.ErrorItem
 import com.gumu.bookwormapp.presentation.component.ErrorSurface
@@ -84,44 +86,52 @@ fun SearchScreen(
                     modifier = Modifier.fillMaxSize(),
                     onRetryClick = { books.retry() }
                 )
-                else -> {
-                    LazyColumn(
-                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        books?.let { items ->
-                            items(items = items) { bookItem ->
-                                bookItem?.let { book ->
-                                    BookItem(
-                                        book = book,
-                                        onClick = { onEvent(SearchEvent.OnBookClick(it)) }
-                                    )
-                                }
-                            }
-                            item {
-                                if (items.loadState.append is LoadState.Error) {
-                                    ErrorItem(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        onRetryClick = { items.retry() }
-                                    )
-                                }
-                                if (items.loadState.append is LoadState.Loading) {
-                                    Box(
-                                        contentAlignment = Alignment.Center,
-                                        modifier = Modifier.fillMaxWidth()
-                                    ) {
-                                        CircularProgressIndicator()
-                                    }
-                                }
-                            }
-                        } ?: item { NewSearchItem() }
-                    }
-                }
+                else -> BooksList(
+                    books = books,
+                    onBookClick = { onEvent(SearchEvent.OnBookClick(it)) }
+                )
             }
         }
     }
 }
 
+@Composable
+fun BooksList(
+    books: LazyPagingItems<Book>?,
+    onBookClick: (Book) -> Unit
+) {
+    LazyColumn(
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        books?.let { items ->
+            items(items = items) { book ->
+                book?.let {
+                    BookItem(
+                        book = it,
+                        onClick = onBookClick
+                    )
+                }
+            }
+            item {
+                if (items.loadState.append is LoadState.Error) {
+                    ErrorItem(
+                        modifier = Modifier.fillMaxWidth(),
+                        onRetryClick = { items.retry() }
+                    )
+                }
+                if (items.loadState.append is LoadState.Loading) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+            }
+        } ?: item { NewSearchItem() }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
