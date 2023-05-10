@@ -114,7 +114,10 @@ fun CustomOutlinedTextField(
                 IconButton(onClick = { isPasswordVisible = isPasswordVisible.not() }) {
                     Icon(
                         imageVector = if (isPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                        contentDescription = stringResource(id = R.string.password_visibility_icon_desc)
+                        contentDescription = stringResource(
+                            id = if (isPasswordVisible) R.string.hide_password_icon_desc
+                                else R.string.show_password_icon_desc
+                        )
                     )
                 }
             } else trailingIcon?.let { it() }
