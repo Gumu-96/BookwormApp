@@ -100,7 +100,7 @@ fun HomeTopAppBar(
         navigationIcon = {
             Icon(
                 imageVector = Icons.Default.MenuBook,
-                contentDescription = stringResource(id = R.string.empty_desc),
+                contentDescription = null,
                 modifier = Modifier.padding(12.dp)
             )
         },

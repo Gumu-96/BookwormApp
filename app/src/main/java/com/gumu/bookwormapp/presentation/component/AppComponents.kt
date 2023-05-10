@@ -353,13 +353,13 @@ fun CustomAsyncImage(
         when (painter.state) {
             is AsyncImagePainter.State.Loading -> Icon(
                 imageVector = Icons.Default.Image,
-                contentDescription = stringResource(id = R.string.empty_desc),
+                contentDescription = null,
                 modifier = Modifier.size(40.dp)
             )
             is AsyncImagePainter.State.Success -> SubcomposeAsyncImageContent()
             else -> Icon(
                 imageVector = Icons.Default.BrokenImage,
-                contentDescription = stringResource(id = R.string.empty_desc),
+                contentDescription = null,
                 modifier = Modifier.size(40.dp)
             )
         }

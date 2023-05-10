@@ -3,7 +3,6 @@
 
     <!-- Content desc -->
     <string name="app_logo_desc">Bookworm logo</string>
-    <string name="empty_desc" />
     <string name="show_password_icon_desc">Show Password</string>
     <string name="hide_password_icon_desc">Hide Password</string>
     <string name="arrow_back_icon_desc">Back</string>
