@@ -2,7 +2,6 @@ package com.gumu.bookwormapp.presentation.component
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -49,7 +48,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -193,15 +191,17 @@ fun PillShapedText(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BookStatusItem() {
+fun BookStatusItem(
+    modifier: Modifier = Modifier
+) {
     ElevatedCard(
+        onClick = {},
 //        colors = CardDefaults.elevatedCardColors(
 //            containerColor = MaterialTheme.colorScheme.primary
 //        ),
-        modifier = Modifier
-            .clip(CardDefaults.elevatedShape)
-            .clickable(onClick = {})
+        modifier = modifier
     ) {
         Column(
             modifier = Modifier.width(160.dp)
@@ -268,6 +268,7 @@ fun BookStatusItem() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookItem(
     modifier: Modifier = Modifier,
@@ -275,12 +276,11 @@ fun BookItem(
     onClick: (Book) -> Unit
 ) {
     OutlinedCard(
+        onClick = { onClick(book) },
         colors = CardDefaults.outlinedCardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
         ),
         modifier = modifier
-            .clip(CardDefaults.shape)
-            .clickable(onClick = { onClick(book) })
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
