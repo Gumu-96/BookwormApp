@@ -165,6 +165,7 @@ fun SignUpForm(
             singleLine = true,
             label = { Text(text = stringResource(id = R.string.sign_up_password_field_label)) },
             keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Next
             ),
             keyboardActions = KeyboardActions(
@@ -185,6 +186,7 @@ fun SignUpForm(
             singleLine = true,
             label = { Text(text = stringResource(id = R.string.sign_up_confirm_password_field_label)) },
             keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done
             ),
             keyboardActions = KeyboardActions(

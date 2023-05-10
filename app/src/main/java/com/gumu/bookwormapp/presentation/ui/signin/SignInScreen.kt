@@ -141,6 +141,7 @@ fun SignInSection(
             label = { Text(text = stringResource(id = R.string.password_field_label)) },
             isPassword = true,
             keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done,
                 autoCorrect = false
             ),
