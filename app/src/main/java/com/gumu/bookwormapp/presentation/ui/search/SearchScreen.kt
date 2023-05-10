@@ -1,10 +1,11 @@
 package com.gumu.bookwormapp.presentation.ui.search
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,10 +39,10 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -49,6 +51,8 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.gumu.bookwormapp.R
 import com.gumu.bookwormapp.presentation.component.BookItem
+import com.gumu.bookwormapp.presentation.component.ErrorItem
+import com.gumu.bookwormapp.presentation.component.ErrorSurface
 import com.gumu.bookwormapp.presentation.component.LoadingOverlay
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,18 +61,8 @@ fun SearchScreen(
     state: SearchState,
     onEvent: (SearchEvent) -> Unit
 ) {
-    val context = LocalContext.current
     val books = state.books?.collectAsLazyPagingItems()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-
-    LaunchedEffect(key1 = books?.loadState) {
-        if (books?.loadState?.refresh is LoadState.Error) {
-            Toast.makeText(context, R.string.search_error_message, Toast.LENGTH_SHORT).show()
-        }
-        if (books?.loadState?.append is LoadState.Error) {
-            Toast.makeText(context, R.string.search_error_message, Toast.LENGTH_SHORT).show()
-        }
-    }
 
     Scaffold(
         topBar = {
@@ -84,38 +78,43 @@ fun SearchScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { padding ->
         Surface(modifier = Modifier.padding(padding)) {
-            if (books?.loadState?.refresh is LoadState.Loading) {
-                LoadingOverlay()
-            } else {
-                LazyColumn(
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    books?.let { items ->
-                        items(items = items) { bookItem ->
-                            bookItem?.let { book ->
-                                BookItem(
-                                    book = book,
-                                    onClick = { onEvent(SearchEvent.OnBookClick(it)) }
-                                )
+            when (books?.loadState?.refresh) {
+                is LoadState.Loading -> LoadingOverlay()
+                is LoadState.Error -> ErrorSurface(
+                    modifier = Modifier.fillMaxSize(),
+                    onRetryClick = { books.retry() }
+                )
+                else -> {
+                    LazyColumn(
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        books?.let { items ->
+                            items(items = items) { bookItem ->
+                                bookItem?.let { book ->
+                                    BookItem(
+                                        book = book,
+                                        onClick = { onEvent(SearchEvent.OnBookClick(it)) }
+                                    )
+                                }
                             }
-                        }
-                    } ?: item {
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 16.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Search,
-                                contentDescription = stringResource(id = R.string.search_icon_desc)
-                            )
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Text(text = stringResource(id = R.string.search_field_placeholder))
-                        }
+                            item {
+                                if (items.loadState.append is LoadState.Error) {
+                                    ErrorItem(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        onRetryClick = { items.retry() }
+                                    )
+                                }
+                                if (items.loadState.append is LoadState.Loading) {
+                                    Box(
+                                        contentAlignment = Alignment.Center,
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        CircularProgressIndicator()
+                                    }
+                                }
+                            }
+                        } ?: item { NewSearchItem() }
                     }
                 }
             }
@@ -197,4 +196,22 @@ fun SearchTopAppBar(
         },
         scrollBehavior = scrollBehavior
     )
+}
+
+@Composable
+fun NewSearchItem() {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 16.dp)
+    ) {
+        Icon(
+            imageVector = Icons.Default.Search,
+            contentDescription = stringResource(id = R.string.search_icon_desc)
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(text = stringResource(id = R.string.search_field_placeholder), fontWeight = FontWeight.SemiBold)
+    }
 }

@@ -23,10 +23,13 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.BrokenImage
+import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
@@ -38,6 +41,7 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
@@ -50,6 +54,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -373,5 +379,86 @@ fun LoadingOverlay() {
         modifier = Modifier.fillMaxSize()
     ) {
         CircularProgressIndicator()
+    }
+}
+
+@Composable
+fun ErrorSurface(
+    modifier: Modifier = Modifier,
+    shape: Shape = RectangleShape,
+    color: Color = MaterialTheme.colorScheme.surface,
+    onRetryClick: () -> Unit
+) {
+    Surface(
+        modifier = modifier,
+        shape = shape,
+        color = color
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.ErrorOutline,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(50.dp)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = stringResource(id = R.string.search_error_message),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.SemiBold,
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+            Button(onClick = onRetryClick) {
+                Text(text = stringResource(id = R.string.retry_button_label))
+            }
+        }
+    }
+}
+
+@Composable
+fun ErrorItem(
+    modifier: Modifier = Modifier,
+    onRetryClick: () -> Unit,
+    shape: Shape = RectangleShape,
+    color: Color = MaterialTheme.colorScheme.surface
+) {
+    Surface(
+        modifier = modifier,
+        shape = shape,
+        color = color
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(imageVector = Icons.Default.ErrorOutline, contentDescription = null)
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(
+                    text = stringResource(id = R.string.search_error_message),
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            TextButton(onClick = onRetryClick) {
+                Text(text = stringResource(id = R.string.retry_button_label))
+                Spacer(modifier = Modifier.width(4.dp))
+                Icon(
+                    imageVector = Icons.Default.Replay,
+                    contentDescription = stringResource(id = R.string.retry_button_label)
+                )
+            }
+        }
     }
 }

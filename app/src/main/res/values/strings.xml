@@ -44,6 +44,7 @@
     <!-- Search Screen -->
     <string name="search_field_placeholder">Search books</string>
     <string name="search_error_message">Something went wrong</string>
+    <string name="retry_button_label">Retry</string>
 
     <!-- Book info -->
     <string name="book_author_label">Author: %s</string>
