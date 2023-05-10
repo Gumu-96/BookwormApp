@@ -113,7 +113,8 @@ fun CustomOutlinedTextField(
             if (isPassword) {
                 IconButton(onClick = { isPasswordVisible = isPasswordVisible.not() }) {
                     Icon(
-                        imageVector = if (isPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                        imageVector = if (isPasswordVisible) Icons.Default.VisibilityOff
+                            else Icons.Default.Visibility,
                         contentDescription = stringResource(
                             id = if (isPasswordVisible) R.string.hide_password_icon_desc
                                 else R.string.show_password_icon_desc
@@ -145,7 +146,10 @@ fun NavigateBackTopAppBar(
         title = title,
         navigationIcon = {
             IconButton(onClick = onBackClick) {
-                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = stringResource(id = R.string.arrow_back_icon_desc))
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = stringResource(id = R.string.arrow_back_icon_desc)
+                )
             }
         },
         scrollBehavior = scrollBehavior,
