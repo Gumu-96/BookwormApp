@@ -61,16 +61,25 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun onBookClick(book: Book) {
+        _uiState.update { it.copy(
+            displayBook = book,
+            showBookDetails = true
+        ) }
+    }
 
+    private fun onHideBookDetails() {
+        _uiState.update { it.copy(showBookDetails = false) }
     }
 
     override fun onEvent(event: SearchEvent) {
         when (event) {
             is SearchEvent.OnSearchQueryChange -> onSearchQueryChange(event.searchQuery)
+            is SearchEvent.OnAddBookClick -> { } //TODO
             is SearchEvent.OnBookClick -> onBookClick(event.book)
+            SearchEvent.OnHideBookDetails -> onHideBookDetails()
+            SearchEvent.OnClearQuery -> onClearQuery()
             SearchEvent.OnBackClick -> sendEvent(UiEvent.NavigateBack)
             SearchEvent.OnPerformSearch -> onPerformSearch()
-            SearchEvent.OnClearQuery -> onClearQuery()
             is SearchEvent.OnBookTypeClick -> onBookTypeClick(event.bookType)
             is SearchEvent.OnOrderByClick -> onOrderByClick(event.bookOrder)
             is SearchEvent.OnPrintTypeClick -> onPrintTypeClick(event.printType)

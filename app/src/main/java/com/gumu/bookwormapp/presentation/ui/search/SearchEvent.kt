@@ -9,6 +9,8 @@ sealed class SearchEvent {
     object OnBackClick : SearchEvent()
     object OnPerformSearch : SearchEvent()
     object OnClearQuery : SearchEvent()
+    object OnHideBookDetails : SearchEvent()
+    data class OnAddBookClick(val book: Book) : SearchEvent()
     data class OnSearchQueryChange(val searchQuery: String) : SearchEvent()
     data class OnBookClick(val book: Book) : SearchEvent()
     data class OnOrderByClick(val bookOrder: BookOrderByFilter) : SearchEvent()

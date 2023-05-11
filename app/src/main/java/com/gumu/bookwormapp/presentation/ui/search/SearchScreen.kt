@@ -8,9 +8,15 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
@@ -18,30 +24,40 @@ import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Print
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Sort
+import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DockedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -52,6 +68,7 @@ import com.gumu.bookwormapp.domain.common.BookPrintTypeFilter
 import com.gumu.bookwormapp.domain.common.BookTypeFilter
 import com.gumu.bookwormapp.domain.model.Book
 import com.gumu.bookwormapp.presentation.component.BookItem
+import com.gumu.bookwormapp.presentation.component.CustomAsyncImage
 import com.gumu.bookwormapp.presentation.component.ErrorItem
 import com.gumu.bookwormapp.presentation.component.ErrorSurface
 import com.gumu.bookwormapp.presentation.component.FilterCategory
@@ -60,15 +77,40 @@ import com.gumu.bookwormapp.presentation.component.SuchEmptyResults
 import com.gumu.bookwormapp.presentation.util.BookOrderByFilterUi
 import com.gumu.bookwormapp.presentation.util.BookPrintTypeFilterUi
 import com.gumu.bookwormapp.presentation.util.BookTypeFilterUi
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
     state: SearchState,
     onEvent: (SearchEvent) -> Unit
 ) {
     val books = state.books?.collectAsLazyPagingItems()
+    val bottomSheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
 
-    Scaffold { padding ->
+    BottomSheetScaffold(
+        sheetContent = {
+            if (state.showBookDetails) {
+                ModalBottomSheet(
+                    onDismissRequest = {
+                        scope.launch { bottomSheetState.hide() }.invokeOnCompletion {
+                            if (bottomSheetState.isVisible.not()) onEvent(SearchEvent.OnHideBookDetails)
+                        }
+                    },
+                    sheetState = bottomSheetState
+                ) {
+                    state.displayBook?.let { book ->
+                        BookBottomSheetContent(
+                            book = book,
+                            onAddClick = { onEvent(SearchEvent.OnAddBookClick(it)) }
+                        )
+                    }
+                }
+            }
+        },
+        sheetPeekHeight = 0.dp,
+    ) { padding ->
         Box(modifier = Modifier.padding(padding)) {
             BooksSearchBar(
                 searchQuery = state.searchQuery,
@@ -299,5 +341,91 @@ fun NewSearchItem() {
         )
         Spacer(modifier = Modifier.width(16.dp))
         Text(text = stringResource(id = R.string.search_field_placeholder), fontWeight = FontWeight.SemiBold)
+    }
+}
+
+@Composable
+fun BookBottomSheetContent(
+    book: Book,
+    onAddClick: (Book) -> Unit
+) {
+    val scrollState = rememberScrollState()
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .height(175.dp)
+        ) {
+            CustomAsyncImage(
+                model = book.thumbnail,
+                contentDescription = book.title,
+                modifier = Modifier
+                    .size(width = 120.dp, height = 175.dp)
+                    .clip(RoundedCornerShape(10))
+            )
+            Column(
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(vertical = 8.dp, horizontal = 16.dp)
+            ) {
+                Text(
+                    text = book.title,
+                    maxLines = 4,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = stringResource(
+                        id = R.string.book_author_label,
+                        book.authors ?: stringResource(id = R.string.book_unknown_data)
+                    ),
+                    fontSize = 12.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = stringResource(
+                        id = R.string.book_published_date_label,
+                        book.publishedDate ?: stringResource(id = R.string.book_unknown_data)
+                    ),
+                    fontSize = 12.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = book.categories?.toString() ?: "",
+                    fontSize = 12.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = book.description ?: stringResource(id = R.string.desc_not_available_label),
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Justify,
+            modifier = Modifier
+                .heightIn(max = 350.dp)
+                .padding(horizontal = 16.dp)
+                .verticalScroll(scrollState)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(
+            onClick = { onAddClick(book) },
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.secondary
+            )
+        ) {
+            Text(text = stringResource(id = R.string.add_to_list_button_label))
+        }
     }
 }

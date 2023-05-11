@@ -48,6 +48,7 @@
     <string name="retry_button_label">Retry</string>
     <string name="wow_such_empty_label">Wow, such empty</string>
     <string name="no_results_label">No results found</string>
+    <string name="add_to_list_button_label">Add to my list</string>
 
     <string name="filter_order_by_title">Order by</string>
     <string name="filter_order_by_relevance_label">Relevance</string>
@@ -70,4 +71,5 @@
     <string name="book_author_label">Author: %s</string>
     <string name="book_published_date_label">Date: %s</string>
     <string name="book_unknown_data">Unknown</string>
+    <string name="desc_not_available_label">Description not available</string>
 </resources>

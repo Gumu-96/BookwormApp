@@ -10,7 +10,9 @@ import kotlinx.coroutines.flow.Flow
 data class SearchState(
     val searchQuery: String = "",
     val books: Flow<PagingData<Book>>? = null,
-    val filterOptions: SearchFilterOptions = SearchFilterOptions()
+    val filterOptions: SearchFilterOptions = SearchFilterOptions(),
+    val showBookDetails: Boolean = false,
+    val displayBook: Book? = null
 )
 
 data class SearchFilterOptions(
