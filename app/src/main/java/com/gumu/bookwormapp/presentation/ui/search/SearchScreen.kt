@@ -2,6 +2,7 @@ package com.gumu.bookwormapp.presentation.ui.search
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,8 +14,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.Print
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DockedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -32,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -41,11 +47,18 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.gumu.bookwormapp.R
+import com.gumu.bookwormapp.domain.common.BookOrderByFilter
+import com.gumu.bookwormapp.domain.common.BookPrintTypeFilter
+import com.gumu.bookwormapp.domain.common.BookTypeFilter
 import com.gumu.bookwormapp.domain.model.Book
 import com.gumu.bookwormapp.presentation.component.BookItem
 import com.gumu.bookwormapp.presentation.component.ErrorItem
 import com.gumu.bookwormapp.presentation.component.ErrorSurface
+import com.gumu.bookwormapp.presentation.component.FilterCategory
 import com.gumu.bookwormapp.presentation.component.LoadingOverlay
+import com.gumu.bookwormapp.presentation.util.BookOrderByFilterUi
+import com.gumu.bookwormapp.presentation.util.BookPrintTypeFilterUi
+import com.gumu.bookwormapp.presentation.util.BookTypeFilterUi
 
 @Composable
 fun SearchScreen(
@@ -61,7 +74,11 @@ fun SearchScreen(
                 onSearchQueryChange = { onEvent(SearchEvent.OnSearchQueryChange(it)) },
                 onBackClick = { onEvent(SearchEvent.OnBackClick) },
                 onPerformSearch = { onEvent(SearchEvent.OnPerformSearch) },
-                onClearQuery = { onEvent(SearchEvent.OnClearQuery) }
+                onClearQuery = { onEvent(SearchEvent.OnClearQuery) },
+                currentFilters = state.filterOptions,
+                onOrderByClick = { onEvent(SearchEvent.OnOrderByClick(it)) },
+                onPrintTypeClick = { onEvent(SearchEvent.OnPrintTypeClick(it)) },
+                onBookTypeClick = { onEvent(SearchEvent.OnBookTypeClick(it)) }
             )
             Box(modifier = Modifier.padding(top = 72.dp)) {
                 when (books?.loadState?.refresh) {
@@ -87,7 +104,11 @@ fun BooksSearchBar(
     onSearchQueryChange: (String) -> Unit,
     onBackClick: () -> Unit,
     onPerformSearch: () -> Unit,
-    onClearQuery: () -> Unit
+    onClearQuery: () -> Unit,
+    currentFilters: SearchFilterOptions,
+    onOrderByClick: (BookOrderByFilter) -> Unit,
+    onPrintTypeClick: (BookPrintTypeFilter) -> Unit,
+    onBookTypeClick: (BookTypeFilter) -> Unit
 ) {
     var isSearching by rememberSaveable { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
@@ -140,8 +161,82 @@ fun BooksSearchBar(
             }
         }
     ) {
-        // TODO -> Filtering options
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            BookOrderFilter(
+                currentOption = currentFilters.bookOrder,
+                onSelectOption = onOrderByClick
+            )
+            Divider(modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp))
+            BookPrintTypeFilter(
+                currentOption = currentFilters.bookPrintType,
+                onSelectOption = onPrintTypeClick
+            )
+            Divider(modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp))
+            BookTypeFilter(
+                currentOption = currentFilters.bookType,
+                onSelectOption = onBookTypeClick
+            )
+        }
     }
+}
+
+@Composable
+fun BookPrintTypeFilter(
+    currentOption: BookPrintTypeFilter,
+    onSelectOption: (BookPrintTypeFilter) -> Unit
+) {
+    val context = LocalContext.current
+    FilterCategory(
+        title = stringResource(id = R.string.filter_print_type_title),
+        options = BookPrintTypeFilterUi.values().toList(),
+        optionLabel = { context.resources.getString(it.label) },
+        isOptionSelected = { it.value == currentOption },
+        onSelectOption = { onSelectOption(it.value) },
+        modifier = Modifier.fillMaxWidth(),
+        leadingIcon = { Icon(imageVector = Icons.Default.Print, contentDescription = null) }
+    )
+}
+
+@Composable
+fun BookOrderFilter(
+    currentOption: BookOrderByFilter,
+    onSelectOption: (BookOrderByFilter) -> Unit
+) {
+    val context = LocalContext.current
+    FilterCategory(
+        title = stringResource(id = R.string.filter_order_by_title),
+        options = BookOrderByFilterUi.values().toList(),
+        optionLabel = { context.resources.getString(it.label) },
+        isOptionSelected = { it.value == currentOption },
+        onSelectOption = { onSelectOption(it.value) },
+        modifier = Modifier.fillMaxWidth(),
+        leadingIcon = { Icon(imageVector = Icons.Default.Sort, contentDescription = null) }
+    )
+}
+
+@Composable
+fun BookTypeFilter(
+    currentOption: BookTypeFilter,
+    onSelectOption: (BookTypeFilter) -> Unit
+) {
+    val context = LocalContext.current
+    FilterCategory(
+        title = stringResource(id = R.string.filter_book_type_title),
+        options = BookTypeFilterUi.values().toList(),
+        optionLabel = { context.resources.getString(it.label) },
+        isOptionSelected = { it.value == currentOption },
+        onSelectOption = { onSelectOption(it.value) },
+        modifier = Modifier.fillMaxWidth(),
+        leadingIcon = { Icon(imageVector = Icons.Default.FilterList, contentDescription = null) }
+    )
 }
 
 @Composable

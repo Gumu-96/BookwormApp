@@ -46,6 +46,23 @@
     <string name="search_error_message">Something went wrong</string>
     <string name="retry_button_label">Retry</string>
 
+    <string name="filter_order_by_title">Order by</string>
+    <string name="filter_order_by_relevance_label">Relevance</string>
+    <string name="filter_order_by_newest_label">Newest</string>
+
+    <string name="filter_print_type_title">Print type</string>
+    <string name="filter_print_type_all_label">All</string>
+    <string name="filter_print_type_books_label">Books</string>
+    <string name="filter_print_type_magazines_label">Magazines</string>
+
+    <string name="filter_book_type_title">Book type</string>
+    <string name="filter_book_type_all_label">All</string>
+    <string name="filter_book_type_partial_label">Partial</string>
+    <string name="filter_book_type_full_label">Full</string>
+    <string name="filter_book_type_free_ebooks_label">Free ebooks</string>
+    <string name="filter_book_type_paid_ebooks_label">Paid ebooks</string>
+    <string name="filter_book_type_ebooks_label">Ebooks</string>
+
     <!-- Book info -->
     <string name="book_author_label">Author: %s</string>
     <string name="book_published_date_label">Date: %s</string>

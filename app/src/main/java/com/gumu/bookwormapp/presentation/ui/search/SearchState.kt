@@ -11,6 +11,10 @@ data class SearchState(
     val isLoading: Boolean = false,
     val searchQuery: String = "",
     val books: Flow<PagingData<Book>>? = null,
+    val filterOptions: SearchFilterOptions = SearchFilterOptions()
+)
+
+data class SearchFilterOptions(
     val bookOrder: BookOrderByFilter = BookOrderByFilter.RELEVANCE,
     val bookPrintType: BookPrintTypeFilter = BookPrintTypeFilter.ALL,
     val bookType: BookTypeFilter = BookTypeFilter.ALL
