@@ -135,8 +135,12 @@ fun BooksSearchBar(
         leadingIcon = {
             IconButton(
                 onClick = {
-                    focusManager.clearFocus()
-                    onBackClick()
+                    if (isSearching) {
+                        isSearching = false
+                    } else {
+                        focusManager.clearFocus()
+                        onBackClick()
+                    }
                 }
             ) {
                 Icon(
