@@ -11,5 +11,8 @@ interface BooksApi {
         @Query("q") query: String,
         @Query("startIndex") startIndex: Int,
         @Query("maxResults") pageSize: Int,
+        @Query("orderBy") orderBy: String,
+        @Query("printType") printType: String,
+        @Query("filter") filter: String?
     ): Call<BookSearchDto>
 }

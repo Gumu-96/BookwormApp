@@ -25,7 +25,12 @@ class SearchViewModel @Inject constructor(
     private fun onPerformSearch() {
         if (_uiState.value.searchQuery.isNotBlank()) {
             _uiState.update { it.copy(
-                books = booksRepository.findBooks(_uiState.value.searchQuery)
+                books = booksRepository.findBooks(
+                    query = it.searchQuery,
+                    orderBy = it.bookOrder,
+                    printType = it.bookPrintType,
+                    bookType = it.bookType
+                )
             ) }
         }
     }

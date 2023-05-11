@@ -6,6 +6,9 @@ import com.gumu.bookwormapp.data.remote.dto.BookSearchDto
 import com.gumu.bookwormapp.data.util.DispatchersProvider
 import com.gumu.bookwormapp.domain.common.AppError
 import com.gumu.bookwormapp.domain.common.AppResult
+import com.gumu.bookwormapp.domain.common.BookOrderByFilter
+import com.gumu.bookwormapp.domain.common.BookPrintTypeFilter
+import com.gumu.bookwormapp.domain.common.BookTypeFilter
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
@@ -18,14 +21,20 @@ class BooksRemoteDataSourceImpl @Inject constructor(
     override suspend fun findBooks(
         query: String,
         page: Int,
-        pageSize: Int
+        pageSize: Int,
+        orderBy: BookOrderByFilter,
+        printType: BookPrintTypeFilter,
+        bookType: BookTypeFilter
     ): AppResult<BookSearchDto> {
         return withContext(dispatchersProvider.io) {
             try {
                 val response = booksApi.findBooks(
                     query = query,
                     startIndex = page.minus(1) * pageSize,
-                    pageSize = pageSize
+                    pageSize = pageSize,
+                    orderBy = orderBy.value,
+                    printType = printType.value,
+                    filter = bookType.value
                 ).execute()
                 if (response.isSuccessful) {
                     response.body()?.let { data ->

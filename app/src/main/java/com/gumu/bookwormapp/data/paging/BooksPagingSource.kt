@@ -6,11 +6,17 @@ import com.gumu.bookwormapp.data.remote.RemoteConstants.DEFAULT_PAGE_SIZE
 import com.gumu.bookwormapp.data.remote.datasource.BooksRemoteDataSource
 import com.gumu.bookwormapp.data.util.toDomain
 import com.gumu.bookwormapp.domain.common.AppResult
+import com.gumu.bookwormapp.domain.common.BookOrderByFilter
+import com.gumu.bookwormapp.domain.common.BookPrintTypeFilter
+import com.gumu.bookwormapp.domain.common.BookTypeFilter
 import com.gumu.bookwormapp.domain.model.Book
 
 class BooksPagingSource(
     private val booksRemoteDataSource: BooksRemoteDataSource,
-    private val query: String
+    private val query: String,
+    private val orderBy: BookOrderByFilter,
+    private val printType: BookPrintTypeFilter,
+    private val bookType: BookTypeFilter
 ) : PagingSource<Int, Book>() {
     override fun getRefreshKey(state: PagingState<Int, Book>): Int? {
         return state.anchorPosition?.let {
@@ -21,8 +27,16 @@ class BooksPagingSource(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Book> {
         val currentPage = params.key ?: 1
+        val result = booksRemoteDataSource.findBooks(
+            query = query,
+            page = currentPage,
+            pageSize = params.loadSize,
+            orderBy = orderBy,
+            printType = printType,
+            bookType = bookType
+        )
 
-        return when (val result = booksRemoteDataSource.findBooks(query, currentPage, params.loadSize)) {
+        return when (result) {
             is AppResult.Failure -> LoadResult.Error(result.error.cause)
             is AppResult.Success -> {
                 val nextKey = if (result.data.items.isNullOrEmpty()) null
