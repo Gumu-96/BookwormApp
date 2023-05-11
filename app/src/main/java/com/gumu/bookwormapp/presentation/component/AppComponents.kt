@@ -320,7 +320,10 @@ fun BookItem(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = stringResource(id = R.string.book_author_label, book.authors ?: "[]"),
+                    text = stringResource(
+                        id = R.string.book_author_label,
+                        book.authors ?: stringResource(id = R.string.book_unknown_data)
+                    ),
                     fontSize = 12.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -335,7 +338,7 @@ fun BookItem(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = book.categories?.toString() ?: "[]",
+                    text = book.categories?.toString() ?: "",
                     fontSize = 12.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
