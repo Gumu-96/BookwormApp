@@ -10,6 +10,7 @@
     <string name="add_book_icon_desc">Add Book</string>
     <string name="search_icon_desc">Search</string>
     <string name="clear_query_icon_desc">Clear search query</string>
+    <string name="doge_calm_desc">Doge calm</string>
 
     <!-- SignIn Screen -->
     <string name="app_title_label">Bookworm!</string>
@@ -45,6 +46,8 @@
     <string name="search_field_placeholder">Search books</string>
     <string name="search_error_message">Something went wrong</string>
     <string name="retry_button_label">Retry</string>
+    <string name="wow_such_empty_label">Wow, such empty</string>
+    <string name="no_results_label">No results found</string>
 
     <string name="filter_order_by_title">Order by</string>
     <string name="filter_order_by_relevance_label">Relevance</string>

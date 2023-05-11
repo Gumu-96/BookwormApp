@@ -56,6 +56,7 @@ import com.gumu.bookwormapp.presentation.component.ErrorItem
 import com.gumu.bookwormapp.presentation.component.ErrorSurface
 import com.gumu.bookwormapp.presentation.component.FilterCategory
 import com.gumu.bookwormapp.presentation.component.LoadingOverlay
+import com.gumu.bookwormapp.presentation.component.SuchEmptyResults
 import com.gumu.bookwormapp.presentation.util.BookOrderByFilterUi
 import com.gumu.bookwormapp.presentation.util.BookPrintTypeFilterUi
 import com.gumu.bookwormapp.presentation.util.BookTypeFilterUi
@@ -248,9 +249,11 @@ fun BooksList(
     books: LazyPagingItems<Book>?,
     onBookClick: (Book) -> Unit
 ) {
+    if (books?.itemCount == 0) SuchEmptyResults(modifier = Modifier.fillMaxSize())
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier.fillMaxSize()
     ) {
         books?.let { items ->
             items(items = items) { book ->
