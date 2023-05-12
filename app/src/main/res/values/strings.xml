@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">BookwormApp</string>
+    <string name="generic_error_message">Something went wrong</string>
+    <string name="generic_success_message">Success</string>
 
     <!-- Content desc -->
     <string name="app_logo_desc">Bookworm logo</string>

@@ -12,7 +12,8 @@ data class SearchState(
     val books: Flow<PagingData<Book>>? = null,
     val filterOptions: SearchFilterOptions = SearchFilterOptions(),
     val showBookDetails: Boolean = false,
-    val displayBook: Book? = null
+    val displayBook: Book? = null,
+    val isAddingBook: Boolean = false
 )
 
 data class SearchFilterOptions(

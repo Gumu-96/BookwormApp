@@ -103,7 +103,8 @@ fun SearchScreen(
                     state.displayBook?.let { book ->
                         BookBottomSheetContent(
                             book = book,
-                            onAddClick = { onEvent(SearchEvent.OnAddBookClick(it)) }
+                            onAddClick = { onEvent(SearchEvent.OnAddBookClick(it)) },
+                            isAddingBook = state.isAddingBook
                         )
                     }
                 }
@@ -132,7 +133,9 @@ fun SearchScreen(
                     )
                     else -> BooksList(
                         books = books,
-                        onBookClick = { onEvent(SearchEvent.OnBookClick(it)) }
+                        onBookClick = {
+                            if (state.isAddingBook.not()) onEvent(SearchEvent.OnBookClick(it))
+                        }
                     )
                 }
             }
@@ -347,7 +350,8 @@ fun NewSearchItem() {
 @Composable
 fun BookBottomSheetContent(
     book: Book,
-    onAddClick: (Book) -> Unit
+    onAddClick: (Book) -> Unit,
+    isAddingBook: Boolean
 ) {
     val scrollState = rememberScrollState()
 
@@ -423,9 +427,11 @@ fun BookBottomSheetContent(
                 .fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.secondary
-            )
+            ),
+            enabled = isAddingBook.not()
         ) {
-            Text(text = stringResource(id = R.string.add_to_list_button_label))
+            if (isAddingBook) CircularProgressIndicator(modifier = Modifier.size(24.dp))
+            else Text(text = stringResource(id = R.string.add_to_list_button_label))
         }
     }
 }
