@@ -8,8 +8,9 @@ object RemoteConstants {
 
     // Firebase
     const val USERS_COLLECTION = "users"
-    const val BOOKS_COLLECTION = "books"
     const val BOOK_STATS_COLLECTION = "book_stats"
+    const val BOOK_ID_FIELD = "bookId"
+    const val USER_ID_FIELD = "userId"
 
     // Google's Books API
     const val DEFAULT_PAGE_SIZE = 20

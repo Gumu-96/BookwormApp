@@ -2,11 +2,13 @@ package com.gumu.bookwormapp.di
 
 import com.gumu.bookwormapp.data.remote.datasource.BooksRemoteDataSource
 import com.gumu.bookwormapp.data.remote.datasource.BooksRemoteDataSourceImpl
+import com.gumu.bookwormapp.data.repository.BookStatsRepositoryImpl
 import com.gumu.bookwormapp.data.repository.BooksRepositoryImpl
 import com.gumu.bookwormapp.data.repository.FirebaseAuthRepository
 import com.gumu.bookwormapp.data.util.DispatchersProvider
 import com.gumu.bookwormapp.data.util.DispatchersProviderImpl
 import com.gumu.bookwormapp.domain.repository.AuthRepository
+import com.gumu.bookwormapp.domain.repository.BookStatsRepository
 import com.gumu.bookwormapp.domain.repository.BooksRepository
 import dagger.Binds
 import dagger.Module
@@ -40,4 +42,10 @@ abstract class RepositoryModule {
     abstract fun bindAuthRepository(
         firebaseAuthRepository: FirebaseAuthRepository
     ): AuthRepository
+
+    @Singleton
+    @Binds
+    abstract fun bindBookStatsRepository(
+        bookStatsRepository: BookStatsRepositoryImpl
+    ): BookStatsRepository
 }
