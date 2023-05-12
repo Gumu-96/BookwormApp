@@ -1,10 +1,11 @@
 package com.gumu.bookwormapp.presentation.ui.signup
 
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import androidx.lifecycle.viewModelScope
 import com.gumu.bookwormapp.R
-import com.gumu.bookwormapp.data.remote.RemoteConstants
-import com.gumu.bookwormapp.data.remote.dto.UserDto
+import com.gumu.bookwormapp.data.repository.FirebaseAuthRepository
+import com.gumu.bookwormapp.domain.common.onFailure
+import com.gumu.bookwormapp.domain.common.onLoading
+import com.gumu.bookwormapp.domain.common.onSuccess
 import com.gumu.bookwormapp.domain.usecase.ValidateEmail
 import com.gumu.bookwormapp.domain.usecase.ValidateName
 import com.gumu.bookwormapp.domain.usecase.ValidatePassword
@@ -15,7 +16,9 @@ import com.gumu.bookwormapp.presentation.ui.common.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,8 +27,7 @@ class SignUpViewModel @Inject constructor(
     private val validateEmail: ValidateEmail,
     private val validatePassword: ValidatePassword,
     private val validateRepeatedPassword: ValidateRepeatedPassword,
-    private val firebaseAuth: FirebaseAuth,
-    private val firebaseFirestore: FirebaseFirestore
+    private val authRepository: FirebaseAuthRepository
 ) : BaseViewModel<SignUpState, SignUpEvent>() {
     override val uiState: StateFlow<SignUpState> = _uiState.asStateFlow()
 
@@ -82,33 +84,38 @@ class SignUpViewModel @Inject constructor(
     }
 
     private fun onRegisterClick() {
-        _uiState.update { it.copy(isLoading = true) }
-        firebaseAuth
-            .createUserWithEmailAndPassword(_uiState.value.email, _uiState.value.password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    firebaseAuth.currentUser?.uid?.let {
+        viewModelScope.launch {
+            authRepository.registerUser(
+                email = _uiState.value.email,
+                password = _uiState.value.password
+            ).collectLatest { result ->
+                result.onLoading {
+                    _uiState.update { it.copy(isLoading = true) }
+                }.onSuccess {  userId ->
+                    userId?.let {
                         saveUserData(it)
                     }
-                } else {
+                }.onFailure {
                     _uiState.update { it.copy(isLoading = false) }
                     sendEvent(UiEvent.Error(R.string.registration_error))
                 }
             }
+        }
     }
 
-    private fun saveUserData(userId: String) {
-        firebaseFirestore
-            .collection(RemoteConstants.USERS_COLLECTION)
-            .document(userId)
-            .set(UserDto(_uiState.value.firstname, _uiState.value.lastname))
-            .addOnSuccessListener {
+    private suspend fun saveUserData(userId: String) {
+        authRepository.saveNewUserData(
+            userId = userId,
+            firstname = _uiState.value.firstname,
+            lastname = _uiState.value.lastname
+        ).collectLatest { result ->
+            result.onSuccess {
                 sendEvent(UiEvent.NavigateTo(Screen.HomeScreen.route, Screen.SignInScreen.route))
-            }
-            .addOnFailureListener {
+            }.onFailure {
                 _uiState.update { it.copy(isLoading = false) }
                 sendEvent(UiEvent.Error(R.string.registration_data_error))
             }
+        }
     }
 
     override fun onEvent(event: SignUpEvent) {
