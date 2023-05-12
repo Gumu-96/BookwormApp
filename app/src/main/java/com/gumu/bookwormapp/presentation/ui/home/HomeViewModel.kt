@@ -1,6 +1,7 @@
 package com.gumu.bookwormapp.presentation.ui.home
 
-import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.gumu.bookwormapp.presentation.navigation.Screen
 import com.gumu.bookwormapp.presentation.ui.common.BaseViewModel
 import com.gumu.bookwormapp.presentation.ui.common.UiEvent
@@ -10,9 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
-    private val firebaseAuth: FirebaseAuth
-) : BaseViewModel<HomeState, HomeEvent>() {
+class HomeViewModel @Inject constructor() : BaseViewModel<HomeState, HomeEvent>() {
     override val uiState: StateFlow<HomeState> = _uiState.asStateFlow()
 
     override fun defaultState(): HomeState = HomeState()
@@ -22,7 +21,7 @@ class HomeViewModel @Inject constructor(
             is HomeEvent.OnBookStatsClick -> {}
             HomeEvent.OnAddBookClick -> sendEvent(UiEvent.NavigateTo(Screen.SearchScreen.route))
             HomeEvent.OnAccountClick -> {
-                firebaseAuth.signOut()
+                Firebase.auth.signOut()
                 sendEvent(UiEvent.NavigateTo(Screen.SignInScreen.route, Screen.HomeScreen.route))
             }
         }
