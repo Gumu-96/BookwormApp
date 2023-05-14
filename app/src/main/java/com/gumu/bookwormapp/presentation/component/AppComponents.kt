@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.BrokenImage
 import androidx.compose.material.icons.filled.ErrorOutline
@@ -80,6 +80,8 @@ import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.gumu.bookwormapp.R
 import com.gumu.bookwormapp.domain.model.Book
+import com.gumu.bookwormapp.domain.model.BookStats
+import com.gumu.bookwormapp.presentation.util.ReadingStatusUi
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -205,41 +207,37 @@ fun PillShapedText(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookStatusItem(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    bookStats: BookStats,
+    onClick: (BookStats) -> Unit
 ) {
     ElevatedCard(
-        onClick = {},
-//        colors = CardDefaults.elevatedCardColors(
-//            containerColor = MaterialTheme.colorScheme.primary
-//        ),
+        onClick = { onClick(bookStats) },
         modifier = modifier
     ) {
         Column(
             modifier = Modifier.width(160.dp)
         ) {
             Box {
-                Image(
-                    painter = painterResource(id = R.drawable.bookworm),
-                    contentDescription = "",
-                    contentScale = ContentScale.Fit,
+                CustomAsyncImage(
+                    model = bookStats.book.thumbnail,
+                    contentDescription = bookStats.book.title,
                     modifier = Modifier
                         .size(width = 160.dp, height = 200.dp)
-                        .aspectRatio(3f / 4f)
                 )
-                PillShapedText(
-                    text = "5",
-                    color = MaterialTheme.colorScheme.tertiary,
-                    wrapContent = true,
-                    trailingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Star,
-                            contentDescription = ""
-                        )
-                    },
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .align(Alignment.BottomEnd)
-                )
+                if (bookStats.rating > 0) {
+                    PillShapedText(
+                        text = bookStats.rating.toString(),
+                        color = MaterialTheme.colorScheme.tertiary,
+                        wrapContent = true,
+                        trailingIcon = {
+                            Icon(imageVector = Icons.Default.Star, contentDescription = null)
+                        },
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .align(Alignment.BottomEnd)
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(8.dp))
             Column(
@@ -248,25 +246,28 @@ fun BookStatusItem(
                     .padding(horizontal = 8.dp)
             ) {
                 Text(
-                    text = "Hello. Android",
+                    text = bookStats.book.title,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = "[Ed Burnette]",
+                    text = bookStats.book.authors?.toString() ?: stringResource(id = R.string.book_unknown_data),
                     fontSize = 12.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
+            val readingStatus = remember { ReadingStatusUi.values().first { it.value == bookStats.status } }
             Surface(
-                color = MaterialTheme.colorScheme.primaryContainer,
+                color = readingStatus.color(),
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
                 Text(
-                    text = "Reading",
+                    text = stringResource(
+                        id = readingStatus.label
+                    ),
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 12.sp,
                     textAlign = TextAlign.Center,
@@ -352,7 +353,8 @@ fun BookItem(
 fun CustomAsyncImage(
     modifier: Modifier = Modifier,
     model: Any?,
-    contentDescription: String?
+    contentDescription: String?,
+    contentScale: ContentScale = ContentScale.Crop
 ) {
     SubcomposeAsyncImage(
         model = ImageRequest.Builder(LocalContext.current)
@@ -361,7 +363,7 @@ fun CustomAsyncImage(
             .diskCachePolicy(CachePolicy.ENABLED)
             .build(),
         contentDescription = contentDescription,
-        contentScale = ContentScale.Crop,
+        contentScale = contentScale,
         modifier = modifier
     ) {
         when (painter.state) {
@@ -473,7 +475,7 @@ fun ErrorItem(
 
 @Composable
 fun SuchEmptyResults(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -506,6 +508,45 @@ fun SuchEmptyResults(
                 text = stringResource(id = R.string.no_results_label),
                 style = MaterialTheme.typography.titleMedium
             )
+        }
+    }
+}
+
+@Composable
+fun SuchEmptyStats(
+    modifier: Modifier = Modifier,
+    onButtonClick: (() -> Unit)? = null
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = modifier
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .size(100.dp)
+                .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.doge_calm),
+                contentDescription = stringResource(id = R.string.doge_calm_desc),
+                modifier = Modifier.size(75.dp)
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = stringResource(id = R.string.wow_such_empty_label),
+            color = MaterialTheme.colorScheme.outline,
+            style = MaterialTheme.typography.bodySmall
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        onButtonClick?.let {
+            TextButton(onClick = it) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = null)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(text = stringResource(id = R.string.add_books_to_list_button_label))
+            }
         }
     }
 }

@@ -43,6 +43,7 @@
     <!-- Home Screen -->
     <string name="current_reading_activity_label">Your reading activity right now…</string>
     <string name="reading_list_label">Your reading list</string>
+    <string name="add_books_to_list_button_label">Add books to your list</string>
 
     <!-- Search Screen -->
     <string name="search_field_placeholder">Search books</string>
@@ -74,4 +75,9 @@
     <string name="book_published_date_label">Date: %s</string>
     <string name="book_unknown_data">Unknown</string>
     <string name="desc_not_available_label">Description not available</string>
+
+    <!-- Book Stats info -->
+    <string name="status_on_queue_label">On Queue</string>
+    <string name="status_reading_label">Reading</string>
+    <string name="status_read_label">Read</string>
 </resources>

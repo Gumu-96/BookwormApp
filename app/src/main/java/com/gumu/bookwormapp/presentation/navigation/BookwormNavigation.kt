@@ -7,6 +7,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.gumu.bookwormapp.presentation.ui.common.ScreenWrapper
 import com.gumu.bookwormapp.presentation.ui.home.HomeScreen
 import com.gumu.bookwormapp.presentation.ui.home.HomeViewModel
@@ -51,6 +52,8 @@ fun BookwormNavigation() {
             ScreenWrapper(viewModel = viewModel, navController = navController) {
                 HomeScreen(
                     state = state,
+                    onQueueList = viewModel.onQueueBooks.collectAsLazyPagingItems(),
+                    readingList = viewModel.readingBooks.collectAsLazyPagingItems(),
                     onEvent = viewModel::onEvent
                 )
             }
