@@ -88,16 +88,21 @@ fun SearchScreen(
     val books = state.books?.collectAsLazyPagingItems()
     val bottomSheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
+    fun dismissDetails() {
+        scope.launch { bottomSheetState.hide() }.invokeOnCompletion {
+            if (bottomSheetState.isVisible.not()) onEvent(SearchEvent.OnHideBookDetails)
+        }
+    }
+
+    LaunchedEffect(key1 = state.isAddingBook) {
+        if (state.isAddingBook.not()) dismissDetails()
+    }
 
     BottomSheetScaffold(
         sheetContent = {
             if (state.showBookDetails) {
                 ModalBottomSheet(
-                    onDismissRequest = {
-                        scope.launch { bottomSheetState.hide() }.invokeOnCompletion {
-                            if (bottomSheetState.isVisible.not()) onEvent(SearchEvent.OnHideBookDetails)
-                        }
-                    },
+                    onDismissRequest = { dismissDetails() },
                     sheetState = bottomSheetState
                 ) {
                     state.displayBook?.let { book ->
