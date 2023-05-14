@@ -86,7 +86,9 @@ fun SearchScreen(
     onEvent: (SearchEvent) -> Unit
 ) {
     val books = state.books?.collectAsLazyPagingItems()
-    val bottomSheetState = rememberModalBottomSheetState()
+    val bottomSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
     val scope = rememberCoroutineScope()
     fun dismissDetails() {
         scope.launch { bottomSheetState.hide() }.invokeOnCompletion {
