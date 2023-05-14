@@ -12,7 +12,7 @@ data class BookItemDto(
 )
 
 data class BookItemInfoDto(
-    val title: String,
+    val title: String?,
     val authors: List<String>?,
     val publishedDate: String?,
     val description: String?,

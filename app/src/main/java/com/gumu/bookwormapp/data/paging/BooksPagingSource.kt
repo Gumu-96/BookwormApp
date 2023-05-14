@@ -1,5 +1,6 @@
 package com.gumu.bookwormapp.data.paging
 
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.gumu.bookwormapp.data.remote.RemoteConstants.DEFAULT_PAGE_SIZE
@@ -36,19 +37,24 @@ class BooksPagingSource(
             bookType = bookType
         )
 
-        return when (result) {
-            is AppResult.Failure -> LoadResult.Error(result.error.cause)
-            is AppResult.Success -> {
-                val nextKey = if (result.data.items.isNullOrEmpty()) null
+        return try {
+            when (result) {
+                is AppResult.Failure -> LoadResult.Error(result.error.cause)
+                is AppResult.Success -> {
+                    val nextKey = if (result.data.items.isNullOrEmpty()) null
                     else currentPage.plus(params.loadSize / DEFAULT_PAGE_SIZE)
 
-                LoadResult.Page(
-                    data = result.data.items?.map { it.toDomain() } ?: emptyList(),
-                    prevKey = null,
-                    nextKey = nextKey
-                )
+                    LoadResult.Page(
+                        data = result.data.items?.map { it.toDomain() } ?: emptyList(),
+                        prevKey = null,
+                        nextKey = nextKey
+                    )
+                }
+                else -> LoadResult.Error(Throwable("How did we get here?"))
             }
-            else -> LoadResult.Error(Throwable("How did we get here?"))
+        } catch (e: Exception) {
+            Log.d("SearchPaging", e.stackTraceToString())
+            LoadResult.Error(Throwable("Something happened"))
         }
     }
 }

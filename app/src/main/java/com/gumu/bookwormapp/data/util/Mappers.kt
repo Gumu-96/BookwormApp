@@ -6,7 +6,7 @@ import com.gumu.bookwormapp.domain.model.Book
 fun BookItemDto.toDomain() =
     Book(
         id = id,
-        title = volumeInfo.title,
+        title = volumeInfo.title ?: id,
         authors = volumeInfo.authors,
         publishedDate = volumeInfo.publishedDate,
         description = volumeInfo.description,
