@@ -38,7 +38,7 @@ class BookStatsRepositoryImpl @Inject constructor(
         else emit(AppResult.Failure(AppError(task.exception ?: Throwable("Save data error"))))
     }.onStart { emit(AppResult .Loading) }
 
-    override fun updateBookStats(bookId: String): Flow<AppResult<Unit>> {
+    override fun updateBookStats(bookStatsId: String): Flow<AppResult<Unit>> {
         TODO("Not yet implemented")
     }
 
@@ -53,18 +53,17 @@ class BookStatsRepositoryImpl @Inject constructor(
         ).flow
     }
 
-    override fun getBookStats(bookId: String): Flow<AppResult<BookStats?>> = flow {
+    override fun getBookStats(bookStatsId: String): Flow<AppResult<BookStats?>> = flow {
         val bookStatsTask = firestore
             .collection(RemoteConstants.BOOK_STATS_COLLECTION)
-            .whereEqualTo(RemoteConstants.USER_ID_FIELD, auth.currentUser?.uid)
-            .whereEqualTo(RemoteConstants.BOOK_ID_FIELD, bookId)
-            .limit(1)
+            .document(bookStatsId)
             .get()
             .also { it.await() }
 
         if (bookStatsTask.isSuccessful) {
-            val statsDto = bookStatsTask.result.documents.first().toObject(BookStatsDto::class.java)
-            emit(AppResult.Success(statsDto?.toDomain()))
+            val docRef = bookStatsTask.result
+            val bookStats = docRef?.toObject(BookStatsDto::class.java)?.toDomain(docRef.id)
+            emit(AppResult.Success(bookStats))
         } else {
             emit(AppResult.Failure(AppError(bookStatsTask.exception ?: Throwable("Error getting data"))))
         }

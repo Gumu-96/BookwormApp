@@ -32,7 +32,9 @@ class BookStatsPagingSource(
             val docs = queryTask.result.documents
             val nextKey = if (docs.isEmpty() || docs.size < params.loadSize) null else docs.last()
             LoadResult.Page(
-                data = docs.mapNotNull { it.toObject(BookStatsDto::class.java) }.map { it.toDomain() },
+                data = docs.mapNotNull {
+                    it.toObject(BookStatsDto::class.java)?.toDomain(it.id)
+                },
                 prevKey = null,
                 nextKey = nextKey
             )

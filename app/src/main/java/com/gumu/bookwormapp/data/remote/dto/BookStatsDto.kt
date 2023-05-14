@@ -30,10 +30,11 @@ fun BookStats.toDto(userId: String) =
         thoughts = thoughts
     )
 
-fun BookStatsDto.toDomain() =
+fun BookStatsDto.toDomain(id: String?) =
     BookStats(
         book = book.toDomain(bookId),
         status = status,
         rating = rating,
-        thoughts = thoughts
+        thoughts = thoughts,
+        id = id
     )
