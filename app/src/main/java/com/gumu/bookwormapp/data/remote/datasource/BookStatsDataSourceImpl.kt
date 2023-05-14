@@ -21,7 +21,7 @@ class BookStatsDataSourceImpl @Inject constructor() : BookStatsDataSource {
             .collection(RemoteConstants.BOOK_STATS_COLLECTION)
             .whereEqualTo(RemoteConstants.USER_ID_FIELD, userId)
             .whereEqualTo(RemoteConstants.BOOK_STATUS_FIELD, status)
-            .orderBy(RemoteConstants.BOOK_ID_FIELD)
+            .orderBy(RemoteConstants.CREATED_AT_FIELD, Query.Direction.DESCENDING)
             .run { startAtDocument?.let { startAfter(it) } ?: this }
             .limit(pageSize.toLong())
     }

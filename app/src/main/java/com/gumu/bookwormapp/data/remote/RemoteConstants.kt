@@ -11,6 +11,7 @@ object RemoteConstants {
     const val BOOK_STATS_COLLECTION = "book_stats"
     const val BOOK_ID_FIELD = "bookId"
     const val USER_ID_FIELD = "userId"
+    const val CREATED_AT_FIELD = "createdAt"
     const val BOOK_STATUS_FIELD = "status"
     const val DEFAULT_STATS_PAGE_SIZE = 20
 
