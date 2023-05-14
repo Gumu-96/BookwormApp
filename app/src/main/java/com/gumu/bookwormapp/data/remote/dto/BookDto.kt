@@ -9,7 +9,9 @@ data class BookDto (
     val description: String?,
     val categories: List<String>?,
     val thumbnail: String?
-)
+) {
+    constructor(): this("", null, null, null, null, null)
+}
 
 fun Book.toDto() =
     BookDto(

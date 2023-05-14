@@ -11,6 +11,8 @@ object RemoteConstants {
     const val BOOK_STATS_COLLECTION = "book_stats"
     const val BOOK_ID_FIELD = "bookId"
     const val USER_ID_FIELD = "userId"
+    const val BOOK_STATUS_FIELD = "status"
+    const val DEFAULT_STATS_PAGE_SIZE = 20
 
     // Google's Books API
     const val DEFAULT_PAGE_SIZE = 20

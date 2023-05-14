@@ -1,5 +1,7 @@
 package com.gumu.bookwormapp.di
 
+import com.gumu.bookwormapp.data.remote.datasource.BookStatsDataSource
+import com.gumu.bookwormapp.data.remote.datasource.BookStatsDataSourceImpl
 import com.gumu.bookwormapp.data.remote.datasource.BooksRemoteDataSource
 import com.gumu.bookwormapp.data.remote.datasource.BooksRemoteDataSourceImpl
 import com.gumu.bookwormapp.data.repository.BookStatsRepositoryImpl
@@ -42,6 +44,12 @@ abstract class RepositoryModule {
     abstract fun bindAuthRepository(
         firebaseAuthRepository: FirebaseAuthRepository
     ): AuthRepository
+
+    @Singleton
+    @Binds
+    abstract fun bindBookStatsDataSource(
+        bookStatsDataSource: BookStatsDataSourceImpl
+    ): BookStatsDataSource
 
     @Singleton
     @Binds

@@ -13,7 +13,9 @@ data class BookStatsDto(
     val thoughts: String?,
     val startedReading: Timestamp? = null,
     val finishedReading: Timestamp? = null
-)
+) {
+    constructor(): this("", "", BookDto(), 0, ReadingStatus.ON_QUEUE, null, null, null)
+}
 
 fun BookStats.toDto(userId: String) =
     BookStatsDto(
