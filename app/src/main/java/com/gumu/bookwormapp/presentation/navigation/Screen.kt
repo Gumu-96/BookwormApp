@@ -7,9 +7,9 @@ sealed class Screen(val route: String) {
     object SignInScreen: Screen("sign_in_screen")
     object SignUpScreen: Screen("sign_up_screen")
     object HomeScreen: Screen("home_screen")
-    object BookScreen: Screen("book_screen")
     object SearchScreen: Screen("search_screen")
-    object StatsScreen: Screen("stats_screen")
+    object BookStatsScreen: Screen("book_stats_screen")
+    object ProfileScreen: Screen("profile_screen")
 
     fun withArgs(vararg args: String): String {
         return buildString {
@@ -21,6 +21,6 @@ sealed class Screen(val route: String) {
     }
 
     companion object {
-        const val BOOK_ID_PARAM = "book_id"
+        const val BOOK_STATS_ID_PARAM = "book_stats_id"
     }
 }
