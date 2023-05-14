@@ -5,7 +5,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.gumu.bookwormapp.data.remote.RemoteConstants.DEFAULT_PAGE_SIZE
 import com.gumu.bookwormapp.data.remote.datasource.BooksRemoteDataSource
-import com.gumu.bookwormapp.data.util.toDomain
+import com.gumu.bookwormapp.data.remote.dto.toDomain
 import com.gumu.bookwormapp.domain.common.AppResult
 import com.gumu.bookwormapp.domain.common.BookOrderByFilter
 import com.gumu.bookwormapp.domain.common.BookPrintTypeFilter
