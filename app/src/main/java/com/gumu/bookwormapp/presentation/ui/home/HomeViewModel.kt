@@ -2,6 +2,7 @@ package com.gumu.bookwormapp.presentation.ui.home
 
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.gumu.bookwormapp.domain.model.BookStats
 import com.gumu.bookwormapp.domain.model.ReadingStatus
 import com.gumu.bookwormapp.domain.repository.BookStatsRepository
 import com.gumu.bookwormapp.presentation.navigation.Screen
@@ -22,9 +23,15 @@ class HomeViewModel @Inject constructor(
 
     override fun defaultState(): HomeState = HomeState()
 
+    private fun onBookStatsClick(bookStats: BookStats) {
+        bookStats.id?.let {
+            sendEvent(UiEvent.NavigateTo(Screen.BookStatsScreen.withArgs(it)))
+        }
+    }
+
     override fun onEvent(event: HomeEvent) {
         when (event) {
-            is HomeEvent.OnBookStatsClick -> {}
+            is HomeEvent.OnBookStatsClick -> onBookStatsClick(event.bookStats)
             HomeEvent.OnAddBookClick -> sendEvent(UiEvent.NavigateTo(Screen.SearchScreen.route))
             HomeEvent.OnAccountClick -> {
                 Firebase.auth.signOut()

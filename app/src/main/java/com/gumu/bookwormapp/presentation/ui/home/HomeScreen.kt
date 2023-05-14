@@ -66,16 +66,17 @@ fun HomeScreen(
                 .fillMaxSize()
                 .padding(padding)
         ) {
+            val onBookStatsClick: (BookStats) -> Unit = { onEvent(HomeEvent.OnBookStatsClick(it)) }
             BookStatsList(
                 label = stringResource(id = R.string.current_reading_activity_label),
                 items = readingList,
-                onBookStatsClick = {}
+                onBookStatsClick = onBookStatsClick
             )
             Spacer(modifier = Modifier.height(16.dp))
             BookStatsList(
                 label = stringResource(id = R.string.reading_list_label),
                 items = onQueueList,
-                onBookStatsClick = {},
+                onBookStatsClick = onBookStatsClick,
                 onEmptyItemsAction = { onEvent(HomeEvent.OnAddBookClick) }
             )
         }

@@ -8,7 +8,7 @@ sealed class Screen(val route: String) {
     object SignUpScreen: Screen("sign_up_screen")
     object HomeScreen: Screen("home_screen")
     object SearchScreen: Screen("search_screen")
-    object BookStatsScreen: Screen("book_stats_screen")
+    object BookStatsScreen: Screen("book_stats_screen/{$BOOK_STATS_ID_PARAM}")
     object ProfileScreen: Screen("profile_screen")
 
     fun withArgs(vararg args: String): String {

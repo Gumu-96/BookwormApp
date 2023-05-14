@@ -4,10 +4,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.gumu.bookwormapp.presentation.ui.bookstats.BookStatsScreen
 import com.gumu.bookwormapp.presentation.ui.common.ScreenWrapper
 import com.gumu.bookwormapp.presentation.ui.home.HomeScreen
 import com.gumu.bookwormapp.presentation.ui.home.HomeViewModel
@@ -68,6 +71,17 @@ fun BookwormNavigation() {
                     onEvent = viewModel::onEvent
                 )
             }
+        }
+        composable(
+            route = Screen.BookStatsScreen.route,
+            arguments = listOf(
+                navArgument(Screen.BOOK_STATS_ID_PARAM) {
+                    type = NavType.StringType
+                    nullable = false
+                }
+            )
+        ) {
+            BookStatsScreen(bookStatsId = it.arguments?.getString(Screen.BOOK_STATS_ID_PARAM))
         }
     }
 }
