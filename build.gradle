@@ -25,8 +25,8 @@ buildscript {
         lifecycle_version = "2.6.1"
 
         lifecycle = [
-                lifecycle_viewmodel: "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version",
-                lifecycle          : "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+                lifecycle_viewmodel : "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version",
+                lifecycle           : "androidx.lifecycle:lifecycle-runtime-compose:$lifecycle_version"
         ]
 
         //Coroutines
