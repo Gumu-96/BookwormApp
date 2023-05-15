@@ -1,9 +1,9 @@
 package com.gumu.bookwormapp.presentation.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -28,7 +28,7 @@ fun BookwormNavigation() {
     NavHost(navController = navController, startDestination = Screen.SignInScreen.route) {
         composable(route = Screen.SignInScreen.route) {
             val viewModel: SignInViewModel = hiltViewModel()
-            val state by viewModel.uiState.collectAsState()
+            val state by viewModel.uiState.collectAsStateWithLifecycle()
 
             ScreenWrapper(viewModel = viewModel, navController = navController) {
                 SignInScreen(
@@ -39,7 +39,7 @@ fun BookwormNavigation() {
         }
         composable(route = Screen.SignUpScreen.route) {
             val viewModel: SignUpViewModel = hiltViewModel()
-            val state by viewModel.uiState.collectAsState()
+            val state by viewModel.uiState.collectAsStateWithLifecycle()
 
             ScreenWrapper(viewModel = viewModel, navController = navController) {
                 SignUpScreen(
@@ -50,7 +50,7 @@ fun BookwormNavigation() {
         }
         composable(route = Screen.HomeScreen.route) {
             val viewModel: HomeViewModel = hiltViewModel()
-            val state by viewModel.uiState.collectAsState()
+            val state by viewModel.uiState.collectAsStateWithLifecycle()
 
             ScreenWrapper(viewModel = viewModel, navController = navController) {
                 HomeScreen(
@@ -63,7 +63,7 @@ fun BookwormNavigation() {
         }
         composable(route = Screen.SearchScreen.route) {
             val viewModel: SearchViewModel = hiltViewModel()
-            val state by viewModel.uiState.collectAsState()
+            val state by viewModel.uiState.collectAsStateWithLifecycle()
 
             ScreenWrapper(viewModel = viewModel, navController = navController) {
                 SearchScreen(
