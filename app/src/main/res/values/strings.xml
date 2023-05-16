@@ -11,6 +11,7 @@
     <string name="account_icon_desc">Account Stats</string>
     <string name="add_book_icon_desc">Add Book</string>
     <string name="search_icon_desc">Search</string>
+    <string name="delete_icon_desc">Delete book</string>
     <string name="clear_query_icon_desc">Clear search query</string>
     <string name="doge_calm_desc">Doge calm</string>
 
@@ -75,9 +76,17 @@
     <string name="book_published_date_label">Date: %s</string>
     <string name="book_unknown_data">Unknown</string>
     <string name="desc_not_available_label">Description not available</string>
-
-    <!-- Book Stats info -->
     <string name="status_on_queue_label">On Queue</string>
     <string name="status_reading_label">Reading</string>
     <string name="status_read_label">Read</string>
+
+    <!-- Book Stats Screen -->
+    <string name="book_stats_screen_title_label">Update stats</string>
+    <string name="rating_label">Rating:</string>
+    <string name="thoughts_field_label">Thoughts</string>
+    <string name="current_status_label">Current status: </string>
+    <string name="start_reading_button_label">Start reading</string>
+    <string name="mark_as_read_button_label">Mark as read</string>
+    <string name="back_to_queue_button_label">Back to queue</string>
+    <string name="save_changes_button_label">Save changes</string>
 </resources>
