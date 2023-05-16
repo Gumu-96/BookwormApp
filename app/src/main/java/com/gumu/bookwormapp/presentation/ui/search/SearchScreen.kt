@@ -1,5 +1,6 @@
 package com.gumu.bookwormapp.presentation.ui.search
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -374,8 +375,9 @@ fun BookBottomSheetContent(
                 model = book.thumbnail,
                 contentDescription = book.title,
                 modifier = Modifier
-                    .size(width = 120.dp, height = 175.dp)
                     .clip(RoundedCornerShape(10))
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .size(width = 120.dp, height = 175.dp)
             )
             Column(
                 verticalArrangement = Arrangement.Center,

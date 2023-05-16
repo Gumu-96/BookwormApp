@@ -224,6 +224,7 @@ fun BookStatusItem(
                     model = bookStats.book.thumbnail,
                     contentDescription = bookStats.book.title,
                     modifier = Modifier
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
                         .size(width = 160.dp, height = 200.dp)
                 )
                 if (bookStats.rating > 0) {
@@ -305,6 +306,7 @@ fun BookItem(
                 model = book.thumbnail,
                 contentDescription = book.title,
                 modifier = Modifier
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
                     .size(width = 110.dp, height = 150.dp)
             )
             Column(
