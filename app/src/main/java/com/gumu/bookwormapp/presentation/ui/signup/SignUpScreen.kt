@@ -207,9 +207,9 @@ fun SignUpForm(
                 containerColor = MaterialTheme.colorScheme.tertiary,
                 contentColor = MaterialTheme.colorScheme.onTertiary
             ),
-            enabled = firstname.isNotBlank() and lastname.isNotBlank() and
-                    email.isNotBlank() and password.isNotBlank() and repeatedPassword.isNotBlank() and
-                    (emailError == null) and (passwordError == null) and (repeatedPasswordError == null),
+            enabled = firstname.isNotBlank() and lastname.isNotBlank() and email.isNotBlank()
+                    and password.isNotBlank() and repeatedPassword.isNotBlank() and (emailError == null)
+                    and (passwordError == null) and (repeatedPasswordError == null),
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = stringResource(id = R.string.create_account_button_label))
