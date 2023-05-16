@@ -132,10 +132,10 @@ fun CustomOutlinedTextField(
                         )
                     )
                 }
-        shape = RoundedCornerShape(if (singleLine) 50 else 35),
             }
         }
         else trailingIcon?.let { { it() } },
+        shape = RoundedCornerShape(if (singleLine) 50 else 15),
         maxLines = maxLines,
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
