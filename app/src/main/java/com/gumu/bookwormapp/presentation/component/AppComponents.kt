@@ -139,8 +139,8 @@ fun CustomOutlinedTextField(
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
         isError = isError,
-        supportingText = {
-            if (isError) errorMessage?.let { Text(text = it, fontSize = 14.sp) }
+        supportingText = errorMessage?.let {
+            { if (isError) Text(text = it, fontSize = 14.sp) }
         }
     )
 }
