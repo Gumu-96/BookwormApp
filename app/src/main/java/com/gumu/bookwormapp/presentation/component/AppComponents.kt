@@ -120,21 +120,22 @@ fun CustomOutlinedTextField(
         label = label,
         visualTransformation = if (isPassword and isPasswordVisible.not()) PasswordVisualTransformation()
             else VisualTransformation.None,
-        trailingIcon = {
-            if (isPassword) {
+        trailingIcon = if (isPassword) {
+            {
                 IconButton(onClick = { isPasswordVisible = isPasswordVisible.not() }) {
                     Icon(
                         imageVector = if (isPasswordVisible) Icons.Default.VisibilityOff
-                            else Icons.Default.Visibility,
+                        else Icons.Default.Visibility,
                         contentDescription = stringResource(
                             id = if (isPasswordVisible) R.string.hide_password_icon_desc
-                                else R.string.show_password_icon_desc
+                            else R.string.show_password_icon_desc
                         )
                     )
                 }
-            } else trailingIcon?.let { it() }
-        },
         shape = RoundedCornerShape(if (singleLine) 50 else 35),
+            }
+        }
+        else trailingIcon?.let { { it() } },
         maxLines = maxLines,
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
