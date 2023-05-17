@@ -104,42 +104,72 @@ fun BookStatsScreen(
                         onDismiss = { onEvent(BookStatsEvent.OnDismissDialog) }
                     )
                 }
-                Column(
-                    modifier = Modifier
-                        .padding(padding)
-                        //.verticalScroll(rememberScrollState())
-                ) {
-                    BookSection(book = book)
-                    Divider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    RatingSection(
-                        rating = state.rating,
-                        onStarClick = { onEvent(BookStatsEvent.OnSetRating(it)) },
-                        thoughts = state.thoughts ?: "",
-                        onThoughtsChange = { onEvent(BookStatsEvent.OnThoughtsChange(it)) }
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    ActionsSection(
-                        status = state.status,
-                        onStatusChange = { onEvent(BookStatsEvent.OnStatusChange(it)) }
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    Button(
-                        onClick = { onEvent(BookStatsEvent.OnSaveChangesClick) },
-                        enabled = state.hasChanges and state.savingChanges.not(),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                    ) {
-                        if (state.savingChanges) CircularProgressIndicator(modifier = Modifier.size(24.dp))
-                        else Text(text = stringResource(id = R.string.save_changes_button_label))
-                    }
-                }
+                StatsContent(
+                    book = book,
+                    thoughts = state.thoughts,
+                    rating = state.rating,
+                    status = state.status,
+                    hasChanges = state.hasChanges,
+                    isSavingChanges = state.savingChanges,
+                    onThoughtsChange = { onEvent(BookStatsEvent.OnThoughtsChange(it)) },
+                    onStarClick = { onEvent(BookStatsEvent.OnSetRating(it)) },
+                    onStatusChange = { onEvent(BookStatsEvent.OnStatusChange(it)) },
+                    onSaveChanges = { onEvent(BookStatsEvent.OnSaveChangesClick) },
+                    modifier = Modifier.padding(padding)
+                )
             } ?: SuchEmptyStats(modifier = Modifier.fillMaxSize())
+        }
+    }
+}
+
+@Composable
+fun StatsContent(
+    modifier: Modifier = Modifier,
+    book: Book,
+    thoughts: String?,
+    rating: Int,
+    status: ReadingStatus,
+    hasChanges: Boolean,
+    isSavingChanges: Boolean,
+    onThoughtsChange: (String) -> Unit,
+    onStarClick: (Int) -> Unit,
+    onStatusChange: (ReadingStatus) -> Unit,
+    onSaveChanges: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .then(modifier)
+        //.verticalScroll(rememberScrollState())
+    ) {
+        BookSection(book = book)
+        Divider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        RatingSection(
+            rating = rating,
+            onStarClick = onStarClick,
+            thoughts = thoughts ?: "",
+            onThoughtsChange = onThoughtsChange
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        ActionsSection(
+            status = status,
+            onStatusChange = onStatusChange
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        Button(
+            onClick = onSaveChanges,
+            enabled = hasChanges and isSavingChanges.not(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            if (isSavingChanges) CircularProgressIndicator(modifier = Modifier.size(24.dp))
+            else Text(text = stringResource(id = R.string.save_changes_button_label))
         }
     }
 }
