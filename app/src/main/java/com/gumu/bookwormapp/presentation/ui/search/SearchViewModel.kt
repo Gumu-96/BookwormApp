@@ -88,10 +88,10 @@ class SearchViewModel @Inject constructor(
                     _uiState.update { it.copy(isAddingBook = true) }
                 }.onSuccess {
                     _uiState.update { it.copy(isAddingBook = false) }
-                    sendEvent(UiEvent.Error(R.string.generic_success_message))
+                    sendEvent(UiEvent.ShowToast(R.string.generic_success_message))
                 }.onFailure {
                     _uiState.update { it.copy(isAddingBook = false) }
-                    sendEvent(UiEvent.Error(R.string.generic_error_message))
+                    sendEvent(UiEvent.ShowToast(R.string.generic_error_message))
                 }
             }
         }

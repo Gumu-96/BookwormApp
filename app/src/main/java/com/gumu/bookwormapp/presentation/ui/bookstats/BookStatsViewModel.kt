@@ -54,17 +54,17 @@ class BookStatsViewModel @Inject constructor(
                             ) }
                         } ?: run {
                             _uiState.update { it.copy(isLoading = false) }
-                            sendEvent(UiEvent.Error(R.string.stats_not_found_message))
+                            sendEvent(UiEvent.ShowToast(R.string.stats_not_found_message))
                         }
                     }.onFailure {
                         _uiState.update { it.copy(isLoading = false) }
-                        sendEvent(UiEvent.Error(R.string.generic_error_message))
+                        sendEvent(UiEvent.ShowToast(R.string.generic_error_message))
                     }
                 }
             }
         } ?: run {
             _uiState.update { it.copy(isLoading = false) }
-            sendEvent(UiEvent.Error(R.string.stats_not_found_message))
+            sendEvent(UiEvent.ShowToast(R.string.stats_not_found_message))
         }
     }
 
@@ -94,13 +94,13 @@ class BookStatsViewModel @Inject constructor(
                         ) }
                     }.onSuccess {
                         sendEvent(UiEvent.NavigateBack)
-                        sendEvent(UiEvent.Error(R.string.generic_success_message))
+                        sendEvent(UiEvent.ShowToast(R.string.generic_success_message))
                     }.onFailure {
                         _uiState.update { it.copy(
                             showDeleteDialog = false,
                             isLoading = false
                         ) }
-                        sendEvent(UiEvent.Error(R.string.generic_error_message))
+                        sendEvent(UiEvent.ShowToast(R.string.generic_error_message))
                     }
                 }
             }
@@ -121,11 +121,11 @@ class BookStatsViewModel @Inject constructor(
                         _uiState.update { it.copy(savingChanges = true) }
                     }.onSuccess {
                         initialStats = updatedStats
-                        sendEvent(UiEvent.Error(R.string.generic_success_message))
+                        sendEvent(UiEvent.ShowToast(R.string.generic_success_message))
                         checkForChanges()
                         _uiState.update { it.copy(savingChanges = false) }
                     }.onFailure {
-                        sendEvent(UiEvent.Error(R.string.generic_error_message))
+                        sendEvent(UiEvent.ShowToast(R.string.generic_error_message))
                         _uiState.update { it.copy(savingChanges = false) }
                     }
                 }

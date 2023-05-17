@@ -97,7 +97,7 @@ class SignUpViewModel @Inject constructor(
                     }
                 }.onFailure {
                     _uiState.update { it.copy(isLoading = false) }
-                    sendEvent(UiEvent.Error(R.string.registration_error))
+                    sendEvent(UiEvent.ShowToast(R.string.registration_error))
                 }
             }
         }
@@ -113,7 +113,7 @@ class SignUpViewModel @Inject constructor(
                 sendEvent(UiEvent.NavigateTo(Screen.HomeScreen.route, Screen.SignInScreen.route))
             }.onFailure {
                 _uiState.update { it.copy(isLoading = false) }
-                sendEvent(UiEvent.Error(R.string.registration_data_error))
+                sendEvent(UiEvent.ShowToast(R.string.registration_data_error))
             }
         }
     }

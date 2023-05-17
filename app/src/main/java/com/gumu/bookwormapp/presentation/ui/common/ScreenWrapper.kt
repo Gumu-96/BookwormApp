@@ -17,7 +17,7 @@ fun <State, ScreenEvent> ScreenWrapper(
     LaunchedEffect(key1 = Unit) {
         viewModel.uiEvents.collect { event ->
             when (event) {
-                is UiEvent.Error -> {
+                is UiEvent.ShowToast -> {
                     Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
                 }
                 is UiEvent.NavigateBack -> navController.popBackStack()

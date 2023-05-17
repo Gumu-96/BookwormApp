@@ -64,7 +64,7 @@ class SignInViewModel @Inject constructor(
                     sendEvent(UiEvent.NavigateTo(Screen.HomeScreen.route, Screen.SignInScreen.route))
                 }.onFailure {
                     _uiState.update { it.copy(isLoading = false) }
-                    sendEvent(UiEvent.Error(R.string.authentication_error))
+                    sendEvent(UiEvent.ShowToast(R.string.authentication_error))
                 }
             }
         }
