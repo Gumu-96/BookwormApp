@@ -1,13 +1,12 @@
 package com.gumu.bookwormapp.presentation.ui.bookstats
 
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,11 +17,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Queue
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material.icons.filled.Start
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -31,11 +33,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -43,69 +46,117 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gumu.bookwormapp.R
+import com.gumu.bookwormapp.domain.model.Book
+import com.gumu.bookwormapp.domain.model.ReadingStatus
+import com.gumu.bookwormapp.presentation.component.CustomAsyncImage
 import com.gumu.bookwormapp.presentation.component.CustomOutlinedTextField
+import com.gumu.bookwormapp.presentation.component.LoadingOverlay
 import com.gumu.bookwormapp.presentation.component.NavigateBackTopAppBar
-import com.gumu.bookwormapp.presentation.theme.BookwormAppTheme
+import com.gumu.bookwormapp.presentation.component.SuchEmptyStats
+import com.gumu.bookwormapp.presentation.util.ReadingStatusUi
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BookStatsScreen(bookStatsId: String?) {
+fun BookStatsScreen(
+    bookStatsId: String?,
+    state: BookStatsState,
+    onEvent: (BookStatsEvent) -> Unit
+) {
+    LaunchedEffect(key1 = Unit) {
+        onEvent(BookStatsEvent.OnLoadStats(bookStatsId))
+    }
+
     Scaffold(
         topBar = {
             NavigateBackTopAppBar(
                 title = { Text(text = stringResource(id = R.string.book_stats_screen_title_label)) },
-                onBackClick = { /*TODO*/ },
+                onBackClick = { onEvent(BookStatsEvent.OnBackClick) },
                 actions = {
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(
-                            imageVector = Icons.Default.DeleteForever,
-                            contentDescription = stringResource(id = R.string.delete_icon_desc),
-                            tint = MaterialTheme.colorScheme.error
-                        )
+                    state.book?.let {
+                        IconButton(onClick = { onEvent(BookStatsEvent.OnDeleteClick) }) {
+                            Icon(
+                                imageVector = Icons.Default.DeleteForever,
+                                contentDescription = stringResource(id = R.string.delete_icon_desc),
+                                tint = MaterialTheme.colorScheme.error
+                            )
+                        }
                     }
                 }
             )
         }
     ) { padding ->
-        Column(modifier = Modifier.padding(padding)) {
-            BookSection()
-            Divider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            RatingSection()
-            Spacer(modifier = Modifier.height(16.dp))
-            ActionsSection()
-            Spacer(modifier = Modifier.weight(1f))
-            Button(
-                onClick = { /*TODO*/ },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Text(text = stringResource(id = R.string.save_changes_button_label))
-            }
+        if (state.isLoading) {
+            LoadingOverlay()
+        } else {
+            state.book?.let { book ->
+                if (state.showDeleteDialog) {
+                    ConfirmDeleteDialog(
+                        onConfirm = { onEvent(BookStatsEvent.OnConfirmDelete) },
+                        onDismiss = { onEvent(BookStatsEvent.OnDismissDialog) }
+                    )
+                }
+                if (state.showLeaveDialog) {
+                    ConfirmLeaveDialog(
+                        onConfirm = { onEvent(BookStatsEvent.OnConfirmLeave) },
+                        onDismiss = { onEvent(BookStatsEvent.OnDismissDialog) }
+                    )
+                }
+                Column(
+                    modifier = Modifier
+                        .padding(padding)
+                        //.verticalScroll(rememberScrollState())
+                ) {
+                    BookSection(book = book)
+                    Divider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    RatingSection(
+                        rating = state.rating,
+                        onStarClick = { onEvent(BookStatsEvent.OnSetRating(it)) },
+                        thoughts = state.thoughts ?: "",
+                        onThoughtsChange = { onEvent(BookStatsEvent.OnThoughtsChange(it)) }
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    ActionsSection(
+                        status = state.status,
+                        onStatusChange = { onEvent(BookStatsEvent.OnStatusChange(it)) }
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    Button(
+                        onClick = { onEvent(BookStatsEvent.OnSaveChangesClick) },
+                        enabled = state.hasChanges and state.savingChanges.not(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        if (state.savingChanges) CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                        else Text(text = stringResource(id = R.string.save_changes_button_label))
+                    }
+                }
+            } ?: SuchEmptyStats(modifier = Modifier.fillMaxSize())
         }
     }
 }
 
 @Composable
-fun BookSection() {
+fun BookSection(
+    book: Book
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.bookworm),
-            contentDescription = null,
+        CustomAsyncImage(
+            model = book.thumbnail,
+            contentDescription = book.title,
             modifier = Modifier
                 .clip(RoundedCornerShape(10))
                 .background(MaterialTheme.colorScheme.surfaceVariant)
@@ -114,14 +165,17 @@ fun BookSection() {
         Spacer(modifier = Modifier.width(16.dp))
         Column(verticalArrangement = Arrangement.Center) {
             Text(
-                text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vel rhoncus erat. Vestibulum feugiat nibh eu nibh lobortis, quis tempor diam convallis.",
+                text = book.title,
                 maxLines = 6,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.titleMedium
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "[Author 1, Author 2, Author 3, Author 4]",
+                text = stringResource(
+                    id = R.string.book_author_label,
+                    book.authors ?: stringResource(id = R.string.book_unknown_data)
+                ),
                 fontSize = 12.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -132,7 +186,12 @@ fun BookSection() {
 }
 
 @Composable
-fun RatingSection() {
+fun RatingSection(
+    rating: Int,
+    onStarClick: (Int) -> Unit,
+    thoughts: String,
+    onThoughtsChange: (String) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -150,20 +209,20 @@ fun RatingSection() {
             Spacer(modifier = Modifier.width(16.dp))
             for (i in 1..5) {
                 Icon(
-                    imageVector = if (4 >= i) Icons.Default.Star else Icons.Default.StarBorder,
+                    imageVector = if (rating >= i) Icons.Default.Star else Icons.Default.StarBorder,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.tertiary,
                     modifier = Modifier
                         .size(35.dp)
                         .clip(CircleShape)
-                        .clickable { }
+                        .clickable(onClick = { onStarClick(i) })
                 )
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
         CustomOutlinedTextField(
-            value = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vel rhoncus erat. Vestibulum feugiat nibh eu nibh lobortis, quis tempor diam convallis.",
-            onValueChange = {},
+            value = thoughts,
+            onValueChange = onThoughtsChange,
             maxLines = 4,
             label = { Text(text = stringResource(id = R.string.thoughts_field_label)) },
             modifier = Modifier
@@ -174,7 +233,10 @@ fun RatingSection() {
 }
 
 @Composable
-fun ActionsSection() {
+fun ActionsSection(
+    status: ReadingStatus,
+    onStatusChange: (ReadingStatus) -> Unit,
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -184,7 +246,7 @@ fun ActionsSection() {
             append(stringResource(id = R.string.current_status_label))
             append(" ")
             withStyle(style = SpanStyle(fontWeight = FontWeight.SemiBold)) {
-                append("On queue")
+                append(stringResource(id = ReadingStatusUi.values().first { it.value == status }.label))
             }
         })
         Spacer(modifier = Modifier.height(16.dp))
@@ -193,31 +255,88 @@ fun ActionsSection() {
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            FilledTonalButton(
-                onClick = { /*TODO*/ },
-                colors = ButtonDefaults.filledTonalButtonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            ) {
-                Icon(imageVector = Icons.Default.Start, contentDescription = null)
-                Spacer(modifier = Modifier.size(8.dp))
-                Text(text = stringResource(id = R.string.start_reading_button_label))
+            if (status != ReadingStatus.ON_QUEUE) {
+                FilledTonalButton(
+                    onClick = { onStatusChange(ReadingStatus.ON_QUEUE) },
+                    colors = ButtonDefaults.filledTonalButtonColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        contentColor = MaterialTheme.colorScheme.onSurface
+                    )
+                ) {
+                    Icon(imageVector = Icons.Default.Queue, contentDescription = null)
+                    Spacer(modifier = Modifier.size(8.dp))
+                    Text(text = stringResource(id = R.string.back_to_queue_button_label))
+                }
+                Spacer(modifier = Modifier.width(8.dp))
             }
-            Spacer(modifier = Modifier.width(8.dp))
-            FilledTonalButton(onClick = { /*TODO*/ },) {
-                Icon(imageVector = Icons.Default.Done, contentDescription = null)
-                Spacer(modifier = Modifier.size(8.dp))
-                Text(text = stringResource(id = R.string.mark_as_read_button_label))
+            if (status != ReadingStatus.READING) {
+                FilledTonalButton(
+                    onClick = { onStatusChange(ReadingStatus.READING) },
+                    colors = ButtonDefaults.filledTonalButtonColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                ) {
+                    Icon(imageVector = Icons.Default.Start, contentDescription = null)
+                    Spacer(modifier = Modifier.size(8.dp))
+                    Text(text = stringResource(id = R.string.start_reading_button_label))
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+            }
+            if (status != ReadingStatus.READ) {
+                FilledTonalButton(onClick = { onStatusChange(ReadingStatus.READ) }) {
+                    Icon(imageVector = Icons.Default.Done, contentDescription = null)
+                    Spacer(modifier = Modifier.size(8.dp))
+                    Text(text = stringResource(id = R.string.mark_as_read_button_label))
+                }
             }
         }
     }
 }
 
-@Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
-fun BookStatsScreenPreview() {
-    BookwormAppTheme {
-        BookStatsScreen(bookStatsId = null)
-    }
+fun ConfirmDeleteDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = stringResource(id = R.string.confirm_delete_dialog_title)) },
+        text = { Text(text = stringResource(id = R.string.confirm_delete_dialog_desc)) },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text(
+                    text = stringResource(id = R.string.delete_dialog_button_label),
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = stringResource(id = R.string.cancel_dialog_button_label))
+            }
+        }
+    )
+}
+
+@Composable
+fun ConfirmLeaveDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = stringResource(id = R.string.unsaved_changes_dialog_title)) },
+        text = { Text(text = stringResource(id = R.string.unsaved_changes_dialog_desc)) },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text(text = stringResource(id = R.string.leave_dialog_button_label))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = stringResource(id = R.string.cancel_dialog_button_label))
+            }
+        }
+    )
 }

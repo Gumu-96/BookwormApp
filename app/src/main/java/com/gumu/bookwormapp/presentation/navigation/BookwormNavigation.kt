@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.gumu.bookwormapp.presentation.ui.bookstats.BookStatsScreen
+import com.gumu.bookwormapp.presentation.ui.bookstats.BookStatsViewModel
 import com.gumu.bookwormapp.presentation.ui.common.ScreenWrapper
 import com.gumu.bookwormapp.presentation.ui.home.HomeScreen
 import com.gumu.bookwormapp.presentation.ui.home.HomeViewModel
@@ -77,11 +78,19 @@ fun BookwormNavigation() {
             arguments = listOf(
                 navArgument(Screen.BOOK_STATS_ID_PARAM) {
                     type = NavType.StringType
-                    nullable = false
                 }
             )
         ) {
-            BookStatsScreen(bookStatsId = it.arguments?.getString(Screen.BOOK_STATS_ID_PARAM))
+            val viewModel: BookStatsViewModel = hiltViewModel()
+            val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+            ScreenWrapper(viewModel = viewModel, navController = navController) {
+                BookStatsScreen(
+                    bookStatsId = it.arguments?.getString(Screen.BOOK_STATS_ID_PARAM),
+                    state = state,
+                    onEvent = viewModel::onEvent
+                )
+            }
         }
     }
 }

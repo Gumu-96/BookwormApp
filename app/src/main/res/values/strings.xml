@@ -2,6 +2,7 @@
     <string name="app_name">BookwormApp</string>
     <string name="generic_error_message">Something went wrong</string>
     <string name="generic_success_message">Success</string>
+    <string name="stats_not_found_message">Book stats not found</string>
 
     <!-- Content desc -->
     <string name="app_logo_desc">Bookworm logo</string>
@@ -89,4 +90,12 @@
     <string name="mark_as_read_button_label">Mark as read</string>
     <string name="back_to_queue_button_label">Back to queue</string>
     <string name="save_changes_button_label">Save changes</string>
+
+    <string name="confirm_delete_dialog_title">Delete book?</string>
+    <string name="confirm_delete_dialog_desc">This book will be permanently deleted from your stats. Do you wish to continue?</string>
+    <string name="unsaved_changes_dialog_title">Leave without saving?</string>
+    <string name="unsaved_changes_dialog_desc">You\'ve made changes to this book\'s stats. If you leave before saving, those changes will be lost.</string>
+    <string name="cancel_dialog_button_label">Cancel</string>
+    <string name="delete_dialog_button_label">Delete</string>
+    <string name="leave_dialog_button_label">Leave</string>
 </resources>
