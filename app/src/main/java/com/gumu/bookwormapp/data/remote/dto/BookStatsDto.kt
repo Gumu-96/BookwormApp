@@ -38,7 +38,9 @@ fun BookStatsDto.toDomain(id: String?) =
         status = status,
         rating = rating,
         thoughts = thoughts,
-        id = id
+        id = id,
+        startedReading = startedReading?.toDate(),
+        finishedReading = finishedReading?.toDate()
     )
 
 fun BookStats.toUpdateMap() =
