@@ -67,7 +67,7 @@ class BookStatsRepositoryImpl @Inject constructor(
         } else {
             emit(AppResult.Failure(AppError(bookStatsTask.exception ?: Throwable("Error getting data"))))
         }
-    }
+    }.onStart { emit(AppResult.Loading) }
 
     override fun deleteBookStats(bookStatsId: String): Flow<AppResult<Unit>> = flow {
         val bookStatsTask = firestore
