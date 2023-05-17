@@ -12,6 +12,7 @@ import com.gumu.bookwormapp.data.remote.datasource.BookStatsDataSource
 import com.gumu.bookwormapp.data.remote.dto.BookStatsDto
 import com.gumu.bookwormapp.data.remote.dto.toDomain
 import com.gumu.bookwormapp.data.remote.dto.toDto
+import com.gumu.bookwormapp.data.remote.dto.toUpdateMap
 import com.gumu.bookwormapp.domain.common.AppError
 import com.gumu.bookwormapp.domain.common.AppResult
 import com.gumu.bookwormapp.domain.model.BookStats
@@ -38,9 +39,18 @@ class BookStatsRepositoryImpl @Inject constructor(
         else emit(AppResult.Failure(AppError(task.exception ?: Throwable("Save data error"))))
     }.onStart { emit(AppResult .Loading) }
 
-    override fun updateBookStats(bookStats: BookStats): Flow<AppResult<Unit>> {
-        TODO("Not yet implemented")
-    }
+    override fun updateBookStats(bookStats: BookStats): Flow<AppResult<Unit>> = flow {
+        bookStats.id?.let { id ->
+            val updateTask = firestore
+                .collection(RemoteConstants.BOOK_STATS_COLLECTION)
+                .document(id)
+                .update(bookStats.toUpdateMap())
+                .also { it.await() }
+
+            if (updateTask.isSuccessful) emit(AppResult.Success(Unit))
+            else emit(AppResult.Failure(AppError(updateTask.exception ?: Throwable("Update error"))))
+        }
+    }.onStart { emit(AppResult.Loading) }
 
     override fun getAllBookStats(status: ReadingStatus): Flow<PagingData<BookStats>> {
         return Pager(

@@ -1,7 +1,9 @@
 package com.gumu.bookwormapp.data.remote.dto
 
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ServerTimestamp
+import com.gumu.bookwormapp.data.remote.RemoteConstants
 import com.gumu.bookwormapp.domain.model.BookStats
 import com.gumu.bookwormapp.domain.model.ReadingStatus
 
@@ -37,4 +39,19 @@ fun BookStatsDto.toDomain(id: String?) =
         rating = rating,
         thoughts = thoughts,
         id = id
+    )
+
+fun BookStats.toUpdateMap() =
+    mapOf(
+        RemoteConstants.BOOK_STATUS_FIELD to status,
+        RemoteConstants.BOOK_RATING_FIELD to rating,
+        RemoteConstants.BOOK_THOUGHTS_FIELD to thoughts,
+        when (status) {
+            ReadingStatus.READING -> RemoteConstants.BOOK_STARTED_READING_FIELD to FieldValue.serverTimestamp()
+            ReadingStatus.READ -> RemoteConstants.BOOK_FINISHED_READING_FIELD to FieldValue.serverTimestamp()
+            else -> {
+                RemoteConstants.BOOK_STARTED_READING_FIELD to null
+                RemoteConstants.BOOK_STARTED_READING_FIELD to null
+            }
+        }
     )
