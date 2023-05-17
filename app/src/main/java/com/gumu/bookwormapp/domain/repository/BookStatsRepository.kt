@@ -11,4 +11,5 @@ interface BookStatsRepository {
     fun updateBookStats(bookStatsId: String): Flow<AppResult<Unit>>
     fun getAllBookStats(status: ReadingStatus): Flow<PagingData<BookStats>>
     fun getBookStats(bookStatsId: String): Flow<AppResult<BookStats?>>
+    fun deleteBookStats(bookStatsId: String): Flow<AppResult<Unit>>
 }
