@@ -190,7 +190,7 @@ fun BookSection(
             modifier = Modifier
                 .clip(RoundedCornerShape(10))
                 .background(MaterialTheme.colorScheme.surfaceVariant)
-                .size(width = 130.dp, height = 185.dp)
+                .size(width = 140.dp, height = 185.dp)
         )
         Spacer(modifier = Modifier.width(16.dp))
         Column(verticalArrangement = Arrangement.Center) {
