@@ -43,17 +43,21 @@ fun BookStatsDto.toDomain(id: String?) =
         finishedReading = finishedReading?.toDate()
     )
 
-fun BookStats.toUpdateMap() =
-    mapOf(
+fun BookStats.toUpdateMap(): Map<String, Any?> {
+    val updates = mutableMapOf<String, Any?>(
         RemoteConstants.BOOK_STATUS_FIELD to status,
         RemoteConstants.BOOK_RATING_FIELD to rating,
-        RemoteConstants.BOOK_THOUGHTS_FIELD to thoughts,
-        when (status) {
-            ReadingStatus.READING -> RemoteConstants.BOOK_STARTED_READING_FIELD to FieldValue.serverTimestamp()
-            ReadingStatus.READ -> RemoteConstants.BOOK_FINISHED_READING_FIELD to FieldValue.serverTimestamp()
-            else -> {
-                RemoteConstants.BOOK_STARTED_READING_FIELD to null
-                RemoteConstants.BOOK_STARTED_READING_FIELD to null
-            }
-        }
+        RemoteConstants.BOOK_THOUGHTS_FIELD to thoughts
     )
+
+    if (status == ReadingStatus.READING && startedReading == null)
+        updates[RemoteConstants.BOOK_STARTED_READING_FIELD] = FieldValue.serverTimestamp()
+    if (status == ReadingStatus.READ)
+        updates[RemoteConstants.BOOK_FINISHED_READING_FIELD] = FieldValue.serverTimestamp()
+    if (status == ReadingStatus.ON_QUEUE) {
+        updates[RemoteConstants.BOOK_STARTED_READING_FIELD] = null
+        updates[RemoteConstants.BOOK_FINISHED_READING_FIELD] = null
+    }
+
+    return updates.toMap()
+}
