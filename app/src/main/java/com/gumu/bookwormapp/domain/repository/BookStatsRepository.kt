@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface BookStatsRepository {
     fun saveBookStats(bookStats: BookStats): Flow<AppResult<Unit>>
-    fun updateBookStats(bookStatsId: String): Flow<AppResult<Unit>>
+    fun updateBookStats(bookStats: BookStats): Flow<AppResult<Unit>>
     fun getAllBookStats(status: ReadingStatus): Flow<PagingData<BookStats>>
     fun getBookStats(bookStatsId: String): Flow<AppResult<BookStats?>>
     fun deleteBookStats(bookStatsId: String): Flow<AppResult<Unit>>

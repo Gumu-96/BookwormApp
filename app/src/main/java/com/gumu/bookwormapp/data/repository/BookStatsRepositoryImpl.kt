@@ -38,7 +38,7 @@ class BookStatsRepositoryImpl @Inject constructor(
         else emit(AppResult.Failure(AppError(task.exception ?: Throwable("Save data error"))))
     }.onStart { emit(AppResult .Loading) }
 
-    override fun updateBookStats(bookStatsId: String): Flow<AppResult<Unit>> {
+    override fun updateBookStats(bookStats: BookStats): Flow<AppResult<Unit>> {
         TODO("Not yet implemented")
     }
 
