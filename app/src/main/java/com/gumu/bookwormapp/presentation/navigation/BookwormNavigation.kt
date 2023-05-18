@@ -51,11 +51,9 @@ fun BookwormNavigation() {
         }
         composable(route = Screen.HomeScreen.route) {
             val viewModel: HomeViewModel = hiltViewModel()
-            val state by viewModel.uiState.collectAsStateWithLifecycle()
 
             ScreenWrapper(viewModel = viewModel, navController = navController) {
                 HomeScreen(
-                    state = state,
                     onQueueList = viewModel.onQueueBooks.collectAsLazyPagingItems(),
                     readingList = viewModel.readingBooks.collectAsLazyPagingItems(),
                     onEvent = viewModel::onEvent

@@ -43,7 +43,6 @@ import com.gumu.bookwormapp.presentation.component.SuchEmptyStats
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    state: HomeState,
     onQueueList: LazyPagingItems<BookStats>,
     readingList: LazyPagingItems<BookStats>,
     onEvent: (HomeEvent) -> Unit
