@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
@@ -45,6 +47,7 @@ import com.gumu.bookwormapp.presentation.component.SuchEmptyStats
 fun HomeScreen(
     onQueueList: LazyPagingItems<BookStats>,
     readingList: LazyPagingItems<BookStats>,
+    readList: LazyPagingItems<BookStats>,
     onEvent: (HomeEvent) -> Unit
 ) {
     Scaffold(
@@ -60,24 +63,37 @@ fun HomeScreen(
             }
         }
     ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
-            val onBookStatsClick: (BookStats) -> Unit = { onEvent(HomeEvent.OnBookStatsClick(it)) }
-            BookStatsList(
-                label = stringResource(id = R.string.current_reading_activity_label),
-                items = readingList,
-                onBookStatsClick = onBookStatsClick
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            BookStatsList(
-                label = stringResource(id = R.string.reading_list_label),
-                items = onQueueList,
-                onBookStatsClick = onBookStatsClick,
-                onEmptyItemsAction = { onEvent(HomeEvent.OnAddBookClick) }
-            )
+        if (readList.loadState.refresh is LoadState.Loading ||
+                onQueueList.loadState.refresh is LoadState.Loading ||
+                readList.loadState.refresh is LoadState.Loading)
+            LoadingOverlay()
+        else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                val onBookStatsClick: (BookStats) -> Unit = { onEvent(HomeEvent.OnBookStatsClick(it)) }
+                BookStatsList(
+                    label = stringResource(id = R.string.current_reading_activity_label),
+                    items = readingList,
+                    onBookStatsClick = onBookStatsClick
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                BookStatsList(
+                    label = stringResource(id = R.string.reading_list_label),
+                    items = onQueueList,
+                    onBookStatsClick = onBookStatsClick,
+                    onEmptyItemsAction = { onEvent(HomeEvent.OnAddBookClick) }
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                BookStatsList(
+                    label = stringResource(id = R.string.read_list_label),
+                    items = readList,
+                    onBookStatsClick = onBookStatsClick
+                )
+            }
         }
     }
 }
@@ -94,16 +110,6 @@ fun BookStatsList(
         modifier = Modifier.padding(horizontal = 16.dp)
     )
     when (items.loadState.refresh) {
-        is LoadState.Loading -> {
-            ElevatedCard(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .height(250.dp)
-            ) {
-                LoadingOverlay()
-            }
-        }
         is LoadState.Error -> {
             ElevatedCard(
                 modifier = Modifier
@@ -130,33 +136,34 @@ fun BookStatsList(
                         onButtonClick = onEmptyItemsAction
                     )
                 }
-            }
-            LazyRow(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(16.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                items(items = items) { bookStats ->
-                    bookStats?.let {
-                        BookStatusItem(
-                            bookStats = it,
-                            onClick = onBookStatsClick
-                        )
+            } else {
+                LazyRow(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    contentPadding = PaddingValues(16.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    items(items = items) { bookStats ->
+                        bookStats?.let {
+                            BookStatusItem(
+                                bookStats = it,
+                                onClick = onBookStatsClick
+                            )
+                        }
                     }
-                }
-                item {
-                    if (items.loadState.append is LoadState.Error) {
-                        ErrorItem(
-                            modifier = Modifier.fillMaxWidth(),
-                            onRetryClick = { items.retry() }
-                        )
-                    }
-                    if (items.loadState.append is LoadState.Loading) {
-                        Box(
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator()
+                    item {
+                        if (items.loadState.append is LoadState.Error) {
+                            ErrorItem(
+                                modifier = Modifier.fillMaxWidth(),
+                                onRetryClick = { items.retry() }
+                            )
+                        }
+                        if (items.loadState.append is LoadState.Loading) {
+                            Box(
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator()
+                            }
                         }
                     }
                 }

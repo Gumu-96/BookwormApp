@@ -56,6 +56,7 @@ fun BookwormNavigation() {
                 HomeScreen(
                     onQueueList = viewModel.onQueueBooks.collectAsLazyPagingItems(),
                     readingList = viewModel.readingBooks.collectAsLazyPagingItems(),
+                    readList = viewModel.readBooks.collectAsLazyPagingItems(),
                     onEvent = viewModel::onEvent
                 )
             }

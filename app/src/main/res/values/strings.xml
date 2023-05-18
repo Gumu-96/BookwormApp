@@ -43,8 +43,9 @@
     <string name="registration_data_error">Failed to save user data</string>
 
     <!-- Home Screen -->
-    <string name="current_reading_activity_label">Your reading activity right now…</string>
-    <string name="reading_list_label">Your reading list</string>
+    <string name="current_reading_activity_label">Your reading activity right now</string>
+    <string name="reading_list_label">Your reading queue</string>
+    <string name="read_list_label">Books you\'ve read</string>
     <string name="add_books_to_list_button_label">Add books to your list</string>
 
     <!-- Search Screen -->

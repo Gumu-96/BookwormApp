@@ -25,6 +25,7 @@ class HomeViewModel @Inject constructor(
      */
     val onQueueBooks = bookStatsRepository.getAllBookStats(ReadingStatus.ON_QUEUE)//.cachedIn(viewModelScope)
     val readingBooks = bookStatsRepository.getAllBookStats(ReadingStatus.READING)//.cachedIn(viewModelScope)
+    val readBooks = bookStatsRepository.getAllBookStats(ReadingStatus.READ)//.cachedIn(viewModelScope)
 
     override fun defaultState(): HomeState = HomeState()
 
