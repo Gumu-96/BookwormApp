@@ -68,7 +68,7 @@ fun BookStatsScreen(
     onEvent: (BookStatsEvent) -> Unit
 ) {
     LaunchedEffect(key1 = Unit) {
-        onEvent(BookStatsEvent.OnLoadStats(bookStatsId))
+        if (state.book == null) onEvent(BookStatsEvent.OnLoadStats(bookStatsId))
     }
 
     Scaffold(
