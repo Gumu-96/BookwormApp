@@ -9,7 +9,7 @@
     <string name="show_password_icon_desc">Show Password</string>
     <string name="hide_password_icon_desc">Hide Password</string>
     <string name="arrow_back_icon_desc">Back</string>
-    <string name="account_icon_desc">Account Stats</string>
+    <string name="sign_out_icon_desc">Sign Out</string>
     <string name="add_book_icon_desc">Add Book</string>
     <string name="search_icon_desc">Search</string>
     <string name="delete_icon_desc">Delete book</string>
