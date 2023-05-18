@@ -75,24 +75,28 @@ fun HomeScreen(
                     .verticalScroll(rememberScrollState())
             ) {
                 val onBookStatsClick: (BookStats) -> Unit = { onEvent(HomeEvent.OnBookStatsClick(it)) }
-                BookStatsList(
-                    label = stringResource(id = R.string.current_reading_activity_label),
-                    items = readingList,
-                    onBookStatsClick = onBookStatsClick
-                )
-                Spacer(modifier = Modifier.height(16.dp))
+                if (readingList.itemCount > 0 && readingList.loadState.refresh !is LoadState.Error) {
+                    BookStatsList(
+                        label = stringResource(id = R.string.current_reading_activity_label),
+                        items = readingList,
+                        onBookStatsClick = onBookStatsClick
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
                 BookStatsList(
                     label = stringResource(id = R.string.reading_list_label),
                     items = onQueueList,
                     onBookStatsClick = onBookStatsClick,
                     onEmptyItemsAction = { onEvent(HomeEvent.OnAddBookClick) }
                 )
-                Spacer(modifier = Modifier.height(16.dp))
-                BookStatsList(
-                    label = stringResource(id = R.string.read_list_label),
-                    items = readList,
-                    onBookStatsClick = onBookStatsClick
-                )
+                if (readList.itemCount > 0 && readList.loadState.refresh !is LoadState.Error) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    BookStatsList(
+                        label = stringResource(id = R.string.read_list_label),
+                        items = readList,
+                        onBookStatsClick = onBookStatsClick
+                    )
+                }
             }
         }
     }
