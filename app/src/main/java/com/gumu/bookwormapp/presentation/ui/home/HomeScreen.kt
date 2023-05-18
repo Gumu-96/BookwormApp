@@ -25,10 +25,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
@@ -50,10 +52,14 @@ fun HomeScreen(
     readList: LazyPagingItems<BookStats>,
     onEvent: (HomeEvent) -> Unit
 ) {
+    val topBarScrollBehaviour = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
-        topBar = { HomeTopAppBar(
-            onAccountClick = { onEvent(HomeEvent.OnAccountClick) }
-        ) },
+        topBar = {
+            HomeTopAppBar(
+                onAccountClick = { onEvent(HomeEvent.OnAccountClick) },
+                scrollBehavior = topBarScrollBehaviour
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(onClick = { onEvent(HomeEvent.OnAddBookClick) }) {
                 Icon(
@@ -61,7 +67,8 @@ fun HomeScreen(
                     contentDescription = stringResource(id = R.string.add_book_icon_desc)
                 )
             }
-        }
+        },
+        modifier = Modifier.nestedScroll(topBarScrollBehaviour.nestedScrollConnection)
     ) { padding ->
         if (readList.loadState.refresh is LoadState.Loading ||
                 onQueueList.loadState.refresh is LoadState.Loading ||
