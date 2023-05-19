@@ -420,7 +420,8 @@ fun BookBottomSheetContent(
         Button(
             onClick = { onAddClick(book) },
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.secondary
+                containerColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.onSecondary
             ),
             enabled = isAddingBook.not(),
             modifier = Modifier
