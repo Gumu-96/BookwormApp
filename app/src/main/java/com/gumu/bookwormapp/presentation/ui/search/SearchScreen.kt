@@ -54,8 +54,8 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -369,7 +369,6 @@ fun BookBottomSheetContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp)
-                .height(175.dp)
         ) {
             CustomAsyncImage(
                 model = book.thumbnail,
@@ -377,67 +376,56 @@ fun BookBottomSheetContent(
                 modifier = Modifier
                     .clip(RoundedCornerShape(10))
                     .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .size(width = 120.dp, height = 175.dp)
+                    .size(width = 140.dp, height = 185.dp)
             )
-            Column(
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(vertical = 8.dp, horizontal = 16.dp)
-            ) {
-                Text(
-                    text = book.title,
-                    maxLines = 4,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = stringResource(
-                        id = R.string.book_author_label,
-                        book.authors ?: stringResource(id = R.string.book_unknown_data)
-                    ),
-                    fontSize = 12.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = stringResource(
-                        id = R.string.book_published_date_label,
-                        book.publishedDate ?: stringResource(id = R.string.book_unknown_data)
-                    ),
-                    fontSize = 12.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = book.categories?.toString() ?: "",
-                    fontSize = 12.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                text = book.title,
+                maxLines = 6,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.titleMedium,
+                fontSize = 18.sp
+            )
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = book.description ?: stringResource(id = R.string.desc_not_available_label),
-            style = MaterialTheme.typography.bodyMedium,
-            textAlign = TextAlign.Justify,
+        Column(
+            verticalArrangement = Arrangement.Center,
             modifier = Modifier
-                .heightIn(max = 350.dp)
+                .heightIn(max = 325.dp)
                 .padding(horizontal = 16.dp)
                 .verticalScroll(scrollState)
-        )
-        Spacer(modifier = Modifier.height(16.dp))
+        ) {
+            Text(
+                text = stringResource(
+                    id = R.string.book_author_label,
+                    book.authors ?: stringResource(id = R.string.book_unknown_data)
+                ),
+                fontSize = 14.sp,
+                fontStyle = FontStyle.Italic
+            )
+            Text(
+                text = stringResource(
+                    id = R.string.book_published_date_label,
+                    book.publishedDate ?: stringResource(id = R.string.book_unknown_data)
+                ),
+                fontSize = 14.sp
+            )
+            Text(
+                text = book.categories?.toString() ?: "",
+                fontSize = 14.sp
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(text = book.description ?: stringResource(id = R.string.desc_not_available_label))
+        }
         Button(
             onClick = { onAddClick(book) },
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.secondary
             ),
-            enabled = isAddingBook.not()
+            enabled = isAddingBook.not(),
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
         ) {
             if (isAddingBook) CircularProgressIndicator(modifier = Modifier.size(24.dp))
             else Text(text = stringResource(id = R.string.add_to_list_button_label))
