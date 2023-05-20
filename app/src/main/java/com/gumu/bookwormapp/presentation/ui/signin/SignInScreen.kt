@@ -64,10 +64,10 @@ fun SignInScreen(
                             .padding(horizontal = 16.dp),
                         email = state.email,
                         onEmailChange = { onEvent(SignInEvent.OnEmailChange(it)) },
-                        emailError = state.emailError,
+                        emailError = state.errorState.emailError,
                         password = state.password,
                         onPasswordChange = { onEvent(SignInEvent.OnPasswordChange(it)) },
-                        passwordError = state.passwordError,
+                        passwordError = state.errorState.passwordError,
                         onSignInClick = { onEvent(SignInEvent.OnSignInClick) }
                     )
                     Spacer(modifier = Modifier.height(16.dp))
@@ -160,7 +160,6 @@ fun SignInSection(
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = onSignInClick,
-            enabled = email.isNotBlank() and password.isNotBlank() and (emailError == null) and (passwordError == null),
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = stringResource(id = R.string.sign_in_button_label))

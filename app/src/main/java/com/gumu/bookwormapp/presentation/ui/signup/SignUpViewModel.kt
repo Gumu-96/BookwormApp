@@ -36,68 +36,69 @@ class SignUpViewModel @Inject constructor(
     private fun onFirstnameChange(firstname: String) {
         _uiState.update { it.copy(
             firstname = firstname,
-            firstnameError =
-                if (validateName.invoke(firstname).not()) R.string.required_field_error
-                else null
+            errorState = it.errorState.copy(firstnameError = null)
         ) }
     }
 
     private fun onLastnameChange(lastname: String) {
         _uiState.update { it.copy(
             lastname = lastname,
-            lastnameError =
-                if (validateName.invoke(lastname).not()) R.string.required_field_error
-                else null
+            errorState = it.errorState.copy(lastnameError = null)
         ) }
     }
 
     private fun onEmailChange(email: String) {
         _uiState.update { it.copy(
             email = email,
-            emailError =
-                if (validateEmail.invoke(email).not()) R.string.not_valid_email_error
-                else null
+            errorState = it.errorState.copy(emailError = null)
         ) }
     }
 
     private fun onPasswordChange(password: String) {
         _uiState.update { it.copy(
             password = password,
-            passwordError =
-                if (validatePassword.invoke(password).not()) R.string.minimum_characters_error
-                else null
+            errorState = it.errorState.copy(passwordError = null, repeatedPasswordError = null)
         ) }
-        if (_uiState.value.repeatedPassword.isNotBlank()) validateStateRepeatedPassword()
     }
 
     private fun onRepeatedPasswordChange(repeatedPassword: String) {
-        _uiState.update { it.copy(repeatedPassword = repeatedPassword) }
-        validateStateRepeatedPassword()
-    }
-
-    private fun validateStateRepeatedPassword() {
         _uiState.update { it.copy(
-            repeatedPasswordError =
-                if (validateRepeatedPassword.invoke(_uiState.value.password, _uiState.value.repeatedPassword).not())
-                R.string.passwords_do_not_match_error else null
+            repeatedPassword = repeatedPassword,
+            errorState = it.errorState.copy(repeatedPasswordError = null)
         ) }
     }
 
     private fun onRegisterClick() {
-        viewModelScope.launch {
-            authRepository.registerUser(
-                email = _uiState.value.email,
-                password = _uiState.value.password
-            ).collectLatest { result ->
-                result.onLoading {
-                    _uiState.update { it.copy(isLoading = true) }
-                }.onSuccess {  userId ->
-                    userId?.let {
-                        saveUserData(it)
+        _uiState.update { it.copy(
+            errorState = it.errorState.copy(
+                firstnameError = if (validateName.invoke(it.firstname).not())
+                    R.string.required_field_error else null,
+                lastnameError = if (validateName.invoke(it.lastname).not())
+                    R.string.required_field_error else null,
+                emailError = if (validateEmail.invoke(it.email).not())
+                    R.string.not_valid_email_error else null,
+                passwordError = if (validatePassword.invoke(it.password).not())
+                    R.string.minimum_characters_error else null,
+                repeatedPasswordError = if (validateRepeatedPassword.invoke(it.password, it.repeatedPassword).not())
+                    R.string.passwords_do_not_match_error else null
+            )
+        ) }
+        if (_uiState.value.errorState == SignUpErrorState()) {
+            viewModelScope.launch {
+                authRepository.registerUser(
+                    email = _uiState.value.email,
+                    password = _uiState.value.password
+                ).collectLatest { result ->
+                    result.onLoading {
+                        _uiState.update { it.copy(isLoading = true) }
+                    }.onSuccess {  userId ->
+                        userId?.let {
+                            saveUserData(it)
+                        }
+                    }.onFailure {
+                        _uiState.update { it.copy(isLoading = false) }
+                        sendEvent(UiEvent.ShowToast(R.string.registration_error))
                     }
-                }.onFailure {
-                    _uiState.update { it.copy(isLoading = false) }
-                    sendEvent(UiEvent.ShowToast(R.string.registration_error))
                 }
             }
         }

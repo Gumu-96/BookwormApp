@@ -66,11 +66,11 @@ fun SignUpScreen(
                     onEmailChange = { onEvent(SignUpEvent.OnEmailChange(it)) },
                     onPasswordChange = { onEvent(SignUpEvent.OnPasswordChange(it)) },
                     onRepeatedPasswordChange = { onEvent(SignUpEvent.OnRepeatedPasswordChange(it)) },
-                    firstnameError = state.firstnameError,
-                    lastnameError = state.lastnameError,
-                    emailError = state.emailError,
-                    passwordError = state.passwordError,
-                    repeatedPasswordError = state.repeatedPasswordError,
+                    firstnameError = state.errorState.firstnameError,
+                    lastnameError = state.errorState.lastnameError,
+                    emailError = state.errorState.emailError,
+                    passwordError = state.errorState.passwordError,
+                    repeatedPasswordError = state.errorState.repeatedPasswordError,
                     onRegisterClick = { onEvent(SignUpEvent.OnRegisterClick) }
                 )
             }
@@ -207,9 +207,6 @@ fun SignUpForm(
                 containerColor = MaterialTheme.colorScheme.tertiary,
                 contentColor = MaterialTheme.colorScheme.onTertiary
             ),
-            enabled = firstname.isNotBlank() and lastname.isNotBlank() and email.isNotBlank()
-                    and password.isNotBlank() and repeatedPassword.isNotBlank() and (emailError == null)
-                    and (passwordError == null) and (repeatedPasswordError == null),
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = stringResource(id = R.string.create_account_button_label))

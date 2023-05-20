@@ -5,7 +5,11 @@ import androidx.annotation.StringRes
 data class SignInState(
     val isLoading: Boolean = false,
     val email: String = "",
-    @StringRes val emailError: Int? = null,
     val password: String = "",
+    val errorState: SignInErrorState = SignInErrorState()
+)
+
+data class SignInErrorState(
+    @StringRes val emailError: Int? = null,
     @StringRes val passwordError: Int? = null
 )

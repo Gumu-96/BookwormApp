@@ -44,27 +44,35 @@ class SignInViewModel @Inject constructor(
     private fun onEmailChange(email: String) {
         _uiState.update { it.copy(
             email = email,
-            emailError = if (validateEmail.invoke(email).not()) R.string.not_valid_email_error else null
+            errorState = it.errorState.copy(emailError = null)
         ) }
     }
 
     private fun onPasswordChange(password: String) {
         _uiState.update { it.copy(
             password = password,
-            passwordError = if (validatePassword.invoke(password).not()) R.string.minimum_characters_error else null
+            errorState = it.errorState.copy(passwordError = null)
         ) }
     }
 
     private fun onSignIn() {
-        viewModelScope.launch {
-            authRepository.signIn(_uiState.value.email, _uiState.value.password).collectLatest { result ->
-                result.onLoading {
-                    _uiState.update { it.copy(isLoading = true) }
-                }.onSuccess {
-                    sendEvent(UiEvent.NavigateTo(Screen.HomeScreen.route, Screen.SignInScreen.route))
-                }.onFailure {
-                    _uiState.update { it.copy(isLoading = false) }
-                    sendEvent(UiEvent.ShowToast(R.string.authentication_error))
+        _uiState.update { it.copy(
+            errorState = SignInErrorState(
+                emailError = if (validateEmail.invoke(it.email).not()) R.string.not_valid_email_error else null,
+                passwordError = if (validatePassword.invoke(it.password).not()) R.string.minimum_characters_error else null
+            )
+        ) }
+        if (_uiState.value.errorState == SignInErrorState()) {
+            viewModelScope.launch {
+                authRepository.signIn(_uiState.value.email, _uiState.value.password).collectLatest { result ->
+                    result.onLoading {
+                        _uiState.update { it.copy(isLoading = true) }
+                    }.onSuccess {
+                        sendEvent(UiEvent.NavigateTo(Screen.HomeScreen.route, Screen.SignInScreen.route))
+                    }.onFailure {
+                        _uiState.update { it.copy(isLoading = false) }
+                        sendEvent(UiEvent.ShowToast(R.string.authentication_error))
+                    }
                 }
             }
         }
