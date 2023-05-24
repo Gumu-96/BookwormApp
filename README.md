@@ -3,7 +3,7 @@ Android App to keep track of books that you are reading.
 
 Makes use of [Google's Books API](https://developers.google.com/books/docs/v1/using) to search books and uses firestore to store any user related data and book stats.
 
-That app was built with clean architecture in mind and the MVVM pattern.
+The app was built with clean architecture in mind and the MVVM pattern.
 Uses Jetpack Compose and Material 3 components for the UI layer.
 
 ## Tech Stack
