@@ -2,7 +2,7 @@ package com.gumu.bookwormapp.data.remote.dto
 
 import com.gumu.bookwormapp.domain.model.Book
 
-data class BookDto (
+data class BookDto(
     val title: String,
     val authors: List<String>?,
     val publishedDate: String?,
@@ -10,7 +10,7 @@ data class BookDto (
     val categories: List<String>?,
     val thumbnail: String?
 ) {
-    constructor(): this("", null, null, null, null, null)
+    constructor() : this("", null, null, null, null, null)
 }
 
 fun Book.toDto() =

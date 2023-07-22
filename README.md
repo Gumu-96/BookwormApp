@@ -21,7 +21,7 @@ Uses Jetpack Compose and Material 3 components for the UI layer.
 - Search for books and add them to your reading queue.
 - Filter the search to get more accurate results.
 - See all the books you've added based on their reading status.
-- Update the reading status of a book to keep track of the books you are reding, have read and have in your queue.
+- Update the reading status of a book to keep track of the books you are reading, have read and have in your queue.
 - Add a rating and comments to your books
 - Remove books from your list
 - Supports light and dark theme
@@ -33,7 +33,7 @@ If you download or clone this repo, in order to make it work, you should:
 - Follow the instructions given in the official documentation on [how to add Firebase to your project](https://firebase.google.com/docs/android/setup#register-app). 
 - Enable **firebase authentication** with email and password as sign-in method.
 - Enable **Cloud firestore** as database
-    - Create a composite index containing the `userId`(ASC), `status`(ASC) and `createdAt`(DESC) fields for the **`book_stats`** collection (It should work even if the collection doesn't exist).
+    - Create a composite index containing the `status`(ASC) and `createdAt`(DESC) fields for the **`book_stats`** collection.
 
 ## Screenshots
 

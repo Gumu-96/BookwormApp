@@ -8,8 +8,6 @@ import com.gumu.bookwormapp.domain.model.BookStats
 import com.gumu.bookwormapp.domain.model.ReadingStatus
 
 data class BookStatsDto(
-    val userId: String,
-    val bookId: String,
     val book: BookDto,
     val rating: Int,
     val status: ReadingStatus,
@@ -19,22 +17,20 @@ data class BookStatsDto(
     @ServerTimestamp
     val createdAt: Timestamp? = null
 ) {
-    constructor(): this("", "", BookDto(), 0, ReadingStatus.ON_QUEUE, null, null, null)
+    constructor() : this(BookDto(), 0, ReadingStatus.ON_QUEUE, null, null, null)
 }
 
-fun BookStats.toDto(userId: String) =
+fun BookStats.toDto() =
     BookStatsDto(
-        userId = userId,
-        bookId = book.id,
         book = book.toDto(),
         rating = rating,
         status = status,
         thoughts = thoughts
     )
 
-fun BookStatsDto.toDomain(id: String?) =
+fun BookStatsDto.toDomain(id: String) =
     BookStats(
-        book = book.toDomain(bookId),
+        book = book.toDomain(id),
         status = status,
         rating = rating,
         thoughts = thoughts,
@@ -50,10 +46,12 @@ fun BookStats.toUpdateMap(): Map<String, Any?> {
         RemoteConstants.BOOK_THOUGHTS_FIELD to thoughts
     )
 
-    if (status == ReadingStatus.READING && startedReading == null)
+    if (status == ReadingStatus.READING && startedReading == null) {
         updates[RemoteConstants.BOOK_STARTED_READING_FIELD] = FieldValue.serverTimestamp()
-    if (status == ReadingStatus.READ)
+    }
+    if (status == ReadingStatus.READ) {
         updates[RemoteConstants.BOOK_FINISHED_READING_FIELD] = FieldValue.serverTimestamp()
+    }
     if (status == ReadingStatus.ON_QUEUE) {
         updates[RemoteConstants.BOOK_STARTED_READING_FIELD] = null
         updates[RemoteConstants.BOOK_FINISHED_READING_FIELD] = null

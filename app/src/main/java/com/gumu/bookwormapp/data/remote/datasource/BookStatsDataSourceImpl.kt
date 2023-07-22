@@ -9,7 +9,7 @@ import com.gumu.bookwormapp.domain.model.ReadingStatus
 import javax.inject.Inject
 
 class BookStatsDataSourceImpl @Inject constructor() : BookStatsDataSource {
-    val firestore = Firebase.firestore
+    private val firestore = Firebase.firestore
 
     override fun getBookStatsQuery(
         userId: String,
@@ -18,8 +18,9 @@ class BookStatsDataSourceImpl @Inject constructor() : BookStatsDataSource {
         startAtDocument: DocumentSnapshot?
     ): Query {
         return firestore
+            .collection(RemoteConstants.USERS_COLLECTION)
+            .document(userId)
             .collection(RemoteConstants.BOOK_STATS_COLLECTION)
-            .whereEqualTo(RemoteConstants.USER_ID_FIELD, userId)
             .whereEqualTo(RemoteConstants.BOOK_STATUS_FIELD, status)
             .orderBy(RemoteConstants.CREATED_AT_FIELD, Query.Direction.DESCENDING)
             .run { startAtDocument?.let { startAfter(it) } ?: this }

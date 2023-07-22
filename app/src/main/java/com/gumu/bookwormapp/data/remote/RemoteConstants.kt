@@ -9,8 +9,6 @@ object RemoteConstants {
     // Firebase
     const val USERS_COLLECTION = "users"
     const val BOOK_STATS_COLLECTION = "book_stats"
-    const val BOOK_ID_FIELD = "bookId"
-    const val USER_ID_FIELD = "userId"
     const val CREATED_AT_FIELD = "createdAt"
     const val BOOK_STATUS_FIELD = "status"
     const val BOOK_THOUGHTS_FIELD = "thoughts"
