@@ -35,6 +35,11 @@ If you download or clone this repo, in order to make it work, you should:
 - Enable **Cloud firestore** as database
     - Create a composite index containing the `status`(ASC) and `createdAt`(DESC) fields for the **`book_stats`** collection.
 
+## TODO
+
+- Profile screen with stats
+- Tests
+
 ## Screenshots
 
 ![home](https://github.com/GustavoMuller/BookwormApp/assets/18502898/aef2f5f3-e4bd-4a71-866b-ed373846c33f)
