@@ -7,25 +7,25 @@ import com.gumu.bookwormapp.domain.usecase.ValidateRepeatedPassword
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.scopes.ViewModelScoped
 
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(ViewModelComponent::class)
 object DomainModule {
-    @Singleton
+    @ViewModelScoped
     @Provides
     fun provideValidateEmailUseCase() = ValidateEmail()
 
-    @Singleton
+    @ViewModelScoped
     @Provides
     fun provideValidatePasswordUseCase() = ValidatePassword()
 
-    @Singleton
+    @ViewModelScoped
     @Provides
     fun provideValidateNameUseCase() = ValidateName()
 
-    @Singleton
+    @ViewModelScoped
     @Provides
     fun provideValidateRepeatedPasswordUseCase() = ValidateRepeatedPassword()
 }
