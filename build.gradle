@@ -1,99 +1,4 @@
 buildscript {
-    ext {
-        // Android Ui
-        core_ktx_version = "1.10.0"
-        compose_version = '1.4.1'
-        activity_compose_version = "1.7.0"
-        material3_version = "1.1.0"
-        nav_version = "2.5.3"
-        splashscreen_version = "1.0.0"
-        coil_version = "2.3.0"
-
-        ui = [
-                activity_compose: "androidx.activity:activity-compose:$activity_compose_version",
-                core_ktx        : "androidx.core:core-ktx:$core_ktx_version",
-                compose         : "androidx.compose.ui:ui:$compose_version",
-                compose_preview : "androidx.compose.ui:ui-tooling-preview:$compose_version",
-                material3       : "androidx.compose.material3:material3:$material3_version",
-                icons_extended  : "androidx.compose.material:material-icons-extended:$compose_version",
-                nav_compose     : "androidx.navigation:navigation-compose:$nav_version",
-                splashscreen    : "androidx.core:core-splashscreen:$splashscreen_version",
-                coil            : "io.coil-kt:coil-compose:$coil_version"
-        ]
-
-        //Lifecycle
-        lifecycle_version = "2.6.1"
-
-        lifecycle = [
-                lifecycle_viewmodel : "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version",
-                lifecycle           : "androidx.lifecycle:lifecycle-runtime-compose:$lifecycle_version"
-        ]
-
-        //Coroutines
-        coroutines_version = "1.6.4"
-
-        coroutines = [
-                core         :  "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version",
-                android      :  "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version",
-                play_services:  "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$coroutines_version"
-        ]
-
-        //Dagger-Hilt
-        hilt_version = "2.45"
-        hilt_compose_version = "1.0.0"
-
-        dagger_hilt = [
-                navigation_compose: "androidx.hilt:hilt-navigation-compose:$hilt_compose_version",
-                android           : "com.google.dagger:hilt-android:$hilt_version",
-                compiler          : "com.google.dagger:hilt-compiler:$hilt_version"
-        ]
-
-        //Retrofit
-        retrofit_version = "2.9.0"
-        okhttp_version = "5.0.0-alpha.11"
-
-        retrofit = [
-                retrofit        : "com.squareup.retrofit2:retrofit:$retrofit_version",
-                converter_gson  : "com.squareup.retrofit2:converter-gson:$retrofit_version",
-                okhttp          : "com.squareup.okhttp3:okhttp:$okhttp_version"
-        ]
-
-        //Room
-        room_version = "2.5.1"
-
-        room_db = [
-                room_ktx        : "androidx.room:room-ktx:$room_version",
-                room_compiler   : "androidx.room:room-compiler:$room_version",
-                room_runtime    : "androidx.room:room-runtime:$room_version",
-                room_paging     : "androidx.room:room-paging:$room_version"
-        ]
-
-        //Paging
-        paging_version = "3.1.1"
-        paging_compose_version = "1.0.0-alpha18"
-
-        paging = [
-                paging_runtime  : "androidx.paging:paging-runtime-ktx:$paging_version",
-                paging_compose  : "androidx.paging:paging-compose:$paging_compose_version"
-        ]
-
-        //DataStore
-        datastore_version = "1.0.0"
-
-        datastore = [
-                datastore_preferences   : "androidx.datastore:datastore-preferences:$datastore_version"
-        ]
-
-        //Firebase
-        firebase_bom_version = "32.0.0"
-
-        firebase = [
-                firebase_bom        : "com.google.firebase:firebase-bom:$firebase_bom_version",
-                firebase_analytics  : "com.google.firebase:firebase-analytics-ktx",
-                firebase_auth       : "com.google.firebase:firebase-auth-ktx",
-                firebase_firestore  : "com.google.firebase:firebase-firestore-ktx"
-        ]
-    }
     repositories {
         google()
         mavenCentral()
@@ -105,8 +10,8 @@ buildscript {
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
-    id 'com.android.application' version '8.0.1' apply false
-    id 'com.android.library' version '8.0.1' apply false
-    id 'org.jetbrains.kotlin.android' version '1.8.0' apply false
-    id 'com.google.dagger.hilt.android' version "$hilt_version" apply false
+    alias libs.plugins.android.application apply false
+    alias libs.plugins.android.library apply false
+    alias libs.plugins.kotlin.android apply false
+    alias libs.plugins.hilt.android apply false
 }
