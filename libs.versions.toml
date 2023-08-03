@@ -12,7 +12,6 @@ coroutines = "1.6.4"
 hilt = "2.45"
 hilt-compose = "1.0.0"
 retrofit = "2.9.0"
-room = "2.5.1"
 paging = "3.1.1"
 paging-compose = "1.0.0-alpha18"
 datastore = "1.0.0"
@@ -55,12 +54,6 @@ hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.r
 # Retrofit
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
-
-# Room
-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
-room-paging = { group = "androidx.room", name = "room-paging", version.ref = "room" }
 
 # Paging
 paging-runtime = { group = "androidx.paging", name = "paging-runtime-ktx", version.ref = "paging" }
