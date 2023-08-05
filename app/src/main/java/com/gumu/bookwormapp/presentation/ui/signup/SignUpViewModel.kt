@@ -71,16 +71,31 @@ class SignUpViewModel @Inject constructor(
     private fun onRegisterClick() {
         _uiState.update { it.copy(
             errorState = it.errorState.copy(
-                firstnameError = if (validateName.invoke(it.firstname).not())
-                    R.string.required_field_error else null,
-                lastnameError = if (validateName.invoke(it.lastname).not())
-                    R.string.required_field_error else null,
-                emailError = if (validateEmail.invoke(it.email).not())
-                    R.string.not_valid_email_error else null,
-                passwordError = if (validatePassword.invoke(it.password).not())
-                    R.string.minimum_characters_error else null,
-                repeatedPasswordError = if (validateRepeatedPassword.invoke(it.password, it.repeatedPassword).not())
-                    R.string.passwords_do_not_match_error else null
+                firstnameError = if (validateName.invoke(it.firstname).not()) {
+                    R.string.required_field_error
+                } else {
+                    null
+                },
+                lastnameError = if (validateName.invoke(it.lastname).not()) {
+                    R.string.required_field_error
+                } else {
+                    null
+                },
+                emailError = if (validateEmail.invoke(it.email).not()) {
+                    R.string.not_valid_email_error
+                } else {
+                    null
+                },
+                passwordError = if (validatePassword.invoke(it.password).not()) {
+                    R.string.minimum_characters_error
+                } else {
+                    null
+                },
+                repeatedPasswordError = if (validateRepeatedPassword.invoke(it.password, it.repeatedPassword).not()) {
+                    R.string.passwords_do_not_match_error
+                } else {
+                    null
+                }
             )
         ) }
         if (_uiState.value.errorState == SignUpErrorState()) {
@@ -91,7 +106,7 @@ class SignUpViewModel @Inject constructor(
                 ).collectLatest { result ->
                     result.onLoading {
                         _uiState.update { it.copy(isLoading = true) }
-                    }.onSuccess {  userId ->
+                    }.onSuccess { userId ->
                         userId?.let {
                             saveUserData(it)
                         }

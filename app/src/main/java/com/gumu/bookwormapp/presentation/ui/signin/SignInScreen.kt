@@ -151,10 +151,9 @@ fun SignInSection(
                 onDone = { localFocusManager.clearFocus() }
             ),
             isError = passwordError != null,
-            errorMessage = passwordError?.let { stringResource(
-                id = it,
-                ValidationUtils.MINIMUM_PASSWORD_LENGTH
-            ) },
+            errorMessage = passwordError?.let {
+                stringResource(id = it, ValidationUtils.MINIMUM_PASSWORD_LENGTH)
+            },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))

@@ -170,8 +170,11 @@ fun StatsContent(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            if (isSavingChanges) CircularProgressIndicator(modifier = Modifier.size(24.dp))
-            else Text(text = stringResource(id = R.string.save_changes_button_label))
+            if (isSavingChanges) {
+                CircularProgressIndicator(modifier = Modifier.size(24.dp))
+            } else {
+                Text(text = stringResource(id = R.string.save_changes_button_label))
+            }
         }
     }
 }
@@ -274,13 +277,15 @@ fun ActionsSection(
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
     ) {
-        Text(text = buildAnnotatedString {
-            append(stringResource(id = R.string.current_status_label))
-            append(" ")
-            withStyle(style = SpanStyle(fontWeight = FontWeight.SemiBold)) {
-                append(stringResource(id = ReadingStatusUi.values().first { it.value == status }.label))
+        Text(
+            text = buildAnnotatedString {
+                append(stringResource(id = R.string.current_status_label))
+                append(" ")
+                withStyle(style = SpanStyle(fontWeight = FontWeight.SemiBold)) {
+                    append(stringResource(id = ReadingStatusUi.values().first { it.value == status }.label))
+                }
             }
-        })
+        )
         Spacer(modifier = Modifier.height(16.dp))
         Row(
             horizontalArrangement = Arrangement.Center,

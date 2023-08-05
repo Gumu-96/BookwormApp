@@ -117,23 +117,27 @@ fun CustomOutlinedTextField(
         onValueChange = onValueChange,
         singleLine = singleLine,
         label = label,
-        visualTransformation = if (isPassword and isPasswordVisible.not()) PasswordVisualTransformation()
-            else VisualTransformation.None,
+        visualTransformation = if (isPassword and isPasswordVisible.not()) {
+            PasswordVisualTransformation()
+        } else {
+            VisualTransformation.None
+        },
         trailingIcon = if (isPassword) {
             {
                 IconButton(onClick = { isPasswordVisible = isPasswordVisible.not() }) {
                     Icon(
-                        imageVector = if (isPasswordVisible) Icons.Default.VisibilityOff
-                        else Icons.Default.Visibility,
+                        imageVector = if (isPasswordVisible) {
+                            Icons.Default.VisibilityOff
+                        } else {
+                            Icons.Default.Visibility
+                        },
                         contentDescription = stringResource(
-                            id = if (isPasswordVisible) R.string.hide_password_icon_desc
-                            else R.string.show_password_icon_desc
+                            id = if (isPasswordVisible) R.string.hide_password_icon_desc else R.string.show_password_icon_desc
                         )
                     )
                 }
             }
-        }
-        else trailingIcon?.let { { it() } },
+        } else trailingIcon?.let { { it() } },
         shape = RoundedCornerShape(if (singleLine) 50 else 15),
         maxLines = maxLines,
         keyboardOptions = keyboardOptions,
@@ -187,7 +191,7 @@ fun PillShapedText(
             modifier = Modifier
                 .padding(
                     horizontal = if (wrapContent) 8.dp else 32.dp,
-                    vertical = if(wrapContent) 4.dp else 8.dp
+                    vertical = if (wrapContent) 4.dp else 8.dp
                 )
         ) {
             leadingIcon?.let { it() }
@@ -196,7 +200,6 @@ fun PillShapedText(
                 text = text,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier
-
             )
             Spacer(modifier = Modifier.width(4.dp))
             trailingIcon?.let { it() }
@@ -262,13 +265,10 @@ fun BookStatusItem(
             val readingStatus = remember { ReadingStatusUi.values().first { it.value == bookStats.status } }
             Surface(
                 color = readingStatus.color(),
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = stringResource(
-                        id = readingStatus.label
-                    ),
+                    text = stringResource(id = readingStatus.label),
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 12.sp,
                     textAlign = TextAlign.Center,
@@ -413,8 +413,7 @@ fun ErrorSurface(
             Icon(
                 imageVector = Icons.Default.ErrorOutline,
                 contentDescription = null,
-                modifier = Modifier
-                    .size(50.dp)
+                modifier = Modifier.size(50.dp)
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(

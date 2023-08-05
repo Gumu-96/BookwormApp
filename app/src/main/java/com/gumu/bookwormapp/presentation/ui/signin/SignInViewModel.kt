@@ -35,10 +35,11 @@ class SignInViewModel @Inject constructor(
 
     private fun checkUserSession() {
         _uiState.update { it.copy(isLoading = true) }
-        if (authRepository.checkUserSession())
+        if (authRepository.checkUserSession()) {
             sendEvent(UiEvent.NavigateTo(Screen.HomeScreen.route, Screen.SignInScreen.route))
-        else
+        } else {
             _uiState.update { it.copy(isLoading = false) }
+        }
     }
 
     private fun onEmailChange(email: String) {

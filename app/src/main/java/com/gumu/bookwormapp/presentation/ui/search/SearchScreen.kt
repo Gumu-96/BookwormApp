@@ -228,16 +228,20 @@ fun BooksSearchBar(
                 currentOption = currentFilters.bookOrder,
                 onSelectOption = onOrderByClick
             )
-            Divider(modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp))
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp)
+            )
             BookPrintTypeFilter(
                 currentOption = currentFilters.bookPrintType,
                 onSelectOption = onPrintTypeClick
             )
-            Divider(modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp))
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp)
+            )
             BookTypeFilter(
                 currentOption = currentFilters.bookType,
                 onSelectOption = onBookTypeClick
@@ -428,8 +432,11 @@ fun BookBottomSheetContent(
                 .padding(16.dp)
                 .fillMaxWidth()
         ) {
-            if (isAddingBook) CircularProgressIndicator(modifier = Modifier.size(24.dp))
-            else Text(text = stringResource(id = R.string.add_to_list_button_label))
+            if (isAddingBook) {
+                CircularProgressIndicator(modifier = Modifier.size(24.dp))
+            } else {
+                Text(text = stringResource(id = R.string.add_to_list_button_label))
+            }
         }
     }
 }

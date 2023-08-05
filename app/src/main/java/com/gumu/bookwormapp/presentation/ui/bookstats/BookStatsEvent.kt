@@ -11,6 +11,6 @@ sealed class BookStatsEvent {
     object OnDismissDialog : BookStatsEvent()
     object OnSaveChangesClick : BookStatsEvent()
     data class OnSetRating(val rating: Int) : BookStatsEvent()
-    data class OnThoughtsChange(val thoughts: String): BookStatsEvent()
-    data class OnStatusChange(val status: ReadingStatus): BookStatsEvent()
+    data class OnThoughtsChange(val thoughts: String) : BookStatsEvent()
+    data class OnStatusChange(val status: ReadingStatus) : BookStatsEvent()
 }

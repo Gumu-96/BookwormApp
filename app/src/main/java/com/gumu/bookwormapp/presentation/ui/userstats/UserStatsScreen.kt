@@ -45,10 +45,12 @@ import com.gumu.bookwormapp.presentation.theme.tertiary
 @Composable
 fun UserStatsScreen() {
     Scaffold(
-        topBar = { NavigateBackTopAppBar(
-            title = { Text(text = "My Stats") },
-            onBackClick = { /*TODO*/ }
-        ) }
+        topBar = {
+            NavigateBackTopAppBar(
+                title = { Text(text = "My Stats") },
+                onBackClick = { /*TODO*/ }
+            )
+        }
     ) { padding ->
         Column(
             modifier = Modifier

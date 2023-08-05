@@ -31,8 +31,8 @@ class BookStatsViewModel @Inject constructor(
     private fun checkForChanges() {
         _uiState.update { it.copy(
             hasChanges = initialStats?.rating != it.rating ||
-                    initialStats?.thoughts != it.thoughts ||
-                    initialStats?.status != it.status
+                initialStats?.thoughts != it.thoughts ||
+                initialStats?.status != it.status
         ) }
     }
 
@@ -136,20 +136,28 @@ class BookStatsViewModel @Inject constructor(
     override fun onEvent(event: BookStatsEvent) {
         when (event) {
             is BookStatsEvent.OnLoadStats -> onLoadStats(event.statsId)
-            BookStatsEvent.OnBackClick -> if (_uiState.value.hasChanges)
-                _uiState.update { it.copy(showLeaveDialog = true) }
-                else sendEvent(UiEvent.NavigateBack)
+            BookStatsEvent.OnBackClick -> {
+                if (_uiState.value.hasChanges) {
+                    _uiState.update { it.copy(showLeaveDialog = true) }
+                } else {
+                    sendEvent(UiEvent.NavigateBack)
+                }
+            }
             BookStatsEvent.OnConfirmLeave -> {
                 _uiState.update { it.copy(showLeaveDialog = false) }
                 sendEvent(UiEvent.NavigateBack)
             }
             BookStatsEvent.OnSaveChangesClick -> onSaveChanges()
-            BookStatsEvent.OnDeleteClick -> _uiState.update { it.copy(showDeleteDialog = true) }
+            BookStatsEvent.OnDeleteClick -> {
+                _uiState.update { it.copy(showDeleteDialog = true) }
+            }
             BookStatsEvent.OnConfirmDelete -> onConfirmDelete()
-            BookStatsEvent.OnDismissDialog -> _uiState.update { it.copy(
-                showDeleteDialog = false,
-                showLeaveDialog = false
-            ) }
+            BookStatsEvent.OnDismissDialog -> {
+                _uiState.update { it.copy(
+                    showDeleteDialog = false,
+                    showLeaveDialog = false
+                ) }
+            }
             is BookStatsEvent.OnSetRating -> onSetRating(event.rating)
             is BookStatsEvent.OnThoughtsChange -> onThoughtsChange(event.thoughts)
             is BookStatsEvent.OnStatusChange -> onStatusChange(event.status)

@@ -71,10 +71,11 @@ fun HomeScreen(
         modifier = Modifier.nestedScroll(topBarScrollBehaviour.nestedScrollConnection)
     ) { padding ->
         if (readList.loadState.refresh is LoadState.Loading ||
-                onQueueList.loadState.refresh is LoadState.Loading ||
-                readList.loadState.refresh is LoadState.Loading)
+            onQueueList.loadState.refresh is LoadState.Loading ||
+            readList.loadState.refresh is LoadState.Loading
+        ) {
             LoadingOverlay()
-        else {
+        } else {
             Column(
                 modifier = Modifier
                     .fillMaxSize()

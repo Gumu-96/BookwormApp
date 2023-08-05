@@ -36,21 +36,21 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun onOrderByClick(bookOrder: BookOrderByFilter) {
-        _uiState.update { current -> current.copy(
-            filterOptions = current.filterOptions.copy(bookOrder = bookOrder)
-        ) }
+        _uiState.update { current ->
+            current.copy(filterOptions = current.filterOptions.copy(bookOrder = bookOrder))
+        }
     }
 
     private fun onPrintTypeClick(printType: BookPrintTypeFilter) {
-        _uiState.update { current -> current.copy(
-            filterOptions = current.filterOptions.copy(bookPrintType = printType)
-        ) }
+        _uiState.update { current ->
+            current.copy(filterOptions = current.filterOptions.copy(bookPrintType = printType))
+        }
     }
 
     private fun onBookTypeClick(bookType: BookTypeFilter) {
-        _uiState.update { current -> current.copy(
-            filterOptions = current.filterOptions.copy(bookType = bookType)
-        ) }
+        _uiState.update { current ->
+            current.copy(filterOptions = current.filterOptions.copy(bookType = bookType))
+        }
     }
 
     private fun onPerformSearch() {
