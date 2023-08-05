@@ -8,17 +8,15 @@ import com.gumu.bookwormapp.domain.model.BookStats
 import com.gumu.bookwormapp.domain.model.ReadingStatus
 
 data class BookStatsDto(
-    val book: BookDto,
-    val rating: Int,
-    val status: ReadingStatus,
-    val thoughts: String?,
+    val book: BookDto = BookDto(),
+    val rating: Int = 0,
+    val status: ReadingStatus = ReadingStatus.ON_QUEUE,
+    val thoughts: String? = null,
     val startedReading: Timestamp? = null,
     val finishedReading: Timestamp? = null,
     @ServerTimestamp
     val createdAt: Timestamp? = null
-) {
-    constructor() : this(BookDto(), 0, ReadingStatus.ON_QUEUE, null, null, null)
-}
+)
 
 fun BookStats.toDto() =
     BookStatsDto(

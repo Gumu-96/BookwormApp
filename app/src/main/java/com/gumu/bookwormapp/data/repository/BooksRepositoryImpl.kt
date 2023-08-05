@@ -28,13 +28,15 @@ class BooksRepositoryImpl @Inject constructor(
                 pageSize = RemoteConstants.DEFAULT_PAGE_SIZE,
                 initialLoadSize = RemoteConstants.MAX_PAGE_SIZE
             ),
-            pagingSourceFactory = { BooksPagingSource(
-                booksRemoteDataSource = booksRemoteDataSource,
-                query = query,
-                orderBy = orderBy,
-                printType = printType,
-                bookType = bookType
-            ) }
+            pagingSourceFactory = {
+                BooksPagingSource(
+                    booksRemoteDataSource = booksRemoteDataSource,
+                    query = query,
+                    orderBy = orderBy,
+                    printType = printType,
+                    bookType = bookType
+                )
+            }
         ).flow
     }
 }
