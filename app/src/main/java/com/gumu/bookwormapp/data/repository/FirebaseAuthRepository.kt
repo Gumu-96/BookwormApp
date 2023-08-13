@@ -1,8 +1,7 @@
 package com.gumu.bookwormapp.data.repository
 
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.gumu.bookwormapp.data.remote.RemoteConstants
 import com.gumu.bookwormapp.data.remote.dto.UserDto
 import com.gumu.bookwormapp.domain.common.AppError
@@ -14,15 +13,16 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
-class FirebaseAuthRepository @Inject constructor() : AuthRepository {
-    private val firebaseAuth = Firebase.auth
-    private val firebaseFirestore = Firebase.firestore
+class FirebaseAuthRepository @Inject constructor(
+    private val auth: FirebaseAuth,
+    private val firestore: FirebaseFirestore
+) : AuthRepository {
 
-    override fun checkUserSession(): Boolean = firebaseAuth.currentUser != null
+    override fun checkUserSession(): Boolean = auth.currentUser != null
 
     override fun signIn(email: String, password: String): Flow<AppResult<Unit>> {
         return flow {
-            val task = firebaseAuth.signInWithEmailAndPassword(email, password).also { it.await() }
+            val task = auth.signInWithEmailAndPassword(email, password).also { it.await() }
 
             if (task.isSuccessful) {
                 task.result.user?.let { emit(AppResult.Success(Unit)) }
@@ -34,7 +34,7 @@ class FirebaseAuthRepository @Inject constructor() : AuthRepository {
 
     override fun registerUser(email: String, password: String): Flow<AppResult<String?>> {
         return flow {
-            val task = firebaseAuth.createUserWithEmailAndPassword(email, password).also { it.await() }
+            val task = auth.createUserWithEmailAndPassword(email, password).also { it.await() }
 
             if (task.isSuccessful) {
                 task.result.user?.let { emit(AppResult.Success(it.uid)) }
@@ -50,7 +50,7 @@ class FirebaseAuthRepository @Inject constructor() : AuthRepository {
         lastname: String
     ): Flow<AppResult<Unit>> {
         return flow {
-            val task = firebaseFirestore
+            val task = firestore
                 .collection(RemoteConstants.USERS_COLLECTION)
                 .document(userId)
                 .set(UserDto(firstname, lastname)).also { it.await() }

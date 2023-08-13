@@ -3,9 +3,8 @@ package com.gumu.bookwormapp.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.gumu.bookwormapp.data.paging.BookStatsPagingSource
 import com.gumu.bookwormapp.data.remote.RemoteConstants
 import com.gumu.bookwormapp.data.remote.RemoteConstants.UNEXPECTED_ERROR
@@ -26,10 +25,10 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class BookStatsRepositoryImpl @Inject constructor(
-    private val bookStatsDataSource: BookStatsDataSource
+    private val bookStatsDataSource: BookStatsDataSource,
+    private val auth: FirebaseAuth,
+    private val firestore: FirebaseFirestore
 ) : BookStatsRepository {
-    private val auth = Firebase.auth
-    private val firestore = Firebase.firestore
 
     override fun saveBookStats(bookStats: BookStats): Flow<AppResult<Unit>> = flow {
         auth.currentUser?.uid?.let { userId ->
