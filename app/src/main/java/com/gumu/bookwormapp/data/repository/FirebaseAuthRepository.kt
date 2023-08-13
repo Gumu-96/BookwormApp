@@ -11,7 +11,6 @@ import com.gumu.bookwormapp.domain.repository.AuthRepository
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -23,54 +22,52 @@ class FirebaseAuthRepository @Inject constructor(
 
     override fun checkUserSession(): Boolean = auth.currentUser != null
 
-    override fun signIn(email: String, password: String): Flow<AppResult<Unit>> {
-        return flow {
-            val task = auth.signInWithEmailAndPassword(email, password).also { it.await() }
-
-            if (task.isSuccessful) {
-                task.result.user?.let { emit(AppResult.Success(Unit)) }
-            } else {
-                emit(AppResult.Failure(AppError(task.exception ?: Throwable("Auth error"))))
+    override fun signIn(email: String, password: String): Flow<AppResult<Unit>> = callbackFlow {
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnSuccessListener {
+                it.user?.let { trySend(AppResult.Success(Unit)) }
             }
-        }.onStart { emit(AppResult.Loading) }
-    }
-
-    override fun registerUser(email: String, password: String): Flow<AppResult<String?>> {
-        return flow {
-            val task = auth.createUserWithEmailAndPassword(email, password).also { it.await() }
-
-            if (task.isSuccessful) {
-                task.result.user?.let { emit(AppResult.Success(it.uid)) }
-            } else {
-                emit(AppResult.Failure(AppError(task.exception ?: Throwable("Registration error"))))
+            .addOnFailureListener {
+                trySend(AppResult.Failure(AppError(it)))
             }
-        }.onStart { emit(AppResult.Loading) }
-    }
+            .await()
+        awaitClose()
+    }.onStart { emit(AppResult.Loading) }
+
+    override fun registerUser(email: String, password: String): Flow<AppResult<String?>> = callbackFlow {
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnSuccessListener { authResult ->
+                authResult.user?.let { trySend(AppResult.Success(it.uid)) }
+            }
+            .addOnFailureListener {
+                trySend(AppResult.Failure(AppError(it)))
+            }
+            .await()
+        awaitClose()
+    }.onStart { emit(AppResult.Loading) }
 
     override fun saveNewUserData(
         userId: String,
         firstname: String,
         lastname: String
-    ): Flow<AppResult<Unit>> {
-        return flow {
-            val task = firestore
-                .collection(RemoteConstants.USERS_COLLECTION)
-                .document(userId)
-                .set(UserDto(firstname, lastname)).also { it.await() }
-            if (task.isSuccessful) {
-                emit(AppResult.Success(Unit))
-            } else {
-                emit(AppResult.Failure(AppError(task.exception ?: Throwable("Save data error"))))
+    ): Flow<AppResult<Unit>> = callbackFlow {
+        firestore.collection(RemoteConstants.USERS_COLLECTION)
+            .document(userId)
+            .set(UserDto(firstname, lastname))
+            .addOnSuccessListener {
+                trySend(AppResult.Success(Unit))
             }
-        }.onStart { emit(AppResult.Loading) }
-    }
+            .addOnFailureListener {
+                trySend(AppResult.Failure(AppError(it)))
+            }
+            .await()
+        awaitClose()
+    }.onStart { emit(AppResult.Loading) }
 
-    override fun signOut(): Flow<AppResult<Unit>> {
-        return callbackFlow {
-            val listener = AuthStateListener { trySend(AppResult.Success(Unit)) }
-            auth.addAuthStateListener(listener)
-            auth.signOut()
-            awaitClose { auth.removeAuthStateListener(listener) }
-        }
+    override fun signOut(): Flow<AppResult<Unit>> = callbackFlow {
+        val listener = AuthStateListener { trySend(AppResult.Success(Unit)) }
+        auth.addAuthStateListener(listener)
+        auth.signOut()
+        awaitClose { auth.removeAuthStateListener(listener) }
     }
 }

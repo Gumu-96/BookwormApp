@@ -18,8 +18,9 @@ import com.gumu.bookwormapp.domain.common.AppResult
 import com.gumu.bookwormapp.domain.model.BookStats
 import com.gumu.bookwormapp.domain.model.ReadingStatus
 import com.gumu.bookwormapp.domain.repository.BookStatsRepository
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -30,41 +31,44 @@ class BookStatsRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore
 ) : BookStatsRepository {
 
-    override fun saveBookStats(bookStats: BookStats): Flow<AppResult<Unit>> = flow {
+    override fun saveBookStats(bookStats: BookStats): Flow<AppResult<Unit>> = callbackFlow {
         auth.currentUser?.uid?.let { userId ->
-            val task = firestore
+            firestore
                 .collection(RemoteConstants.USERS_COLLECTION)
                 .document(userId)
                 .collection(RemoteConstants.BOOK_STATS_COLLECTION)
                 .document(bookStats.book.id)
-                .set(bookStats.toDto()).also { it.await() }
-
-            if (task.isSuccessful) {
-                emit(AppResult.Success(Unit))
-            } else {
-                emit(AppResult.Failure(AppError(task.exception ?: Throwable("Save data error"))))
-            }
-        } ?: emit(UNEXPECTED_ERROR)
+                .set(bookStats.toDto())
+                .addOnSuccessListener {
+                    trySend(AppResult.Success(Unit))
+                }
+                .addOnFailureListener {
+                    trySend(AppResult.Failure(AppError(it)))
+                }
+                .await()
+        } ?: trySend(UNEXPECTED_ERROR)
+        awaitClose()
     }.onStart { emit(AppResult.Loading) }
 
-    override fun updateBookStats(bookStats: BookStats): Flow<AppResult<Unit>> = flow {
+    override fun updateBookStats(bookStats: BookStats): Flow<AppResult<Unit>> = callbackFlow {
         auth.currentUser?.uid?.let { userId ->
             bookStats.id?.let { id ->
-                val updateTask = firestore
+                firestore
                     .collection(RemoteConstants.USERS_COLLECTION)
                     .document(userId)
                     .collection(RemoteConstants.BOOK_STATS_COLLECTION)
                     .document(id)
                     .update(bookStats.toUpdateMap())
-                    .also { it.await() }
-
-                if (updateTask.isSuccessful) {
-                    emit(AppResult.Success(Unit))
-                } else {
-                    emit(AppResult.Failure(AppError(updateTask.exception ?: Throwable("Update error"))))
-                }
+                    .addOnSuccessListener {
+                        trySend(AppResult.Success(Unit))
+                    }
+                    .addOnFailureListener {
+                        trySend(AppResult.Failure(AppError(it)))
+                    }
+                    .await()
             }
-        } ?: emit(UNEXPECTED_ERROR)
+        } ?: trySend(UNEXPECTED_ERROR)
+        awaitClose()
     }.onStart { emit(AppResult.Loading) }
 
     override fun getAllBookStats(status: ReadingStatus): Flow<PagingData<BookStats>> {
@@ -80,41 +84,42 @@ class BookStatsRepositoryImpl @Inject constructor(
         ).flow
     }
 
-    override fun getBookStats(bookStatsId: String): Flow<AppResult<BookStats?>> = flow {
+    override fun getBookStats(bookStatsId: String): Flow<AppResult<BookStats?>> = callbackFlow {
         auth.currentUser?.uid?.let { userId ->
-            val bookStatsTask = firestore
+            firestore
                 .collection(RemoteConstants.USERS_COLLECTION)
                 .document(userId)
                 .collection(RemoteConstants.BOOK_STATS_COLLECTION)
                 .document(bookStatsId)
                 .get()
-                .also { it.await() }
-
-            if (bookStatsTask.isSuccessful) {
-                val docRef = bookStatsTask.result
-                val bookStats = docRef?.toObject(BookStatsDto::class.java)?.toDomain(docRef.id)
-                emit(AppResult.Success(bookStats))
-            } else {
-                emit(AppResult.Failure(AppError(bookStatsTask.exception ?: Throwable("Error getting data"))))
-            }
-        } ?: emit(UNEXPECTED_ERROR)
+                .addOnSuccessListener {
+                    val bookStats = it?.toObject(BookStatsDto::class.java)?.toDomain(it.id)
+                    trySend(AppResult.Success(bookStats))
+                }
+                .addOnFailureListener {
+                    trySend(AppResult.Failure(AppError(it)))
+                }
+                .await()
+        } ?: trySend(UNEXPECTED_ERROR)
+        awaitClose()
     }.onStart { emit(AppResult.Loading) }
 
-    override fun deleteBookStats(bookStatsId: String): Flow<AppResult<Unit>> = flow {
+    override fun deleteBookStats(bookStatsId: String): Flow<AppResult<Unit>> = callbackFlow {
         auth.currentUser?.uid?.let { userId ->
-            val bookStatsTask = firestore
+            firestore
                 .collection(RemoteConstants.USERS_COLLECTION)
                 .document(userId)
                 .collection(RemoteConstants.BOOK_STATS_COLLECTION)
                 .document(bookStatsId)
                 .delete()
-                .also { it.await() }
-
-            if (bookStatsTask.isSuccessful) {
-                emit(AppResult.Success(Unit))
-            } else {
-                emit(AppResult.Failure(AppError(bookStatsTask.exception ?: Throwable("Error deleting data"))))
-            }
-        } ?: emit(UNEXPECTED_ERROR)
+                .addOnSuccessListener {
+                    trySend(AppResult.Success(Unit))
+                }
+                .addOnFailureListener {
+                    trySend(AppResult.Failure(AppError(it)))
+                }
+                .await()
+        } ?: trySend(UNEXPECTED_ERROR)
+        awaitClose()
     }.onStart { emit(AppResult.Loading) }
 }
