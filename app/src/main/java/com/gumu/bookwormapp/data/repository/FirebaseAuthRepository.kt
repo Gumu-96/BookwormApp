@@ -1,13 +1,16 @@
 package com.gumu.bookwormapp.data.repository
 
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuth.AuthStateListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.gumu.bookwormapp.data.remote.RemoteConstants
 import com.gumu.bookwormapp.data.remote.dto.UserDto
 import com.gumu.bookwormapp.domain.common.AppError
 import com.gumu.bookwormapp.domain.common.AppResult
 import com.gumu.bookwormapp.domain.repository.AuthRepository
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.tasks.await
@@ -60,5 +63,14 @@ class FirebaseAuthRepository @Inject constructor(
                 emit(AppResult.Failure(AppError(task.exception ?: Throwable("Save data error"))))
             }
         }.onStart { emit(AppResult.Loading) }
+    }
+
+    override fun signOut(): Flow<AppResult<Unit>> {
+        return callbackFlow {
+            val listener = AuthStateListener { trySend(AppResult.Success(Unit)) }
+            auth.addAuthStateListener(listener)
+            auth.signOut()
+            awaitClose { auth.removeAuthStateListener(listener) }
+        }
     }
 }
