@@ -12,6 +12,9 @@ import com.gumu.bookwormapp.domain.usecase.auth.SignUpUseCase
 import com.gumu.bookwormapp.domain.usecase.auth.SignUpUseCaseImpl
 import com.gumu.bookwormapp.domain.usecase.bookstats.AddBookStatsUseCase
 import com.gumu.bookwormapp.domain.usecase.bookstats.AddBookStatsUseCaseImpl
+import com.gumu.bookwormapp.domain.usecase.bookstats.DeleteBookStatsUseCase
+import com.gumu.bookwormapp.domain.usecase.bookstats.DeleteBookStatsUseCaseImpl
+import com.gumu.bookwormapp.domain.usecase.bookstats.FindBooksUseCase
 import com.gumu.bookwormapp.domain.usecase.bookstats.FindBooksUseCaseImpl
 import com.gumu.bookwormapp.domain.usecase.bookstats.GetAllBookStatsUseCase
 import com.gumu.bookwormapp.domain.usecase.bookstats.GetAllBookStatsUseCaseImpl
@@ -62,7 +65,7 @@ abstract class UseCasesModule {
     @ViewModelScoped
     abstract fun bindFindBooksUseCase(
         findBooksUseCaseImpl: FindBooksUseCaseImpl
-    ): FindBooksUseCaseImpl
+    ): FindBooksUseCase
 
     @Binds
     @ViewModelScoped
@@ -81,6 +84,12 @@ abstract class UseCasesModule {
     abstract fun bindUpdateBookStatsUseCase(
         updateBookStatsUseCaseImpl: UpdateBookStatsUseCaseImpl
     ): UpdateBookStatsUseCase
+
+    @Binds
+    @ViewModelScoped
+    abstract fun bindDeleteBookStatsUseCase(
+        deleteBookStatsUseCaseImpl: DeleteBookStatsUseCaseImpl
+    ): DeleteBookStatsUseCase
 
     @Binds
     @ViewModelScoped
