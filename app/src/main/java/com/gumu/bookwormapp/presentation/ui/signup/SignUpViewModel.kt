@@ -6,6 +6,7 @@ import com.gumu.bookwormapp.data.repository.FirebaseAuthRepository
 import com.gumu.bookwormapp.domain.common.onFailure
 import com.gumu.bookwormapp.domain.common.onLoading
 import com.gumu.bookwormapp.domain.common.onSuccess
+import com.gumu.bookwormapp.domain.model.User
 import com.gumu.bookwormapp.domain.usecase.ValidateEmail
 import com.gumu.bookwormapp.domain.usecase.ValidateName
 import com.gumu.bookwormapp.domain.usecase.ValidatePassword
@@ -121,9 +122,11 @@ class SignUpViewModel @Inject constructor(
 
     private suspend fun saveUserData(userId: String) {
         authRepository.saveNewUserData(
-            userId = userId,
-            firstname = _uiState.value.firstname,
-            lastname = _uiState.value.lastname
+            User(
+                id = userId,
+                firstname = _uiState.value.firstname,
+                lastname = _uiState.value.lastname
+            )
         ).collectLatest { result ->
             result.onSuccess {
                 sendEvent(UiEvent.NavigateTo(Screen.HomeScreen.route, Screen.SignInScreen.route))

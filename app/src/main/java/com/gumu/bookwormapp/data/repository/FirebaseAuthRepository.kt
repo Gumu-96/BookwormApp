@@ -4,9 +4,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuth.AuthStateListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.gumu.bookwormapp.data.remote.RemoteConstants
-import com.gumu.bookwormapp.data.remote.dto.UserDto
+import com.gumu.bookwormapp.data.remote.dto.toDto
 import com.gumu.bookwormapp.domain.common.AppError
 import com.gumu.bookwormapp.domain.common.AppResult
+import com.gumu.bookwormapp.domain.model.User
 import com.gumu.bookwormapp.domain.repository.AuthRepository
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -46,14 +47,10 @@ class FirebaseAuthRepository @Inject constructor(
         awaitClose()
     }.onStart { emit(AppResult.Loading) }
 
-    override fun saveNewUserData(
-        userId: String,
-        firstname: String,
-        lastname: String
-    ): Flow<AppResult<Unit>> = callbackFlow {
+    override fun saveNewUserData(user: User): Flow<AppResult<Unit>> = callbackFlow {
         firestore.collection(RemoteConstants.USERS_COLLECTION)
-            .document(userId)
-            .set(UserDto(firstname, lastname))
+            .document(user.id)
+            .set(user.toDto())
             .addOnSuccessListener {
                 trySend(AppResult.Success(Unit))
             }
