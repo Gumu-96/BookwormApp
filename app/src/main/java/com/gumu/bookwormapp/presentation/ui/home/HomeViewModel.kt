@@ -4,8 +4,8 @@ import androidx.lifecycle.viewModelScope
 import com.gumu.bookwormapp.domain.common.onSuccess
 import com.gumu.bookwormapp.domain.model.BookStats
 import com.gumu.bookwormapp.domain.model.ReadingStatus
-import com.gumu.bookwormapp.domain.repository.AuthRepository
-import com.gumu.bookwormapp.domain.repository.BookStatsRepository
+import com.gumu.bookwormapp.domain.usecase.auth.SignOutUseCase
+import com.gumu.bookwormapp.domain.usecase.bookstats.GetAllBookStatsUseCase
 import com.gumu.bookwormapp.presentation.navigation.Screen
 import com.gumu.bookwormapp.presentation.ui.common.BaseViewModel
 import com.gumu.bookwormapp.presentation.ui.common.UiEvent
@@ -18,8 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    bookStatsRepository: BookStatsRepository,
-    private val authRepository: AuthRepository
+    getAllBookStatsUseCase: GetAllBookStatsUseCase,
+    private val signOutUseCase: SignOutUseCase
 ) : BaseViewModel<HomeState, HomeEvent>() {
     override val uiState: StateFlow<HomeState> = _uiState.asStateFlow()
 
@@ -28,9 +28,9 @@ class HomeViewModel @Inject constructor(
     but won't reflect any changes made after loaded for the first time
     Currently the firestore library doesn't support paging with live updates (a similar behavior of Room with flows)
      */
-    val onQueueBooks = bookStatsRepository.getAllBookStats(ReadingStatus.ON_QUEUE) // .cachedIn(viewModelScope)
-    val readingBooks = bookStatsRepository.getAllBookStats(ReadingStatus.READING) // .cachedIn(viewModelScope)
-    val readBooks = bookStatsRepository.getAllBookStats(ReadingStatus.READ) // .cachedIn(viewModelScope)
+    val onQueueBooks = getAllBookStatsUseCase.invoke(ReadingStatus.ON_QUEUE) // .cachedIn(viewModelScope)
+    val readingBooks = getAllBookStatsUseCase.invoke(ReadingStatus.READING) // .cachedIn(viewModelScope)
+    val readBooks = getAllBookStatsUseCase.invoke(ReadingStatus.READ) // .cachedIn(viewModelScope)
 
     override fun defaultState(): HomeState = HomeState()
 
@@ -42,7 +42,7 @@ class HomeViewModel @Inject constructor(
 
     private fun onSignOutClick() {
         viewModelScope.launch {
-            authRepository.signOut().collectLatest {
+            signOutUseCase.invoke().collectLatest {
                 it.onSuccess {
                     sendEvent(UiEvent.NavigateTo(Screen.SignInScreen.route, Screen.HomeScreen.route))
                 }

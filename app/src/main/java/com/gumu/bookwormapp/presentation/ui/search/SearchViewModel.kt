@@ -10,8 +10,8 @@ import com.gumu.bookwormapp.domain.common.onLoading
 import com.gumu.bookwormapp.domain.common.onSuccess
 import com.gumu.bookwormapp.domain.model.Book
 import com.gumu.bookwormapp.domain.model.BookStats
-import com.gumu.bookwormapp.domain.repository.BookStatsRepository
-import com.gumu.bookwormapp.domain.repository.BooksRepository
+import com.gumu.bookwormapp.domain.usecase.bookstats.AddBookStatsUseCase
+import com.gumu.bookwormapp.domain.usecase.bookstats.FindBooksUseCase
 import com.gumu.bookwormapp.presentation.ui.common.BaseViewModel
 import com.gumu.bookwormapp.presentation.ui.common.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,8 +24,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val booksRepository: BooksRepository,
-    private val bookStatsRepository: BookStatsRepository
+    private val findBooksUseCase: FindBooksUseCase,
+    private val addBookStatsUseCase: AddBookStatsUseCase
 ) : BaseViewModel<SearchState, SearchEvent>() {
     override val uiState: StateFlow<SearchState> = _uiState.asStateFlow()
 
@@ -56,7 +56,7 @@ class SearchViewModel @Inject constructor(
     private fun onPerformSearch() {
         if (_uiState.value.searchQuery.isNotBlank()) {
             _uiState.update { it.copy(
-                books = booksRepository.findBooks(
+                books = findBooksUseCase.invoke(
                     query = it.searchQuery,
                     orderBy = it.filterOptions.bookOrder,
                     printType = it.filterOptions.bookPrintType,
@@ -83,7 +83,7 @@ class SearchViewModel @Inject constructor(
 
     private fun onAddBookClick(book: Book) {
         viewModelScope.launch {
-            bookStatsRepository.saveBookStats(BookStats(book)).collectLatest { result ->
+            addBookStatsUseCase.invoke(BookStats(book)).collectLatest { result ->
                 result.onLoading {
                     _uiState.update { it.copy(isAddingBook = true) }
                 }.onSuccess {

@@ -7,7 +7,9 @@ import com.gumu.bookwormapp.domain.common.onLoading
 import com.gumu.bookwormapp.domain.common.onSuccess
 import com.gumu.bookwormapp.domain.model.BookStats
 import com.gumu.bookwormapp.domain.model.ReadingStatus
-import com.gumu.bookwormapp.domain.repository.BookStatsRepository
+import com.gumu.bookwormapp.domain.usecase.bookstats.DeleteBookStatsUseCase
+import com.gumu.bookwormapp.domain.usecase.bookstats.GetBookStatsUseCase
+import com.gumu.bookwormapp.domain.usecase.bookstats.UpdateBookStatsUseCase
 import com.gumu.bookwormapp.presentation.ui.common.BaseViewModel
 import com.gumu.bookwormapp.presentation.ui.common.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +22,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BookStatsViewModel @Inject constructor(
-    private val statsRepository: BookStatsRepository
+    private val getBookStatsUseCase: GetBookStatsUseCase,
+    private val updateBookStatsUseCase: UpdateBookStatsUseCase,
+    private val deleteBookStatsUseCase: DeleteBookStatsUseCase
 ) : BaseViewModel<BookStatsState, BookStatsEvent>() {
     private var initialStats: BookStats? = null
 
@@ -39,7 +43,7 @@ class BookStatsViewModel @Inject constructor(
     private fun onLoadStats(statsId: String?) {
         statsId?.let { id ->
             viewModelScope.launch {
-                statsRepository.getBookStats(id).collectLatest { result ->
+                getBookStatsUseCase.invoke(id).collectLatest { result ->
                     result.onLoading {
                         _uiState.update { it.copy(isLoading = true) }
                     }.onSuccess { statsResult ->
@@ -86,7 +90,7 @@ class BookStatsViewModel @Inject constructor(
     private fun onConfirmDelete() {
         initialStats?.id?.let { id ->
             viewModelScope.launch {
-                statsRepository.deleteBookStats(id).collectLatest { result ->
+                deleteBookStatsUseCase.invoke(id).collectLatest { result ->
                     result.onLoading {
                         _uiState.update { it.copy(
                             showDeleteDialog = false,
@@ -116,7 +120,7 @@ class BookStatsViewModel @Inject constructor(
                     status = _uiState.value.status
                 )
 
-                statsRepository.updateBookStats(updatedStats).collectLatest { result ->
+                updateBookStatsUseCase.invoke(updatedStats).collectLatest { result ->
                     result.onLoading {
                         _uiState.update { it.copy(savingChanges = true) }
                     }.onSuccess {

@@ -5,9 +5,10 @@ import com.gumu.bookwormapp.R
 import com.gumu.bookwormapp.domain.common.onFailure
 import com.gumu.bookwormapp.domain.common.onLoading
 import com.gumu.bookwormapp.domain.common.onSuccess
-import com.gumu.bookwormapp.domain.repository.AuthRepository
 import com.gumu.bookwormapp.domain.usecase.ValidateEmail
 import com.gumu.bookwormapp.domain.usecase.ValidatePassword
+import com.gumu.bookwormapp.domain.usecase.auth.CheckUserSessionUseCase
+import com.gumu.bookwormapp.domain.usecase.auth.SignInUseCase
 import com.gumu.bookwormapp.presentation.navigation.Screen
 import com.gumu.bookwormapp.presentation.ui.common.BaseViewModel
 import com.gumu.bookwormapp.presentation.ui.common.UiEvent
@@ -23,7 +24,8 @@ import javax.inject.Inject
 class SignInViewModel @Inject constructor(
     private val validateEmail: ValidateEmail,
     private val validatePassword: ValidatePassword,
-    private val authRepository: AuthRepository
+    private val signInUseCase: SignInUseCase,
+    private val checkUserSessionUseCase: CheckUserSessionUseCase
 ) : BaseViewModel<SignInState, SignInEvent>() {
     override val uiState: StateFlow<SignInState> = _uiState.asStateFlow()
 
@@ -35,7 +37,7 @@ class SignInViewModel @Inject constructor(
 
     private fun checkUserSession() {
         _uiState.update { it.copy(isLoading = true) }
-        if (authRepository.checkUserSession()) {
+        if (checkUserSessionUseCase.invoke()) {
             sendEvent(UiEvent.NavigateTo(Screen.HomeScreen.route, Screen.SignInScreen.route))
         } else {
             _uiState.update { it.copy(isLoading = false) }
@@ -65,7 +67,7 @@ class SignInViewModel @Inject constructor(
         ) }
         if (_uiState.value.errorState == SignInErrorState()) {
             viewModelScope.launch {
-                authRepository.signIn(_uiState.value.email, _uiState.value.password).collectLatest { result ->
+                signInUseCase.invoke(_uiState.value.email, _uiState.value.password).collectLatest { result ->
                     result.onLoading {
                         _uiState.update { it.copy(isLoading = true) }
                     }.onSuccess {
