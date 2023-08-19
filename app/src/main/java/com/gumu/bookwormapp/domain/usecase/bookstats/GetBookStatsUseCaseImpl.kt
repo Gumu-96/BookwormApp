@@ -6,10 +6,10 @@ import com.gumu.bookwormapp.domain.repository.BookStatsRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class UpdateBookStatsUseCaseImpl @Inject constructor(
+class GetBookStatsUseCaseImpl @Inject constructor(
     private val repository: BookStatsRepository
-) : UpdateBookStatsUseCase {
-    override fun invoke(bookStats: BookStats): Flow<AppResult<Unit>> {
-        return repository.updateBookStats(bookStats)
+) : GetBookStatsUseCase {
+    override fun invoke(id: String): Flow<AppResult<BookStats?>> {
+        return repository.getBookStats(id)
     }
 }
