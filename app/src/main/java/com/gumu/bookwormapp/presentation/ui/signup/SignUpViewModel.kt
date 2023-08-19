@@ -2,11 +2,11 @@ package com.gumu.bookwormapp.presentation.ui.signup
 
 import androidx.lifecycle.viewModelScope
 import com.gumu.bookwormapp.R
-import com.gumu.bookwormapp.data.repository.FirebaseAuthRepository
 import com.gumu.bookwormapp.domain.common.onFailure
 import com.gumu.bookwormapp.domain.common.onLoading
 import com.gumu.bookwormapp.domain.common.onSuccess
 import com.gumu.bookwormapp.domain.model.User
+import com.gumu.bookwormapp.domain.repository.AuthRepository
 import com.gumu.bookwormapp.domain.usecase.ValidateEmail
 import com.gumu.bookwormapp.domain.usecase.ValidateName
 import com.gumu.bookwormapp.domain.usecase.ValidatePassword
@@ -28,7 +28,7 @@ class SignUpViewModel @Inject constructor(
     private val validateEmail: ValidateEmail,
     private val validatePassword: ValidatePassword,
     private val validateRepeatedPassword: ValidateRepeatedPassword,
-    private val authRepository: FirebaseAuthRepository
+    private val authRepository: AuthRepository
 ) : BaseViewModel<SignUpState, SignUpEvent>() {
     override val uiState: StateFlow<SignUpState> = _uiState.asStateFlow()
 
