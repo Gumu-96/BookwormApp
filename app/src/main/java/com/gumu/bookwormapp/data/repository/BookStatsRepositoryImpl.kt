@@ -54,21 +54,23 @@ class BookStatsRepositoryImpl @Inject constructor(
     override fun updateBookStats(bookStats: BookStats): Flow<AppResult<Unit>> = callbackFlow {
         currentUserId?.let { userId ->
             bookStats.id?.let { id ->
-                firestore
-                    .collection(RemoteConstants.USERS_COLLECTION)
-                    .document(userId)
-                    .collection(RemoteConstants.BOOK_STATS_COLLECTION)
-                    .document(id)
-                    .update(bookStats.toUpdateMap())
-                    .addOnSuccessListener {
-                        trySend(AppResult.Success(Unit))
-                    }
-                    .addOnFailureListener {
-                        trySend(AppResult.Failure(AppError(it)))
-                    }
-                    .await()
-            }
-        } ?: trySend(UNEXPECTED_ERROR)
+                try {
+                    firestore
+                        .collection(RemoteConstants.USERS_COLLECTION)
+                        .document(userId)
+                        .collection(RemoteConstants.BOOK_STATS_COLLECTION)
+                        .document(id)
+                        .update(bookStats.toUpdateMap())
+                        .addOnSuccessListener {
+                            trySend(AppResult.Success(Unit))
+                        }
+                        .addOnFailureListener {
+                            trySend(AppResult.Failure(AppError(it)))
+                        }
+                        .await()
+                } catch (ex: Exception) {
+                    trySend(AppResult.Failure(AppError(ex)))
+                }
             } ?: trySend(UNEXPECTED_ERROR)
         } // ?: trySend(UNEXPECTED_ERROR) // This triggers even when the user is logged in
         awaitClose()
