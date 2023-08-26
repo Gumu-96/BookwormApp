@@ -27,12 +27,13 @@ import javax.inject.Inject
 
 class BookStatsRepositoryImpl @Inject constructor(
     private val bookStatsDataSource: BookStatsDataSource,
-    private val auth: FirebaseAuth,
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    auth: FirebaseAuth
 ) : BookStatsRepository {
+    private val currentUserId = auth.currentUser?.uid
 
     override fun saveBookStats(bookStats: BookStats): Flow<AppResult<Unit>> = callbackFlow {
-        auth.currentUser?.uid?.let { userId ->
+        currentUserId?.let { userId ->
             firestore
                 .collection(RemoteConstants.USERS_COLLECTION)
                 .document(userId)
@@ -46,12 +47,12 @@ class BookStatsRepositoryImpl @Inject constructor(
                     trySend(AppResult.Failure(AppError(it)))
                 }
                 .await()
-        } ?: trySend(UNEXPECTED_ERROR)
+        } // ?: trySend(UNEXPECTED_ERROR) // This triggers even when the user is logged in
         awaitClose()
     }.onStart { emit(AppResult.Loading) }
 
     override fun updateBookStats(bookStats: BookStats): Flow<AppResult<Unit>> = callbackFlow {
-        auth.currentUser?.uid?.let { userId ->
+        currentUserId?.let { userId ->
             bookStats.id?.let { id ->
                 firestore
                     .collection(RemoteConstants.USERS_COLLECTION)
@@ -68,6 +69,8 @@ class BookStatsRepositoryImpl @Inject constructor(
                     .await()
             }
         } ?: trySend(UNEXPECTED_ERROR)
+            } ?: trySend(UNEXPECTED_ERROR)
+        } // ?: trySend(UNEXPECTED_ERROR) // This triggers even when the user is logged in
         awaitClose()
     }.onStart { emit(AppResult.Loading) }
 
@@ -77,7 +80,7 @@ class BookStatsRepositoryImpl @Inject constructor(
             pagingSourceFactory = {
                 BookStatsPagingSource(
                     bookStatsDataSource = bookStatsDataSource,
-                    userId = auth.currentUser?.uid ?: "",
+                    userId = currentUserId ?: "",
                     status = status
                 )
             }
@@ -85,7 +88,7 @@ class BookStatsRepositoryImpl @Inject constructor(
     }
 
     override fun getBookStats(bookStatsId: String): Flow<AppResult<BookStats?>> = callbackFlow {
-        auth.currentUser?.uid?.let { userId ->
+        currentUserId?.let { userId ->
             firestore
                 .collection(RemoteConstants.USERS_COLLECTION)
                 .document(userId)
@@ -105,7 +108,7 @@ class BookStatsRepositoryImpl @Inject constructor(
     }.onStart { emit(AppResult.Loading) }
 
     override fun deleteBookStats(bookStatsId: String): Flow<AppResult<Unit>> = callbackFlow {
-        auth.currentUser?.uid?.let { userId ->
+        currentUserId?.let { userId ->
             firestore
                 .collection(RemoteConstants.USERS_COLLECTION)
                 .document(userId)
@@ -119,7 +122,7 @@ class BookStatsRepositoryImpl @Inject constructor(
                     trySend(AppResult.Failure(AppError(it)))
                 }
                 .await()
-        } ?: trySend(UNEXPECTED_ERROR)
+        } // ?: trySend(UNEXPECTED_ERROR) // This triggers even when the user is logged in
         awaitClose()
     }.onStart { emit(AppResult.Loading) }
 }
