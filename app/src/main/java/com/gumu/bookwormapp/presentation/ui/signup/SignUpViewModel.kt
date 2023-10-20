@@ -6,10 +6,7 @@ import com.gumu.bookwormapp.domain.common.onFailure
 import com.gumu.bookwormapp.domain.common.onLoading
 import com.gumu.bookwormapp.domain.common.onSuccess
 import com.gumu.bookwormapp.domain.model.User
-import com.gumu.bookwormapp.domain.usecase.ValidateEmail
-import com.gumu.bookwormapp.domain.usecase.ValidateName
-import com.gumu.bookwormapp.domain.usecase.ValidatePassword
-import com.gumu.bookwormapp.domain.usecase.ValidateRepeatedPassword
+import com.gumu.bookwormapp.domain.usecase.ValidateSignUp
 import com.gumu.bookwormapp.domain.usecase.auth.SaveNewUserDataUseCase
 import com.gumu.bookwormapp.domain.usecase.auth.SignUpUseCase
 import com.gumu.bookwormapp.presentation.navigation.Screen
@@ -25,10 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
-    private val validateName: ValidateName,
-    private val validateEmail: ValidateEmail,
-    private val validatePassword: ValidatePassword,
-    private val validateRepeatedPassword: ValidateRepeatedPassword,
+    private val validateSignUp: ValidateSignUp,
     private val signUpUseCase: SignUpUseCase,
     private val saveNewUserDataUseCase: SaveNewUserDataUseCase
 ) : BaseViewModel<SignUpState, SignUpEvent>() {
@@ -72,35 +66,31 @@ class SignUpViewModel @Inject constructor(
     }
 
     private fun onRegisterClick() {
-        _uiState.update { it.copy(
-            errorState = it.errorState.copy(
-                firstnameError = if (validateName.invoke(it.firstname).not()) {
-                    R.string.required_field_error
-                } else {
-                    null
-                },
-                lastnameError = if (validateName.invoke(it.lastname).not()) {
-                    R.string.required_field_error
-                } else {
-                    null
-                },
-                emailError = if (validateEmail.invoke(it.email).not()) {
-                    R.string.not_valid_email_error
-                } else {
-                    null
-                },
-                passwordError = if (validatePassword.invoke(it.password).not()) {
-                    R.string.minimum_characters_error
-                } else {
-                    null
-                },
-                repeatedPasswordError = if (validateRepeatedPassword.invoke(it.password, it.repeatedPassword).not()) {
-                    R.string.passwords_do_not_match_error
-                } else {
-                    null
-                }
+        _uiState.update {
+            val validationResult = validateSignUp(
+                name = it.firstname,
+                lastname = it.lastname,
+                email = it.email,
+                password = it.password,
+                confirmPassword = it.repeatedPassword
             )
-        ) }
+            when (validationResult) {
+                is ValidateSignUp.Result.Failure -> {
+                    it.copy(
+                        errorState = SignUpErrorState(
+                            firstnameError = validationResult.errors[ValidateSignUp.NAME_FIELD],
+                            lastnameError = validationResult.errors[ValidateSignUp.LASTNAME_FIELD],
+                            emailError = validationResult.errors[ValidateSignUp.EMAIL_FIELD],
+                            passwordError = validationResult.errors[ValidateSignUp.PASSWORD_FIELD],
+                            repeatedPasswordError = validationResult.errors[ValidateSignUp.CONFIRM_PASSWORD_FIELD],
+                        )
+                    )
+                }
+                is ValidateSignUp.Result.Success -> {
+                    it.copy(errorState = SignUpErrorState())
+                }
+            }
+        }
         if (_uiState.value.errorState == SignUpErrorState()) {
             viewModelScope.launch {
                 signUpUseCase.invoke(

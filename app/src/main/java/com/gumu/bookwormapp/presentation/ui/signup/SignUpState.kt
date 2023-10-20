@@ -1,6 +1,6 @@
 package com.gumu.bookwormapp.presentation.ui.signup
 
-import androidx.annotation.StringRes
+import com.gumu.bookwormapp.domain.common.UiText
 
 data class SignUpState(
     val isLoading: Boolean = false,
@@ -13,9 +13,9 @@ data class SignUpState(
 )
 
 data class SignUpErrorState(
-    @StringRes val firstnameError: Int? = null,
-    @StringRes val lastnameError: Int? = null,
-    @StringRes val emailError: Int? = null,
-    @StringRes val passwordError: Int? = null,
-    @StringRes val repeatedPasswordError: Int? = null
+    val firstnameError: UiText? = null,
+    val lastnameError: UiText? = null,
+    val emailError: UiText? = null,
+    val passwordError: UiText? = null,
+    val repeatedPasswordError: UiText? = null
 )

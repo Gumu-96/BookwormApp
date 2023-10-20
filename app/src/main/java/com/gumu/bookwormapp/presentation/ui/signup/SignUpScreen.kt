@@ -1,6 +1,5 @@
 package com.gumu.bookwormapp.presentation.ui.signup
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -32,7 +31,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.gumu.bookwormapp.R
-import com.gumu.bookwormapp.domain.common.ValidationUtils
+import com.gumu.bookwormapp.domain.common.UiText
 import com.gumu.bookwormapp.presentation.component.CustomOutlinedTextField
 import com.gumu.bookwormapp.presentation.component.LoadingOverlay
 import com.gumu.bookwormapp.presentation.component.NavigateBackTopAppBar
@@ -90,11 +89,11 @@ fun SignUpForm(
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onRepeatedPasswordChange: (String) -> Unit,
-    @StringRes firstnameError: Int?,
-    @StringRes lastnameError: Int?,
-    @StringRes emailError: Int?,
-    @StringRes passwordError: Int?,
-    @StringRes repeatedPasswordError: Int?,
+    firstnameError: UiText?,
+    lastnameError: UiText?,
+    emailError: UiText?,
+    passwordError: UiText?,
+    repeatedPasswordError: UiText?,
     onRegisterClick: () -> Unit
 ) {
     val localFocusManager = LocalFocusManager.current
@@ -125,7 +124,7 @@ fun SignUpForm(
                 onNext = { localFocusManager.moveFocus(FocusDirection.Down) }
             ),
             isError = firstnameError != null,
-            errorMessage = firstnameError?.let { stringResource(id = it) },
+            errorMessage = firstnameError?.asString(),
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -141,7 +140,7 @@ fun SignUpForm(
                 onNext = { localFocusManager.moveFocus(FocusDirection.Down) }
             ),
             isError = lastnameError != null,
-            errorMessage = lastnameError?.let { stringResource(id = it) },
+            errorMessage = lastnameError?.asString(),
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -158,7 +157,7 @@ fun SignUpForm(
                 onNext = { localFocusManager.moveFocus(FocusDirection.Down) }
             ),
             isError = emailError != null,
-            errorMessage = emailError?.let { stringResource(id = it) },
+            errorMessage = emailError?.asString(),
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -176,9 +175,7 @@ fun SignUpForm(
             ),
             isPassword = true,
             isError = passwordError != null,
-            errorMessage = passwordError?.let {
-                stringResource(id = it, ValidationUtils.MINIMUM_PASSWORD_LENGTH)
-            },
+            errorMessage = passwordError?.asString(),
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -196,7 +193,7 @@ fun SignUpForm(
             ),
             isPassword = true,
             isError = repeatedPasswordError != null,
-            errorMessage = repeatedPasswordError?.let { stringResource(id = it) },
+            errorMessage = repeatedPasswordError?.asString(),
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.weight(1f))
