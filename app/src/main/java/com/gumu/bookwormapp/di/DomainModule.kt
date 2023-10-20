@@ -4,6 +4,7 @@ import com.gumu.bookwormapp.domain.usecase.ValidateEmail
 import com.gumu.bookwormapp.domain.usecase.ValidateName
 import com.gumu.bookwormapp.domain.usecase.ValidatePassword
 import com.gumu.bookwormapp.domain.usecase.ValidateRepeatedPassword
+import com.gumu.bookwormapp.domain.usecase.ValidateSignUp
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,4 +29,8 @@ object DomainModule {
     @ViewModelScoped
     @Provides
     fun provideValidateRepeatedPasswordUseCase() = ValidateRepeatedPassword()
+
+    @ViewModelScoped
+    @Provides
+    fun provideValidateSignUpUseCase() = ValidateSignUp()
 }
