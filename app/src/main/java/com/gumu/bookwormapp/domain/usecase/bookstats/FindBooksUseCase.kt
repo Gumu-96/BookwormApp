@@ -7,9 +7,8 @@ import com.gumu.bookwormapp.domain.common.BookTypeFilter
 import com.gumu.bookwormapp.domain.model.Book
 import com.gumu.bookwormapp.domain.repository.BooksRepository
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
 
-class FindBooksUseCase @Inject constructor(
+class FindBooksUseCase(
     private val repository: BooksRepository
 ) {
     operator fun invoke(

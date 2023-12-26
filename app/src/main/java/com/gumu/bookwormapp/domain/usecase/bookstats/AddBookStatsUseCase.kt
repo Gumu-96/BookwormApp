@@ -4,9 +4,8 @@ import com.gumu.bookwormapp.domain.common.AppResult
 import com.gumu.bookwormapp.domain.model.BookStats
 import com.gumu.bookwormapp.domain.repository.BookStatsRepository
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
 
-class AddBookStatsUseCase @Inject constructor(
+class AddBookStatsUseCase(
     private val repository: BookStatsRepository
 ) {
     operator fun invoke(bookStats: BookStats): Flow<AppResult<Unit>> {
