@@ -26,9 +26,7 @@ class FirebaseAuthRepository @Inject constructor(
                 .addOnSuccessListener {
                     it.user?.let { continuation.resume(AppResult.Success(Unit)) }
                 }
-                .addOnFailureListener {
-                    continuation.resume(AppResult.Failure(AppError(it)))
-                }
+                .addOnFailureListener { continuation.resume(AppResult.Failure(AppError(it))) }
         }
 
     override suspend fun registerUser(email: String, password: String): AppResult<String?> =
@@ -37,9 +35,7 @@ class FirebaseAuthRepository @Inject constructor(
                 .addOnSuccessListener { authResult ->
                     authResult.user?.let { continuation.resume(AppResult.Success(it.uid)) }
                 }
-                .addOnFailureListener {
-                    continuation.resume(AppResult.Failure(AppError(it)))
-                }
+                .addOnFailureListener { continuation.resume(AppResult.Failure(AppError(it))) }
         }
 
     override suspend fun saveNewUserData(user: User): AppResult<Unit> =
@@ -47,12 +43,8 @@ class FirebaseAuthRepository @Inject constructor(
             firestore.collection(RemoteConstants.USERS_COLLECTION)
                 .document(user.id)
                 .set(user.toDto())
-                .addOnSuccessListener {
-                    continuation.resume(AppResult.Success(Unit))
-                }
-                .addOnFailureListener {
-                    continuation.resume(AppResult.Failure(AppError(it)))
-                }
+                .addOnSuccessListener { continuation.resume(AppResult.Success(Unit)) }
+                .addOnFailureListener { continuation.resume(AppResult.Failure(AppError(it))) }
         }
 
     override suspend fun signOut(): AppResult<Unit> = suspendCancellableCoroutine { continuation ->
