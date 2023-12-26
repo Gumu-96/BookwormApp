@@ -13,8 +13,10 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
+import kotlin.coroutines.resume
 
 class FirebaseAuthRepository @Inject constructor(
     private val auth: FirebaseAuth,
@@ -23,17 +25,16 @@ class FirebaseAuthRepository @Inject constructor(
 
     override fun checkUserSession(): Boolean = auth.currentUser != null
 
-    override fun signIn(email: String, password: String): Flow<AppResult<Unit>> = callbackFlow {
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnSuccessListener {
-                it.user?.let { trySend(AppResult.Success(Unit)) }
-            }
-            .addOnFailureListener {
-                trySend(AppResult.Failure(AppError(it)))
-            }
-            .await()
-        awaitClose()
-    }.onStart { emit(AppResult.Loading) }
+    override suspend fun signIn(email: String, password: String): AppResult<Unit> =
+        suspendCancellableCoroutine { continuation ->
+            auth.signInWithEmailAndPassword(email, password)
+                .addOnSuccessListener {
+                    it.user?.let { continuation.resume(AppResult.Success(Unit)) }
+                }
+                .addOnFailureListener {
+                    continuation.resume(AppResult.Failure(AppError(it)))
+                }
+        }
 
     override fun registerUser(email: String, password: String): Flow<AppResult<String?>> = callbackFlow {
         auth.createUserWithEmailAndPassword(email, password)
