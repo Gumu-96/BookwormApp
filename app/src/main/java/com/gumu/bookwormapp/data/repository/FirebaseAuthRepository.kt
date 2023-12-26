@@ -9,9 +9,6 @@ import com.gumu.bookwormapp.domain.common.AppError
 import com.gumu.bookwormapp.domain.common.AppResult
 import com.gumu.bookwormapp.domain.model.User
 import com.gumu.bookwormapp.domain.repository.AuthRepository
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 import kotlin.coroutines.resume
@@ -58,10 +55,10 @@ class FirebaseAuthRepository @Inject constructor(
                 }
         }
 
-    override fun signOut(): Flow<AppResult<Unit>> = callbackFlow {
-        val listener = AuthStateListener { trySend(AppResult.Success(Unit)) }
+    override suspend fun signOut(): AppResult<Unit> = suspendCancellableCoroutine { continuation ->
+        val listener = AuthStateListener { continuation.resume(AppResult.Success(Unit)) }
         auth.addAuthStateListener(listener)
         auth.signOut()
-        awaitClose { auth.removeAuthStateListener(listener) }
+        continuation.invokeOnCancellation { auth.removeAuthStateListener(listener) }
     }
 }

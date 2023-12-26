@@ -12,7 +12,6 @@ import com.gumu.bookwormapp.presentation.ui.common.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -42,10 +41,8 @@ class HomeViewModel @Inject constructor(
 
     private fun onSignOutClick() {
         viewModelScope.launch {
-            signOutUseCase.invoke().collectLatest {
-                it.onSuccess {
-                    sendEvent(UiEvent.NavigateTo(Screen.SignInScreen.route, Screen.HomeScreen.route))
-                }
+            signOutUseCase().onSuccess {
+                sendEvent(UiEvent.NavigateTo(Screen.SignInScreen.route, Screen.HomeScreen.route))
             }
         }
     }
