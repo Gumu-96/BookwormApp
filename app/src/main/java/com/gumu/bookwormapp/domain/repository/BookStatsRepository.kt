@@ -7,9 +7,9 @@ import com.gumu.bookwormapp.domain.model.ReadingStatus
 import kotlinx.coroutines.flow.Flow
 
 interface BookStatsRepository {
-    fun saveBookStats(bookStats: BookStats): Flow<AppResult<Unit>>
-    fun updateBookStats(bookStats: BookStats): Flow<AppResult<Unit>>
+    suspend fun saveBookStats(bookStats: BookStats): AppResult<Unit>
+    suspend fun updateBookStats(bookStats: BookStats): AppResult<Unit>
     fun getAllBookStats(status: ReadingStatus): Flow<PagingData<BookStats>>
-    fun getBookStats(bookStatsId: String): Flow<AppResult<BookStats?>>
-    fun deleteBookStats(bookStatsId: String): Flow<AppResult<Unit>>
+    suspend fun getBookStats(bookStatsId: String): AppResult<BookStats?>
+    suspend fun deleteBookStats(bookStatsId: String): AppResult<Unit>
 }

@@ -3,7 +3,6 @@ package com.gumu.bookwormapp.presentation.ui.bookstats
 import androidx.lifecycle.viewModelScope
 import com.gumu.bookwormapp.R
 import com.gumu.bookwormapp.domain.common.onFailure
-import com.gumu.bookwormapp.domain.common.onLoading
 import com.gumu.bookwormapp.domain.common.onSuccess
 import com.gumu.bookwormapp.domain.model.BookStats
 import com.gumu.bookwormapp.domain.model.ReadingStatus
@@ -15,7 +14,6 @@ import com.gumu.bookwormapp.presentation.ui.common.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -43,27 +41,24 @@ class BookStatsViewModel @Inject constructor(
     private fun onLoadStats(statsId: String?) {
         statsId?.let { id ->
             viewModelScope.launch {
-                getBookStatsUseCase.invoke(id).collectLatest { result ->
-                    result.onLoading {
-                        _uiState.update { it.copy(isLoading = true) }
-                    }.onSuccess { statsResult ->
-                        statsResult?.let { stats ->
-                            initialStats = stats
-                            _uiState.update { it.copy(
-                                book = stats.book,
-                                rating = stats.rating,
-                                thoughts = stats.thoughts,
-                                status = stats.status,
-                                isLoading = false
-                            ) }
-                        } ?: run {
-                            _uiState.update { it.copy(isLoading = false) }
-                            sendEvent(UiEvent.ShowToast(R.string.stats_not_found_message))
-                        }
-                    }.onFailure {
+                _uiState.update { it.copy(isLoading = true) }
+                getBookStatsUseCase(id).onSuccess { statsResult ->
+                    statsResult?.let { stats ->
+                        initialStats = stats
+                        _uiState.update { it.copy(
+                            book = stats.book,
+                            rating = stats.rating,
+                            thoughts = stats.thoughts,
+                            status = stats.status,
+                            isLoading = false
+                        ) }
+                    } ?: run {
                         _uiState.update { it.copy(isLoading = false) }
-                        sendEvent(UiEvent.ShowToast(R.string.generic_error_message))
+                        sendEvent(UiEvent.ShowToast(R.string.stats_not_found_message))
                     }
+                }.onFailure {
+                    _uiState.update { it.copy(isLoading = false) }
+                    sendEvent(UiEvent.ShowToast(R.string.generic_error_message))
                 }
             }
         } ?: run {
@@ -90,22 +85,16 @@ class BookStatsViewModel @Inject constructor(
     private fun onConfirmDelete() {
         initialStats?.id?.let { id ->
             viewModelScope.launch {
-                deleteBookStatsUseCase.invoke(id).collectLatest { result ->
-                    result.onLoading {
-                        _uiState.update { it.copy(
-                            showDeleteDialog = false,
-                            isLoading = true
-                        ) }
-                    }.onSuccess {
-                        sendEvent(UiEvent.NavigateBack)
-                        sendEvent(UiEvent.ShowToast(R.string.generic_success_message))
-                    }.onFailure {
-                        _uiState.update { it.copy(
-                            showDeleteDialog = false,
-                            isLoading = false
-                        ) }
-                        sendEvent(UiEvent.ShowToast(R.string.generic_error_message))
-                    }
+                _uiState.update { it.copy(
+                    showDeleteDialog = false,
+                    isLoading = true
+                ) }
+                deleteBookStatsUseCase.invoke(id).onSuccess {
+                    sendEvent(UiEvent.ShowToast(R.string.generic_success_message))
+                    sendEvent(UiEvent.NavigateBack)
+                }.onFailure {
+                    _uiState.update { it.copy(isLoading = false) }
+                    sendEvent(UiEvent.ShowToast(R.string.generic_error_message))
                 }
             }
         }
@@ -114,24 +103,21 @@ class BookStatsViewModel @Inject constructor(
     private fun onSaveChanges() {
         initialStats?.let { stats ->
             viewModelScope.launch {
+                _uiState.update { it.copy(savingChanges = true) }
                 val updatedStats = stats.copy(
                     rating = _uiState.value.rating,
                     thoughts = _uiState.value.thoughts,
                     status = _uiState.value.status
                 )
 
-                updateBookStatsUseCase.invoke(updatedStats).collectLatest { result ->
-                    result.onLoading {
-                        _uiState.update { it.copy(savingChanges = true) }
-                    }.onSuccess {
-                        initialStats = updatedStats
-                        sendEvent(UiEvent.ShowToast(R.string.generic_success_message))
-                        checkForChanges()
-                        _uiState.update { it.copy(savingChanges = false) }
-                    }.onFailure {
-                        sendEvent(UiEvent.ShowToast(R.string.generic_error_message))
-                        _uiState.update { it.copy(savingChanges = false) }
-                    }
+                updateBookStatsUseCase(updatedStats).onSuccess {
+                    initialStats = updatedStats
+                    sendEvent(UiEvent.ShowToast(R.string.generic_success_message))
+                    checkForChanges()
+                    _uiState.update { it.copy(savingChanges = false) }
+                }.onFailure {
+                    sendEvent(UiEvent.ShowToast(R.string.generic_error_message))
+                    _uiState.update { it.copy(savingChanges = false) }
                 }
             }
         }

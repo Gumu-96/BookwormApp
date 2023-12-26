@@ -6,7 +6,6 @@ import com.gumu.bookwormapp.domain.common.BookOrderByFilter
 import com.gumu.bookwormapp.domain.common.BookPrintTypeFilter
 import com.gumu.bookwormapp.domain.common.BookTypeFilter
 import com.gumu.bookwormapp.domain.common.onFailure
-import com.gumu.bookwormapp.domain.common.onLoading
 import com.gumu.bookwormapp.domain.common.onSuccess
 import com.gumu.bookwormapp.domain.model.Book
 import com.gumu.bookwormapp.domain.model.BookStats
@@ -17,7 +16,6 @@ import com.gumu.bookwormapp.presentation.ui.common.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -83,16 +81,13 @@ class SearchViewModel @Inject constructor(
 
     private fun onAddBookClick(book: Book) {
         viewModelScope.launch {
-            addBookStatsUseCase.invoke(BookStats(book)).collectLatest { result ->
-                result.onLoading {
-                    _uiState.update { it.copy(isAddingBook = true) }
-                }.onSuccess {
-                    _uiState.update { it.copy(isAddingBook = false) }
-                    sendEvent(UiEvent.ShowToast(R.string.generic_success_message))
-                }.onFailure {
-                    _uiState.update { it.copy(isAddingBook = false) }
-                    sendEvent(UiEvent.ShowToast(R.string.generic_error_message))
-                }
+            _uiState.update { it.copy(isAddingBook = true) }
+            addBookStatsUseCase.invoke(BookStats(book)).onSuccess {
+                _uiState.update { it.copy(isAddingBook = false) }
+                sendEvent(UiEvent.ShowToast(R.string.generic_success_message))
+            }.onFailure {
+                _uiState.update { it.copy(isAddingBook = false) }
+                sendEvent(UiEvent.ShowToast(R.string.generic_error_message))
             }
         }
     }
