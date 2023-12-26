@@ -56,7 +56,9 @@ class FirebaseAuthRepository @Inject constructor(
         }
 
     override suspend fun signOut(): AppResult<Unit> = suspendCancellableCoroutine { continuation ->
-        val listener = AuthStateListener { continuation.resume(AppResult.Success(Unit)) }
+        val listener = AuthStateListener {
+            if (continuation.isActive) continuation.resume(AppResult.Success(Unit))
+        }
         auth.addAuthStateListener(listener)
         auth.signOut()
         continuation.invokeOnCancellation { auth.removeAuthStateListener(listener) }
