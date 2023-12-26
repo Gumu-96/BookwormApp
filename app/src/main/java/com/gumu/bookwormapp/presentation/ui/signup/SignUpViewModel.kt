@@ -3,7 +3,6 @@ package com.gumu.bookwormapp.presentation.ui.signup
 import androidx.lifecycle.viewModelScope
 import com.gumu.bookwormapp.R
 import com.gumu.bookwormapp.domain.common.onFailure
-import com.gumu.bookwormapp.domain.common.onLoading
 import com.gumu.bookwormapp.domain.common.onSuccess
 import com.gumu.bookwormapp.domain.model.User
 import com.gumu.bookwormapp.domain.usecase.ValidateSignUp
@@ -15,7 +14,6 @@ import com.gumu.bookwormapp.presentation.ui.common.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -93,39 +91,34 @@ class SignUpViewModel @Inject constructor(
         }
         if (_uiState.value.errorState == SignUpErrorState()) {
             viewModelScope.launch {
-                signUpUseCase.invoke(
+                _uiState.update { it.copy(isLoading = true) }
+                signUpUseCase(
                     email = _uiState.value.email,
                     password = _uiState.value.password
-                ).collectLatest { result ->
-                    result.onLoading {
-                        _uiState.update { it.copy(isLoading = true) }
-                    }.onSuccess { userId ->
-                        userId?.let {
-                            saveUserData(it)
-                        }
-                    }.onFailure {
-                        _uiState.update { it.copy(isLoading = false) }
-                        sendEvent(UiEvent.ShowToast(R.string.registration_error))
+                ).onSuccess { userId ->
+                    userId?.let {
+                        saveUserData(it)
                     }
+                }.onFailure {
+                    _uiState.update { it.copy(isLoading = false) }
+                    sendEvent(UiEvent.ShowToast(R.string.registration_error))
                 }
             }
         }
     }
 
     private suspend fun saveUserData(userId: String) {
-        saveNewUserDataUseCase.invoke(
+        saveNewUserDataUseCase(
             User(
                 id = userId,
                 firstname = _uiState.value.firstname,
                 lastname = _uiState.value.lastname
             )
-        ).collectLatest { result ->
-            result.onSuccess {
-                sendEvent(UiEvent.NavigateTo(Screen.HomeScreen.route, Screen.SignInScreen.route))
-            }.onFailure {
-                _uiState.update { it.copy(isLoading = false) }
-                sendEvent(UiEvent.ShowToast(R.string.registration_data_error))
-            }
+        ).onSuccess {
+            sendEvent(UiEvent.NavigateTo(Screen.HomeScreen.route, Screen.SignInScreen.route))
+        }.onFailure {
+            _uiState.update { it.copy(isLoading = false) }
+            sendEvent(UiEvent.ShowToast(R.string.registration_data_error))
         }
     }
 

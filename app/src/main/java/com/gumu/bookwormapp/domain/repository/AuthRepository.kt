@@ -8,6 +8,6 @@ interface AuthRepository {
     fun checkUserSession(): Boolean
     suspend fun signIn(email: String, password: String): AppResult<Unit>
     fun signOut(): Flow<AppResult<Unit>>
-    fun registerUser(email: String, password: String): Flow<AppResult<String?>>
-    fun saveNewUserData(user: User): Flow<AppResult<Unit>>
+    suspend fun registerUser(email: String, password: String): AppResult<String?>
+    suspend fun saveNewUserData(user: User): AppResult<Unit>
 }
