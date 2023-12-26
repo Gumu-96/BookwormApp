@@ -1,9 +1,8 @@
 package com.gumu.bookwormapp.domain.usecase.auth
 
 import com.gumu.bookwormapp.domain.repository.AuthRepository
-import javax.inject.Inject
 
-class CheckUserSessionUseCase @Inject constructor(
+class CheckUserSessionUseCase(
     private val repository: AuthRepository
 ) {
     operator fun invoke(): Boolean {
