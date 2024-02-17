@@ -38,11 +38,11 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.items
 import com.gumu.bookwormapp.R
 import com.gumu.bookwormapp.domain.model.BookStats
-import com.gumu.bookwormapp.presentation.component.BookStatusItem
 import com.gumu.bookwormapp.presentation.component.ErrorItem
 import com.gumu.bookwormapp.presentation.component.ErrorSurface
 import com.gumu.bookwormapp.presentation.component.LoadingOverlay
 import com.gumu.bookwormapp.presentation.component.SuchEmptyStats
+import com.gumu.bookwormapp.presentation.ui.home.component.BookStatusItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

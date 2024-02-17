@@ -68,13 +68,13 @@ import com.gumu.bookwormapp.domain.common.BookOrderByFilter
 import com.gumu.bookwormapp.domain.common.BookPrintTypeFilter
 import com.gumu.bookwormapp.domain.common.BookTypeFilter
 import com.gumu.bookwormapp.domain.model.Book
-import com.gumu.bookwormapp.presentation.component.BookItem
 import com.gumu.bookwormapp.presentation.component.CustomAsyncImage
 import com.gumu.bookwormapp.presentation.component.ErrorItem
 import com.gumu.bookwormapp.presentation.component.ErrorSurface
 import com.gumu.bookwormapp.presentation.component.FilterCategory
 import com.gumu.bookwormapp.presentation.component.LoadingOverlay
-import com.gumu.bookwormapp.presentation.component.SuchEmptyResults
+import com.gumu.bookwormapp.presentation.ui.search.component.BookItem
+import com.gumu.bookwormapp.presentation.ui.search.component.SuchEmptyResults
 import com.gumu.bookwormapp.presentation.util.BookOrderByFilterUi
 import com.gumu.bookwormapp.presentation.util.BookPrintTypeFilterUi
 import com.gumu.bookwormapp.presentation.util.BookTypeFilterUi
