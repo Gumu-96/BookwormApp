@@ -48,6 +48,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gumu.bookwormapp.R
@@ -58,6 +59,7 @@ import com.gumu.bookwormapp.presentation.component.CustomOutlinedTextField
 import com.gumu.bookwormapp.presentation.component.LoadingOverlay
 import com.gumu.bookwormapp.presentation.component.NavigateBackTopAppBar
 import com.gumu.bookwormapp.presentation.component.SuchEmptyStats
+import com.gumu.bookwormapp.presentation.theme.BookwormAppTheme
 import com.gumu.bookwormapp.presentation.util.ReadingStatusUi
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -376,4 +378,26 @@ fun ConfirmLeaveDialog(
             }
         }
     )
+}
+
+@Preview
+@Composable
+private fun BookStatsScreenPreview() {
+    BookwormAppTheme {
+        BookStatsScreen(
+            bookStatsId = null,
+            state = BookStatsState(
+                book = Book(
+                    id = "ABC123",
+                    title = "Book item",
+                    authors = listOf("John", "Doe"),
+                    publishedDate = "May 2023",
+                    description = "This is a Book item",
+                    categories = listOf("Compose", "Preview"),
+                    thumbnail = null
+                )
+            ),
+            onEvent = {}
+        )
+    }
 }

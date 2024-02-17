@@ -29,12 +29,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gumu.bookwormapp.R
 import com.gumu.bookwormapp.domain.common.UiText
 import com.gumu.bookwormapp.presentation.component.CustomOutlinedTextField
 import com.gumu.bookwormapp.presentation.component.LoadingOverlay
 import com.gumu.bookwormapp.presentation.component.NavigateBackTopAppBar
+import com.gumu.bookwormapp.presentation.theme.BookwormAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -207,5 +209,16 @@ fun SignUpForm(
         ) {
             Text(text = stringResource(id = R.string.create_account_button_label))
         }
+    }
+}
+
+@Preview
+@Composable
+private fun SignUpScreenPreview() {
+    BookwormAppTheme {
+        SignUpScreen(
+            state = SignUpState(),
+            onEvent = {}
+        )
     }
 }

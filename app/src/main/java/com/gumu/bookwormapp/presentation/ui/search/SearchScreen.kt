@@ -57,6 +57,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.LoadState
@@ -73,6 +74,7 @@ import com.gumu.bookwormapp.presentation.component.ErrorItem
 import com.gumu.bookwormapp.presentation.component.ErrorSurface
 import com.gumu.bookwormapp.presentation.component.FilterCategory
 import com.gumu.bookwormapp.presentation.component.LoadingOverlay
+import com.gumu.bookwormapp.presentation.theme.BookwormAppTheme
 import com.gumu.bookwormapp.presentation.ui.search.component.BookItem
 import com.gumu.bookwormapp.presentation.ui.search.component.SuchEmptyResults
 import com.gumu.bookwormapp.presentation.util.BookOrderByFilterUi
@@ -438,5 +440,16 @@ fun BookBottomSheetContent(
                 Text(text = stringResource(id = R.string.add_to_list_button_label))
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun SearchScreenPreview() {
+    BookwormAppTheme {
+        SearchScreen(
+            state = SearchState(),
+            onEvent = {}
+        )
     }
 }

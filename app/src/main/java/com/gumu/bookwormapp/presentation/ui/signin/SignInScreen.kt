@@ -33,11 +33,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gumu.bookwormapp.R
 import com.gumu.bookwormapp.domain.common.ValidationUtils
 import com.gumu.bookwormapp.presentation.component.CustomOutlinedTextField
 import com.gumu.bookwormapp.presentation.component.LoadingOverlay
+import com.gumu.bookwormapp.presentation.theme.BookwormAppTheme
 
 @Composable
 fun SignInScreen(
@@ -180,6 +182,17 @@ fun SignUpSection(
             color = MaterialTheme.colorScheme.primary,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.clickable(onClick = onSignUpClick)
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun SignInPreview() {
+    BookwormAppTheme {
+        SignInScreen(
+            state = SignInState(),
+            onEvent = {}
         )
     }
 }
