@@ -13,4 +13,4 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "BookwormApp"
-include ':app'
+include(":app")
