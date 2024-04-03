@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BookwormApp</string>
+    <string name="app_name">Bookworm</string>
     <string name="generic_error_message">Something went wrong</string>
     <string name="generic_success_message">Success</string>
     <string name="stats_not_found_message">Book stats not found</string>
