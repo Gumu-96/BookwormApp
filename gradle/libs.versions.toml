@@ -22,7 +22,7 @@ espresso-core = "3.5.1"
 compose-bom = "2022.10.00"
 
 # Plugin versions
-androidGradlePlugin = "8.0.1"
+androidGradlePlugin = "8.2.2"
 kotlin = "1.8.0"
 crashlytics = "2.9.9"
 
