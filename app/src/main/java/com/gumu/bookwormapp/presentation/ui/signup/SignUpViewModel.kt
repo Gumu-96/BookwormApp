@@ -65,28 +65,25 @@ class SignUpViewModel @Inject constructor(
 
     private fun onRegisterClick() {
         _uiState.update {
-            val validationResult = validateSignUp(
+            val result = validateSignUp(
                 name = it.firstname,
                 lastname = it.lastname,
                 email = it.email,
                 password = it.password,
                 confirmPassword = it.repeatedPassword
             )
-            when (validationResult) {
-                is ValidateSignUp.Result.Failure -> {
-                    it.copy(
-                        errorState = SignUpErrorState(
-                            firstnameError = validationResult.errors[ValidateSignUp.NAME_FIELD],
-                            lastnameError = validationResult.errors[ValidateSignUp.LASTNAME_FIELD],
-                            emailError = validationResult.errors[ValidateSignUp.EMAIL_FIELD],
-                            passwordError = validationResult.errors[ValidateSignUp.PASSWORD_FIELD],
-                            repeatedPasswordError = validationResult.errors[ValidateSignUp.CONFIRM_PASSWORD_FIELD],
-                        )
+            if (result.isSuccess()) {
+                it.copy(errorState = SignUpErrorState())
+            } else {
+                it.copy(
+                    errorState = SignUpErrorState(
+                        firstnameError = result.errors[ValidateSignUp.NAME_FIELD],
+                        lastnameError = result.errors[ValidateSignUp.LASTNAME_FIELD],
+                        emailError = result.errors[ValidateSignUp.EMAIL_FIELD],
+                        passwordError = result.errors[ValidateSignUp.PASSWORD_FIELD],
+                        repeatedPasswordError = result.errors[ValidateSignUp.CONFIRM_PASSWORD_FIELD],
                     )
-                }
-                is ValidateSignUp.Result.Success -> {
-                    it.copy(errorState = SignUpErrorState())
-                }
+                )
             }
         }
         if (_uiState.value.errorState == SignUpErrorState()) {

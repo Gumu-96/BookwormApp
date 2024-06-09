@@ -3,6 +3,8 @@ package com.gumu.bookwormapp.domain.usecase
 import android.util.Patterns
 import com.gumu.bookwormapp.R
 import com.gumu.bookwormapp.domain.common.UiText
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 class ValidateSignUp {
     operator fun invoke(
@@ -72,6 +74,15 @@ class ValidateSignUp {
     sealed class Result {
         object Success : Result()
         data class Failure(val errors: Map<String, UiText>) : Result()
+
+        @OptIn(ExperimentalContracts::class)
+        fun isSuccess(): Boolean {
+            contract {
+                returns(false) implies (this@Result is Failure)
+                returns(true) implies (this@Result is Success)
+            }
+            return this is Success
+        }
     }
 
     companion object {
