@@ -25,7 +25,6 @@ import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Print
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Sort
-import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -99,55 +98,53 @@ fun SearchScreen(
         }
     }
 
-    LaunchedEffect(key1 = state.isAddingBook) {
+    LaunchedEffect(state.isAddingBook) {
         if (state.isAddingBook.not()) dismissDetails()
     }
 
-    BottomSheetScaffold(
-        sheetContent = {
-            if (state.showBookDetails) {
-                ModalBottomSheet(
-                    onDismissRequest = { dismissDetails() },
-                    sheetState = bottomSheetState
-                ) {
-                    state.displayBook?.let { book ->
-                        BookBottomSheetContent(
-                            book = book,
-                            onAddClick = { onEvent(SearchEvent.OnAddBookClick(it)) },
-                            isAddingBook = state.isAddingBook
-                        )
-                    }
-                }
+    if (state.showBookDetails) {
+        ModalBottomSheet(
+            onDismissRequest = { dismissDetails() },
+            sheetState = bottomSheetState
+        ) {
+            state.displayBook?.let { book ->
+                BookBottomSheetContent(
+                    book = book,
+                    onAddClick = { onEvent(SearchEvent.OnAddBookClick(it)) },
+                    isAddingBook = state.isAddingBook
+                )
             }
-        },
-        sheetPeekHeight = 0.dp,
-    ) { padding ->
-        Box(modifier = Modifier.padding(padding)) {
-            BooksSearchBar(
-                searchQuery = state.searchQuery,
-                onSearchQueryChange = { onEvent(SearchEvent.OnSearchQueryChange(it)) },
-                onBackClick = { onEvent(SearchEvent.OnBackClick) },
-                onPerformSearch = { onEvent(SearchEvent.OnPerformSearch) },
-                onClearQuery = { onEvent(SearchEvent.OnClearQuery) },
-                currentFilters = state.filterOptions,
-                onOrderByClick = { onEvent(SearchEvent.OnOrderByClick(it)) },
-                onPrintTypeClick = { onEvent(SearchEvent.OnPrintTypeClick(it)) },
-                onBookTypeClick = { onEvent(SearchEvent.OnBookTypeClick(it)) }
-            )
-            Box(modifier = Modifier.padding(top = 72.dp)) {
-                when (books?.loadState?.refresh) {
-                    is LoadState.Loading -> LoadingOverlay()
-                    is LoadState.Error -> ErrorSurface(
-                        modifier = Modifier.fillMaxSize(),
-                        onRetryClick = { books.retry() }
-                    )
-                    else -> BooksList(
-                        books = books,
-                        onBookClick = {
-                            if (state.isAddingBook.not()) onEvent(SearchEvent.OnBookClick(it))
-                        }
-                    )
-                }
+        }
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface)
+    ) {
+        BooksSearchBar(
+            searchQuery = state.searchQuery,
+            onSearchQueryChange = { onEvent(SearchEvent.OnSearchQueryChange(it)) },
+            onBackClick = { onEvent(SearchEvent.OnBackClick) },
+            onPerformSearch = { onEvent(SearchEvent.OnPerformSearch) },
+            onClearQuery = { onEvent(SearchEvent.OnClearQuery) },
+            currentFilters = state.filterOptions,
+            onOrderByClick = { onEvent(SearchEvent.OnOrderByClick(it)) },
+            onPrintTypeClick = { onEvent(SearchEvent.OnPrintTypeClick(it)) },
+            onBookTypeClick = { onEvent(SearchEvent.OnBookTypeClick(it)) }
+        )
+        Box(modifier = Modifier.padding(top = 72.dp)) {
+            when (books?.loadState?.refresh) {
+                is LoadState.Loading -> LoadingOverlay()
+                is LoadState.Error -> ErrorSurface(
+                    modifier = Modifier.fillMaxSize(),
+                    onRetryClick = { books.retry() }
+                )
+                else -> BooksList(
+                    books = books,
+                    onBookClick = {
+                        if (state.isAddingBook.not()) onEvent(SearchEvent.OnBookClick(it))
+                    }
+                )
             }
         }
     }
@@ -354,10 +351,15 @@ fun NewSearchItem() {
     ) {
         Icon(
             imageVector = Icons.Default.Search,
-            contentDescription = stringResource(id = R.string.search_icon_desc)
+            contentDescription = stringResource(id = R.string.search_icon_desc),
+            tint = MaterialTheme.colorScheme.onSurface
         )
         Spacer(modifier = Modifier.width(16.dp))
-        Text(text = stringResource(id = R.string.search_field_placeholder), fontWeight = FontWeight.SemiBold)
+        Text(
+            text = stringResource(id = R.string.search_field_placeholder),
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurface
+        )
     }
 }
 
