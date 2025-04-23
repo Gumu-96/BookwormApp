@@ -22,6 +22,7 @@ compose-bom = "2023.05.01"
 # Plugin versions
 androidGradlePlugin = "8.2.2"
 kotlin = "2.0.0"
+ksp = "2.0.0-1.0.24" # <kotlin version>-<ksp version>
 crashlytics = "2.9.9"
 
 [libraries]
@@ -82,6 +83,7 @@ android-application = { id = "com.android.application", version.ref = "androidGr
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+google-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 google-services = { id = "com.google.gms.google-services" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }

@@ -2,9 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose.compiler)
+    alias(libs.plugins.google.ksp)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.firebase.crashlytics)
-    id("kotlin-kapt")
     id("com.google.gms.google-services")
 }
 
@@ -77,7 +77,7 @@ dependencies {
     // Dagger-Hilt
     implementation(libs.hilt.nav.compose)
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
     // Retrofit
     implementation(libs.retrofit)
