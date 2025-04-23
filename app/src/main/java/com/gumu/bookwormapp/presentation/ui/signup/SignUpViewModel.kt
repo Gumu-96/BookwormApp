@@ -112,7 +112,7 @@ class SignUpViewModel @Inject constructor(
                 lastname = _uiState.value.lastname
             )
         ).onSuccess {
-            sendEvent(UiEvent.NavigateTo(Screen.HomeScreen.route, Screen.SignInScreen.route))
+            sendEvent(UiEvent.Navigate(Screen.HomeScreen, Screen.SignInScreen))
         }.onFailure {
             _uiState.update { it.copy(isLoading = false) }
             sendEvent(UiEvent.ShowToast(R.string.registration_data_error))

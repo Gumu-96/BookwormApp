@@ -4,8 +4,8 @@ import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import kotlinx.coroutines.Dispatchers
@@ -25,8 +25,8 @@ fun <State, ScreenEvent> ScreenWrapper(
             is UiEvent.ShowToast -> {
                 Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
             }
-            is UiEvent.NavigateBack -> navController.popBackStack()
-            is UiEvent.NavigateTo -> navController.navigate(event.route) {
+            is UiEvent.NavigateBack -> navController.navigateUp()
+            is UiEvent.Navigate<*> -> navController.navigate(event.destination) {
                 event.popUpTo?.let {
                     popUpTo(it) { inclusive = true }
                 }

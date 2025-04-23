@@ -1,26 +1,24 @@
 package com.gumu.bookwormapp.presentation.navigation
 
-sealed class Screen(val route: String) {
-    private val baseRoute: String =
-        route.substring(0, route.indexOf('/').takeIf { it > -1 } ?: route.length)
+import kotlinx.serialization.Serializable
 
-    object SignInScreen : Screen("sign_in_screen")
-    object SignUpScreen : Screen("sign_up_screen")
-    object HomeScreen : Screen("home_screen")
-    object SearchScreen : Screen("search_screen")
-    object BookStatsScreen : Screen("book_stats_screen/{$BOOK_STATS_ID_PARAM}")
-    object UserStatsScreen : Screen("user_stats_screen")
+@Serializable
+sealed interface Screen {
+    @Serializable
+    data object SignInScreen : Screen
 
-    fun withArgs(vararg args: String): String {
-        return buildString {
-            append(baseRoute)
-            args.forEach {
-                append("/$it")
-            }
-        }
-    }
+    @Serializable
+    data object SignUpScreen : Screen
 
-    companion object {
-        const val BOOK_STATS_ID_PARAM = "book_stats_id"
-    }
+    @Serializable
+    data object HomeScreen : Screen
+
+    @Serializable
+    data object SearchScreen : Screen
+
+    @Serializable
+    data class BookStatsScreen(val statsId: String) : Screen
+
+    @Serializable
+    data object UserStatsScreen : Screen
 }

@@ -35,14 +35,14 @@ class HomeViewModel @Inject constructor(
 
     private fun onBookStatsClick(bookStats: BookStats) {
         bookStats.id?.let {
-            sendEvent(UiEvent.NavigateTo(Screen.BookStatsScreen.withArgs(it)))
+            sendEvent(UiEvent.Navigate(Screen.BookStatsScreen(it)))
         }
     }
 
     private fun onSignOutClick() {
         viewModelScope.launch {
             signOutUseCase().onSuccess {
-                sendEvent(UiEvent.NavigateTo(Screen.SignInScreen.route, Screen.HomeScreen.route))
+                sendEvent(UiEvent.Navigate(Screen.SignInScreen, Screen.HomeScreen))
             }
         }
     }
@@ -50,7 +50,7 @@ class HomeViewModel @Inject constructor(
     override fun onEvent(event: HomeEvent) {
         when (event) {
             is HomeEvent.OnBookStatsClick -> onBookStatsClick(event.bookStats)
-            HomeEvent.OnAddBookClick -> sendEvent(UiEvent.NavigateTo(Screen.SearchScreen.route))
+            HomeEvent.OnAddBookClick -> sendEvent(UiEvent.Navigate(Screen.SearchScreen))
             HomeEvent.OnAccountClick -> onSignOutClick()
         }
     }

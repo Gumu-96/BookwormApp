@@ -36,7 +36,7 @@ class SignInViewModel @Inject constructor(
     private fun checkUserSession() {
         _uiState.update { it.copy(isLoading = true) }
         if (checkUserSessionUseCase.invoke()) {
-            sendEvent(UiEvent.NavigateTo(Screen.HomeScreen.route, Screen.SignInScreen.route))
+            sendEvent(UiEvent.Navigate(Screen.HomeScreen, Screen.SignInScreen))
         } else {
             _uiState.update { it.copy(isLoading = false) }
         }
@@ -67,7 +67,7 @@ class SignInViewModel @Inject constructor(
             viewModelScope.launch {
                 _uiState.update { it.copy(isLoading = true) }
                 signInUseCase(uiState.value.email, uiState.value.password).onSuccess {
-                    sendEvent(UiEvent.NavigateTo(Screen.HomeScreen.route, Screen.SignInScreen.route))
+                    sendEvent(UiEvent.Navigate(Screen.HomeScreen, Screen.SignInScreen))
                 }.onFailure {
                     _uiState.update { it.copy(isLoading = false) }
                     sendEvent(UiEvent.ShowToast(R.string.authentication_error))
@@ -81,7 +81,7 @@ class SignInViewModel @Inject constructor(
             is SignInEvent.OnEmailChange -> onEmailChange(event.email.trim())
             is SignInEvent.OnPasswordChange -> onPasswordChange(event.password.trim())
             is SignInEvent.OnSignInClick -> onSignIn()
-            is SignInEvent.OnSignUpClick -> sendEvent(UiEvent.NavigateTo(Screen.SignUpScreen.route))
+            is SignInEvent.OnSignUpClick -> sendEvent(UiEvent.Navigate(Screen.SignUpScreen))
         }
     }
 }

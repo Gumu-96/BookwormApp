@@ -4,11 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.gumu.bookwormapp.presentation.ui.bookstats.BookStatsScreen
 import com.gumu.bookwormapp.presentation.ui.bookstats.BookStatsViewModel
@@ -26,8 +25,8 @@ import com.gumu.bookwormapp.presentation.ui.signup.SignUpViewModel
 fun BookwormNavigation() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = Screen.SignInScreen.route) {
-        composable(route = Screen.SignInScreen.route) {
+    NavHost(navController = navController, startDestination = Screen.SignInScreen) {
+        composable<Screen.SignInScreen> {
             val viewModel: SignInViewModel = hiltViewModel()
             val state by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -38,7 +37,7 @@ fun BookwormNavigation() {
                 )
             }
         }
-        composable(route = Screen.SignUpScreen.route) {
+        composable<Screen.SignUpScreen> {
             val viewModel: SignUpViewModel = hiltViewModel()
             val state by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -49,7 +48,7 @@ fun BookwormNavigation() {
                 )
             }
         }
-        composable(route = Screen.HomeScreen.route) {
+        composable<Screen.HomeScreen> {
             val viewModel: HomeViewModel = hiltViewModel()
 
             ScreenWrapper(viewModel = viewModel, navController = navController) {
@@ -61,7 +60,7 @@ fun BookwormNavigation() {
                 )
             }
         }
-        composable(route = Screen.SearchScreen.route) {
+        composable<Screen.SearchScreen> {
             val viewModel: SearchViewModel = hiltViewModel()
             val state by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -72,20 +71,14 @@ fun BookwormNavigation() {
                 )
             }
         }
-        composable(
-            route = Screen.BookStatsScreen.route,
-            arguments = listOf(
-                navArgument(Screen.BOOK_STATS_ID_PARAM) {
-                    type = NavType.StringType
-                }
-            )
-        ) {
+        composable<Screen.BookStatsScreen> {
             val viewModel: BookStatsViewModel = hiltViewModel()
             val state by viewModel.uiState.collectAsStateWithLifecycle()
+            val args = it.toRoute<Screen.BookStatsScreen>()
 
             ScreenWrapper(viewModel = viewModel, navController = navController) {
                 BookStatsScreen(
-                    bookStatsId = it.arguments?.getString(Screen.BOOK_STATS_ID_PARAM),
+                    bookStatsId = args.statsId,
                     state = state,
                     onEvent = viewModel::onEvent
                 )
