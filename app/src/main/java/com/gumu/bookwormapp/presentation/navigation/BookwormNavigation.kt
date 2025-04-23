@@ -1,9 +1,7 @@
 package com.gumu.bookwormapp.presentation.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -28,22 +26,20 @@ fun BookwormNavigation() {
     NavHost(navController = navController, startDestination = Screen.SignInScreen) {
         composable<Screen.SignInScreen> {
             val viewModel: SignInViewModel = hiltViewModel()
-            val state by viewModel.uiState.collectAsStateWithLifecycle()
 
             ScreenWrapper(viewModel = viewModel, navController = navController) {
                 SignInScreen(
-                    state = state,
+                    state = it,
                     onIntent = viewModel::onIntent
                 )
             }
         }
         composable<Screen.SignUpScreen> {
             val viewModel: SignUpViewModel = hiltViewModel()
-            val state by viewModel.uiState.collectAsStateWithLifecycle()
 
             ScreenWrapper(viewModel = viewModel, navController = navController) {
                 SignUpScreen(
-                    state = state,
+                    state = it,
                     onIntent = viewModel::onIntent
                 )
             }
@@ -62,21 +58,19 @@ fun BookwormNavigation() {
         }
         composable<Screen.SearchScreen> {
             val viewModel: SearchViewModel = hiltViewModel()
-            val state by viewModel.uiState.collectAsStateWithLifecycle()
 
             ScreenWrapper(viewModel = viewModel, navController = navController) {
                 SearchScreen(
-                    state = state,
+                    state = it,
                     onIntent = viewModel::onIntent
                 )
             }
         }
         composable<Screen.BookStatsScreen> {
             val viewModel: BookStatsViewModel = hiltViewModel()
-            val state by viewModel.uiState.collectAsStateWithLifecycle()
             val args = it.toRoute<Screen.BookStatsScreen>()
 
-            ScreenWrapper(viewModel = viewModel, navController = navController) {
+            ScreenWrapper(viewModel = viewModel, navController = navController) { state ->
                 BookStatsScreen(
                     bookStatsId = args.statsId,
                     state = state,

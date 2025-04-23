@@ -3,9 +3,11 @@ package com.gumu.bookwormapp.presentation.ui.common
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import kotlinx.coroutines.Dispatchers
@@ -16,9 +18,10 @@ import kotlinx.coroutines.withContext
 fun <S, I> ScreenWrapper(
     viewModel: BaseViewModel<S, I>,
     navController: NavController,
-    content: @Composable () -> Unit
+    content: @Composable (S) -> Unit
 ) {
     val context = LocalContext.current
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     ObserveAsEvents(viewModel.sideEffects) { event ->
         when (event) {
@@ -34,7 +37,7 @@ fun <S, I> ScreenWrapper(
         }
     }
 
-    content()
+    content(state)
 }
 
 @Composable
