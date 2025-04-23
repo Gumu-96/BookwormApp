@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.compose.compiler)
     alias(libs.plugins.google.ksp)
     alias(libs.plugins.hilt.android)
@@ -62,6 +63,7 @@ dependencies {
     implementation(libs.androidx.ktx)
     implementation(libs.activity.compose)
     implementation(libs.androidx.nav.compose)
+    implementation(libs.kotlin.serialization.json)
     // implementation(libs.androidx.splashscreen)
     implementation(libs.coil)
 
