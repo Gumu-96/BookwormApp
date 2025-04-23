@@ -55,12 +55,14 @@ android {
 
 dependencies {
     // Android - UI
-    implementation(libs.androidx.ktx)
-    implementation(libs.activity.compose)
+    implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
     implementation(libs.compose.tooling)
     implementation(libs.material3)
     implementation(libs.icons.extended)
+
+    implementation(libs.androidx.ktx)
+    implementation(libs.activity.compose)
     implementation(libs.androidx.nav.compose)
     // implementation(libs.androidx.splashscreen)
     implementation(libs.coil)
