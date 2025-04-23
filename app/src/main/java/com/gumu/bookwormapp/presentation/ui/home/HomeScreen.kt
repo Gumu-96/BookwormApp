@@ -50,18 +50,18 @@ fun HomeScreen(
     onQueueList: LazyPagingItems<BookStats>,
     readingList: LazyPagingItems<BookStats>,
     readList: LazyPagingItems<BookStats>,
-    onEvent: (HomeEvent) -> Unit
+    onIntent: (HomeIntent) -> Unit
 ) {
     val topBarScrollBehaviour = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
         topBar = {
             HomeTopAppBar(
-                onAccountClick = { onEvent(HomeEvent.OnAccountClick) },
+                onAccountClick = { onIntent(HomeIntent.OnAccountClick) },
                 scrollBehavior = topBarScrollBehaviour
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { onEvent(HomeEvent.OnAddBookClick) }) {
+            FloatingActionButton(onClick = { onIntent(HomeIntent.OnAddBookClick) }) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = stringResource(id = R.string.add_book_icon_desc)
@@ -82,7 +82,7 @@ fun HomeScreen(
                     .padding(padding)
                     .verticalScroll(rememberScrollState())
             ) {
-                val onBookStatsClick: (BookStats) -> Unit = { onEvent(HomeEvent.OnBookStatsClick(it)) }
+                val onBookStatsClick: (BookStats) -> Unit = { onIntent(HomeIntent.OnBookStatsClick(it)) }
                 if (readingList.itemCount > 0 && readingList.loadState.refresh !is LoadState.Error) {
                     BookStatsList(
                         label = stringResource(id = R.string.current_reading_activity_label),
@@ -95,7 +95,7 @@ fun HomeScreen(
                     label = stringResource(id = R.string.reading_list_label),
                     items = onQueueList,
                     onBookStatsClick = onBookStatsClick,
-                    onEmptyItemsAction = { onEvent(HomeEvent.OnAddBookClick) }
+                    onEmptyItemsAction = { onIntent(HomeIntent.OnAddBookClick) }
                 )
                 if (readList.itemCount > 0 && readList.loadState.refresh !is LoadState.Error) {
                     Spacer(modifier = Modifier.height(16.dp))

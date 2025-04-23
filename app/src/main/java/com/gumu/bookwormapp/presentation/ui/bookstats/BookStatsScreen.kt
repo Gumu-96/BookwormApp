@@ -67,20 +67,20 @@ import com.gumu.bookwormapp.presentation.util.ReadingStatusUi
 fun BookStatsScreen(
     bookStatsId: String?,
     state: BookStatsState,
-    onEvent: (BookStatsEvent) -> Unit
+    onIntent: (BookStatsIntent) -> Unit
 ) {
     LaunchedEffect(key1 = Unit) {
-        if (state.book == null) onEvent(BookStatsEvent.OnLoadStats(bookStatsId))
+        if (state.book == null) onIntent(BookStatsIntent.OnLoadStats(bookStatsId))
     }
 
     Scaffold(
         topBar = {
             NavigateBackTopAppBar(
                 title = { Text(text = stringResource(id = R.string.book_stats_screen_title_label)) },
-                onBackClick = { onEvent(BookStatsEvent.OnBackClick) },
+                onBackClick = { onIntent(BookStatsIntent.OnBackClick) },
                 actions = {
                     state.book?.let {
-                        IconButton(onClick = { onEvent(BookStatsEvent.OnDeleteClick) }) {
+                        IconButton(onClick = { onIntent(BookStatsIntent.OnDeleteClick) }) {
                             Icon(
                                 imageVector = Icons.Default.DeleteForever,
                                 contentDescription = stringResource(id = R.string.delete_icon_desc),
@@ -98,14 +98,14 @@ fun BookStatsScreen(
             state.book?.let { book ->
                 if (state.showDeleteDialog) {
                     ConfirmDeleteDialog(
-                        onConfirm = { onEvent(BookStatsEvent.OnConfirmDelete) },
-                        onDismiss = { onEvent(BookStatsEvent.OnDismissDialog) }
+                        onConfirm = { onIntent(BookStatsIntent.OnConfirmDelete) },
+                        onDismiss = { onIntent(BookStatsIntent.OnDismissDialog) }
                     )
                 }
                 if (state.showLeaveDialog) {
                     ConfirmLeaveDialog(
-                        onConfirm = { onEvent(BookStatsEvent.OnConfirmLeave) },
-                        onDismiss = { onEvent(BookStatsEvent.OnDismissDialog) }
+                        onConfirm = { onIntent(BookStatsIntent.OnConfirmLeave) },
+                        onDismiss = { onIntent(BookStatsIntent.OnDismissDialog) }
                     )
                 }
                 StatsContent(
@@ -115,10 +115,10 @@ fun BookStatsScreen(
                     status = state.status,
                     hasChanges = state.hasChanges,
                     isSavingChanges = state.savingChanges,
-                    onThoughtsChange = { onEvent(BookStatsEvent.OnThoughtsChange(it)) },
-                    onStarClick = { onEvent(BookStatsEvent.OnSetRating(it)) },
-                    onStatusChange = { onEvent(BookStatsEvent.OnStatusChange(it)) },
-                    onSaveChanges = { onEvent(BookStatsEvent.OnSaveChangesClick) },
+                    onThoughtsChange = { onIntent(BookStatsIntent.OnThoughtsChange(it)) },
+                    onStarClick = { onIntent(BookStatsIntent.OnSetRating(it)) },
+                    onStatusChange = { onIntent(BookStatsIntent.OnStatusChange(it)) },
+                    onSaveChanges = { onIntent(BookStatsIntent.OnSaveChangesClick) },
                     modifier = Modifier.padding(padding)
                 )
             } ?: SuchEmptyStats(modifier = Modifier.fillMaxSize())
@@ -397,7 +397,7 @@ private fun BookStatsScreenPreview() {
                     thumbnail = null
                 )
             ),
-            onEvent = {}
+            onIntent = {}
         )
     }
 }

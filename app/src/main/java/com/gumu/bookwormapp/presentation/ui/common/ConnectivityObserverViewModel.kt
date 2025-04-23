@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 
-abstract class ConnectivityObserverViewModel<State, ScreenEvent>(
+abstract class ConnectivityObserverViewModel<S, I>(
     private val connectivityObserver: ConnectivityObserver
-) : BaseViewModel<State, ScreenEvent>() {
+) : BaseViewModel<S, I>() {
     init {
         observeConnectivityStatus()
     }

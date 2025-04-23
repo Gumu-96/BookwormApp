@@ -85,7 +85,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun SearchScreen(
     state: SearchState,
-    onEvent: (SearchEvent) -> Unit
+    onIntent: (SearchEvent) -> Unit
 ) {
     val books = state.books?.collectAsLazyPagingItems()
     val bottomSheetState = rememberModalBottomSheetState(
@@ -94,7 +94,7 @@ fun SearchScreen(
     val scope = rememberCoroutineScope()
     fun dismissDetails() {
         scope.launch { bottomSheetState.hide() }.invokeOnCompletion {
-            if (bottomSheetState.isVisible.not()) onEvent(SearchEvent.OnHideBookDetails)
+            if (bottomSheetState.isVisible.not()) onIntent(SearchEvent.OnHideBookDetails)
         }
     }
 
@@ -110,7 +110,7 @@ fun SearchScreen(
             state.displayBook?.let { book ->
                 BookBottomSheetContent(
                     book = book,
-                    onAddClick = { onEvent(SearchEvent.OnAddBookClick(it)) },
+                    onAddClick = { onIntent(SearchEvent.OnAddBookClick(it)) },
                     isAddingBook = state.isAddingBook
                 )
             }
@@ -123,14 +123,14 @@ fun SearchScreen(
     ) {
         BooksSearchBar(
             searchQuery = state.searchQuery,
-            onSearchQueryChange = { onEvent(SearchEvent.OnSearchQueryChange(it)) },
-            onBackClick = { onEvent(SearchEvent.OnBackClick) },
-            onPerformSearch = { onEvent(SearchEvent.OnPerformSearch) },
-            onClearQuery = { onEvent(SearchEvent.OnClearQuery) },
+            onSearchQueryChange = { onIntent(SearchEvent.OnSearchQueryChange(it)) },
+            onBackClick = { onIntent(SearchEvent.OnBackClick) },
+            onPerformSearch = { onIntent(SearchEvent.OnPerformSearch) },
+            onClearQuery = { onIntent(SearchEvent.OnClearQuery) },
             currentFilters = state.filterOptions,
-            onOrderByClick = { onEvent(SearchEvent.OnOrderByClick(it)) },
-            onPrintTypeClick = { onEvent(SearchEvent.OnPrintTypeClick(it)) },
-            onBookTypeClick = { onEvent(SearchEvent.OnBookTypeClick(it)) }
+            onOrderByClick = { onIntent(SearchEvent.OnOrderByClick(it)) },
+            onPrintTypeClick = { onIntent(SearchEvent.OnPrintTypeClick(it)) },
+            onBookTypeClick = { onIntent(SearchEvent.OnBookTypeClick(it)) }
         )
         Box(modifier = Modifier.padding(top = 72.dp)) {
             when (books?.loadState?.refresh) {
@@ -142,7 +142,7 @@ fun SearchScreen(
                 else -> BooksList(
                     books = books,
                     onBookClick = {
-                        if (state.isAddingBook.not()) onEvent(SearchEvent.OnBookClick(it))
+                        if (state.isAddingBook.not()) onIntent(SearchEvent.OnBookClick(it))
                     }
                 )
             }
@@ -451,7 +451,7 @@ private fun SearchScreenPreview() {
     BookwormAppTheme {
         SearchScreen(
             state = SearchState(),
-            onEvent = {}
+            onIntent = {}
         )
     }
 }

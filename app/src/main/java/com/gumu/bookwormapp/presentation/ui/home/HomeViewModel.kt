@@ -19,7 +19,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     getAllBookStatsUseCase: GetAllBookStatsUseCase,
     private val signOutUseCase: SignOutUseCase
-) : BaseViewModel<HomeState, HomeEvent>() {
+) : BaseViewModel<HomeState, HomeIntent>() {
     override val uiState: StateFlow<HomeState> = _uiState.asStateFlow()
 
     /*
@@ -47,11 +47,11 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    override fun onEvent(event: HomeEvent) {
-        when (event) {
-            is HomeEvent.OnBookStatsClick -> onBookStatsClick(event.bookStats)
-            HomeEvent.OnAddBookClick -> sendEvent(UiEvent.Navigate(Screen.SearchScreen))
-            HomeEvent.OnAccountClick -> onSignOutClick()
+    override fun onIntent(intent: HomeIntent) {
+        when (intent) {
+            is HomeIntent.OnBookStatsClick -> onBookStatsClick(intent.bookStats)
+            HomeIntent.OnAddBookClick -> sendEvent(UiEvent.Navigate(Screen.SearchScreen))
+            HomeIntent.OnAccountClick -> onSignOutClick()
         }
     }
 }

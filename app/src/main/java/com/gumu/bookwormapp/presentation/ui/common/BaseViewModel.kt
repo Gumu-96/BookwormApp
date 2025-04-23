@@ -8,20 +8,20 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
-abstract class BaseViewModel<State, ScreenEvent> : ViewModel() {
+abstract class BaseViewModel<S, I> : ViewModel() {
     protected val _uiState = MutableStateFlow(this.defaultState())
-    abstract val uiState: StateFlow<State>
+    abstract val uiState: StateFlow<S>
 
-    private val _uiEventChannel = Channel<UiEvent>()
-    val uiEvents = _uiEventChannel.receiveAsFlow()
+    private val _sideEffectsChannel = Channel<UiEvent>()
+    val sideEffects = _sideEffectsChannel.receiveAsFlow()
 
-    protected abstract fun defaultState(): State
+    protected abstract fun defaultState(): S
 
-    abstract fun onEvent(event: ScreenEvent)
+    abstract fun onIntent(intent: I)
 
     protected fun sendEvent(event: UiEvent) {
         viewModelScope.launch {
-            _uiEventChannel.send(event)
+            _sideEffectsChannel.send(event)
         }
     }
 }

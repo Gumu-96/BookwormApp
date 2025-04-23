@@ -24,7 +24,7 @@ class SignInViewModel @Inject constructor(
     private val validatePassword: ValidatePassword,
     private val signInUseCase: SignInUseCase,
     private val checkUserSessionUseCase: CheckUserSessionUseCase
-) : BaseViewModel<SignInState, SignInEvent>() {
+) : BaseViewModel<SignInState, SignInIntent>() {
     override val uiState: StateFlow<SignInState> = _uiState.asStateFlow()
 
     init {
@@ -76,12 +76,12 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    override fun onEvent(event: SignInEvent) {
-        when (event) {
-            is SignInEvent.OnEmailChange -> onEmailChange(event.email.trim())
-            is SignInEvent.OnPasswordChange -> onPasswordChange(event.password.trim())
-            is SignInEvent.OnSignInClick -> onSignIn()
-            is SignInEvent.OnSignUpClick -> sendEvent(UiEvent.Navigate(Screen.SignUpScreen))
+    override fun onIntent(intent: SignInIntent) {
+        when (intent) {
+            is SignInIntent.OnEmailChange -> onEmailChange(intent.email.trim())
+            is SignInIntent.OnPasswordChange -> onPasswordChange(intent.password.trim())
+            is SignInIntent.OnSignInClick -> onSignIn()
+            is SignInIntent.OnSignUpClick -> sendEvent(UiEvent.Navigate(Screen.SignUpScreen))
         }
     }
 }

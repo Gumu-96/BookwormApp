@@ -44,7 +44,7 @@ import com.gumu.bookwormapp.presentation.theme.BookwormAppTheme
 @Composable
 fun SignInScreen(
     state: SignInState,
-    onEvent: (SignInEvent) -> Unit
+    onIntent: (SignInIntent) -> Unit
 ) {
     Scaffold { padding ->
         Surface(modifier = Modifier.padding(padding)) {
@@ -65,16 +65,16 @@ fun SignInScreen(
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp),
                         email = state.email,
-                        onEmailChange = { onEvent(SignInEvent.OnEmailChange(it)) },
+                        onEmailChange = { onIntent(SignInIntent.OnEmailChange(it)) },
                         emailError = state.errorState.emailError,
                         password = state.password,
-                        onPasswordChange = { onEvent(SignInEvent.OnPasswordChange(it)) },
+                        onPasswordChange = { onIntent(SignInIntent.OnPasswordChange(it)) },
                         passwordError = state.errorState.passwordError,
-                        onSignInClick = { onEvent(SignInEvent.OnSignInClick) }
+                        onSignInClick = { onIntent(SignInIntent.OnSignInClick) }
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     SignUpSection(
-                        onSignUpClick = { onEvent(SignInEvent.OnSignUpClick) }
+                        onSignUpClick = { onIntent(SignInIntent.OnSignUpClick) }
                     )
                 }
             }
@@ -192,7 +192,7 @@ private fun SignInPreview() {
     BookwormAppTheme {
         SignInScreen(
             state = SignInState(),
-            onEvent = {}
+            onIntent = {}
         )
     }
 }

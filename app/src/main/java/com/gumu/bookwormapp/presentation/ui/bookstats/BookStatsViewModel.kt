@@ -23,7 +23,7 @@ class BookStatsViewModel @Inject constructor(
     private val getBookStatsUseCase: GetBookStatsUseCase,
     private val updateBookStatsUseCase: UpdateBookStatsUseCase,
     private val deleteBookStatsUseCase: DeleteBookStatsUseCase
-) : BaseViewModel<BookStatsState, BookStatsEvent>() {
+) : BaseViewModel<BookStatsState, BookStatsIntent>() {
     private var initialStats: BookStats? = null
 
     override val uiState: StateFlow<BookStatsState> = _uiState.asStateFlow()
@@ -123,34 +123,34 @@ class BookStatsViewModel @Inject constructor(
         }
     }
 
-    override fun onEvent(event: BookStatsEvent) {
-        when (event) {
-            is BookStatsEvent.OnLoadStats -> onLoadStats(event.statsId)
-            BookStatsEvent.OnBackClick -> {
+    override fun onIntent(intent: BookStatsIntent) {
+        when (intent) {
+            is BookStatsIntent.OnLoadStats -> onLoadStats(intent.statsId)
+            BookStatsIntent.OnBackClick -> {
                 if (_uiState.value.hasChanges) {
                     _uiState.update { it.copy(showLeaveDialog = true) }
                 } else {
                     sendEvent(UiEvent.NavigateBack)
                 }
             }
-            BookStatsEvent.OnConfirmLeave -> {
+            BookStatsIntent.OnConfirmLeave -> {
                 _uiState.update { it.copy(showLeaveDialog = false) }
                 sendEvent(UiEvent.NavigateBack)
             }
-            BookStatsEvent.OnSaveChangesClick -> onSaveChanges()
-            BookStatsEvent.OnDeleteClick -> {
+            BookStatsIntent.OnSaveChangesClick -> onSaveChanges()
+            BookStatsIntent.OnDeleteClick -> {
                 _uiState.update { it.copy(showDeleteDialog = true) }
             }
-            BookStatsEvent.OnConfirmDelete -> onConfirmDelete()
-            BookStatsEvent.OnDismissDialog -> {
+            BookStatsIntent.OnConfirmDelete -> onConfirmDelete()
+            BookStatsIntent.OnDismissDialog -> {
                 _uiState.update { it.copy(
                     showDeleteDialog = false,
                     showLeaveDialog = false
                 ) }
             }
-            is BookStatsEvent.OnSetRating -> onSetRating(event.rating)
-            is BookStatsEvent.OnThoughtsChange -> onThoughtsChange(event.thoughts)
-            is BookStatsEvent.OnStatusChange -> onStatusChange(event.status)
+            is BookStatsIntent.OnSetRating -> onSetRating(intent.rating)
+            is BookStatsIntent.OnThoughtsChange -> onThoughtsChange(intent.thoughts)
+            is BookStatsIntent.OnStatusChange -> onStatusChange(intent.status)
         }
     }
 }

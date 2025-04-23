@@ -23,7 +23,7 @@ class SignUpViewModel @Inject constructor(
     private val validateSignUp: ValidateSignUp,
     private val signUpUseCase: SignUpUseCase,
     private val saveNewUserDataUseCase: SaveNewUserDataUseCase
-) : BaseViewModel<SignUpState, SignUpEvent>() {
+) : BaseViewModel<SignUpState, SignUpIntent>() {
     override val uiState: StateFlow<SignUpState> = _uiState.asStateFlow()
 
     override fun defaultState(): SignUpState = SignUpState()
@@ -119,15 +119,15 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
-    override fun onEvent(event: SignUpEvent) {
-        when (event) {
-            is SignUpEvent.OnEmailChange -> onEmailChange(event.email.trim())
-            is SignUpEvent.OnFirstnameChange -> onFirstnameChange(event.firstname.trim())
-            is SignUpEvent.OnLastnameChange -> onLastnameChange(event.lastname.trim())
-            is SignUpEvent.OnPasswordChange -> onPasswordChange(event.password.trim())
-            is SignUpEvent.OnRepeatedPasswordChange -> onRepeatedPasswordChange(event.repeatedPassword.trim())
-            is SignUpEvent.OnRegisterClick -> onRegisterClick()
-            is SignUpEvent.OnBackClick -> sendEvent(UiEvent.NavigateBack)
+    override fun onIntent(intent: SignUpIntent) {
+        when (intent) {
+            is SignUpIntent.OnEmailChange -> onEmailChange(intent.email.trim())
+            is SignUpIntent.OnFirstnameChange -> onFirstnameChange(intent.firstname.trim())
+            is SignUpIntent.OnLastnameChange -> onLastnameChange(intent.lastname.trim())
+            is SignUpIntent.OnPasswordChange -> onPasswordChange(intent.password.trim())
+            is SignUpIntent.OnRepeatedPasswordChange -> onRepeatedPasswordChange(intent.repeatedPassword.trim())
+            is SignUpIntent.OnRegisterClick -> onRegisterClick()
+            is SignUpIntent.OnBackClick -> sendEvent(UiEvent.NavigateBack)
         }
     }
 }

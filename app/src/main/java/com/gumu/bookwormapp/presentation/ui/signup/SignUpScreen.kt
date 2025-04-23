@@ -42,13 +42,13 @@ import com.gumu.bookwormapp.presentation.theme.BookwormAppTheme
 @Composable
 fun SignUpScreen(
     state: SignUpState,
-    onEvent: (SignUpEvent) -> Unit
+    onIntent: (SignUpIntent) -> Unit
 ) {
     Scaffold(
         topBar = {
             NavigateBackTopAppBar(
                 title = { Text(text = stringResource(id = R.string.sign_up_screen_title_label)) },
-                onBackClick = { onEvent(SignUpEvent.OnBackClick) }
+                onBackClick = { onIntent(SignUpIntent.OnBackClick) }
             )
         }
     ) { padding ->
@@ -62,17 +62,17 @@ fun SignUpScreen(
                     email = state.email,
                     password = state.password,
                     repeatedPassword = state.repeatedPassword,
-                    onFirstnameChange = { onEvent(SignUpEvent.OnFirstnameChange(it)) },
-                    onLastnameChange = { onEvent(SignUpEvent.OnLastnameChange(it)) },
-                    onEmailChange = { onEvent(SignUpEvent.OnEmailChange(it)) },
-                    onPasswordChange = { onEvent(SignUpEvent.OnPasswordChange(it)) },
-                    onRepeatedPasswordChange = { onEvent(SignUpEvent.OnRepeatedPasswordChange(it)) },
+                    onFirstnameChange = { onIntent(SignUpIntent.OnFirstnameChange(it)) },
+                    onLastnameChange = { onIntent(SignUpIntent.OnLastnameChange(it)) },
+                    onEmailChange = { onIntent(SignUpIntent.OnEmailChange(it)) },
+                    onPasswordChange = { onIntent(SignUpIntent.OnPasswordChange(it)) },
+                    onRepeatedPasswordChange = { onIntent(SignUpIntent.OnRepeatedPasswordChange(it)) },
                     firstnameError = state.errorState.firstnameError,
                     lastnameError = state.errorState.lastnameError,
                     emailError = state.errorState.emailError,
                     passwordError = state.errorState.passwordError,
                     repeatedPasswordError = state.errorState.repeatedPasswordError,
-                    onRegisterClick = { onEvent(SignUpEvent.OnRegisterClick) }
+                    onRegisterClick = { onIntent(SignUpIntent.OnRegisterClick) }
                 )
             }
         }
@@ -218,7 +218,7 @@ private fun SignUpScreenPreview() {
     BookwormAppTheme {
         SignUpScreen(
             state = SignUpState(),
-            onEvent = {}
+            onIntent = {}
         )
     }
 }

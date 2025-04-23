@@ -33,7 +33,7 @@ fun BookwormNavigation() {
             ScreenWrapper(viewModel = viewModel, navController = navController) {
                 SignInScreen(
                     state = state,
-                    onEvent = viewModel::onEvent
+                    onIntent = viewModel::onIntent
                 )
             }
         }
@@ -44,7 +44,7 @@ fun BookwormNavigation() {
             ScreenWrapper(viewModel = viewModel, navController = navController) {
                 SignUpScreen(
                     state = state,
-                    onEvent = viewModel::onEvent
+                    onIntent = viewModel::onIntent
                 )
             }
         }
@@ -56,7 +56,7 @@ fun BookwormNavigation() {
                     onQueueList = viewModel.onQueueBooks.collectAsLazyPagingItems(),
                     readingList = viewModel.readingBooks.collectAsLazyPagingItems(),
                     readList = viewModel.readBooks.collectAsLazyPagingItems(),
-                    onEvent = viewModel::onEvent
+                    onIntent = viewModel::onIntent
                 )
             }
         }
@@ -67,7 +67,7 @@ fun BookwormNavigation() {
             ScreenWrapper(viewModel = viewModel, navController = navController) {
                 SearchScreen(
                     state = state,
-                    onEvent = viewModel::onEvent
+                    onIntent = viewModel::onIntent
                 )
             }
         }
@@ -80,7 +80,7 @@ fun BookwormNavigation() {
                 BookStatsScreen(
                     bookStatsId = args.statsId,
                     state = state,
-                    onEvent = viewModel::onEvent
+                    onIntent = viewModel::onIntent
                 )
             }
         }

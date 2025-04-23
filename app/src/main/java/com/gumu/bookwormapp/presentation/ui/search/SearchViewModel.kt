@@ -92,18 +92,18 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    override fun onEvent(event: SearchEvent) {
-        when (event) {
-            is SearchEvent.OnSearchQueryChange -> onSearchQueryChange(event.searchQuery)
-            is SearchEvent.OnAddBookClick -> onAddBookClick(event.book)
-            is SearchEvent.OnBookClick -> onBookClick(event.book)
+    override fun onIntent(intent: SearchEvent) {
+        when (intent) {
+            is SearchEvent.OnSearchQueryChange -> onSearchQueryChange(intent.searchQuery)
+            is SearchEvent.OnAddBookClick -> onAddBookClick(intent.book)
+            is SearchEvent.OnBookClick -> onBookClick(intent.book)
             SearchEvent.OnHideBookDetails -> onHideBookDetails()
             SearchEvent.OnClearQuery -> onClearQuery()
             SearchEvent.OnBackClick -> sendEvent(UiEvent.NavigateBack)
             SearchEvent.OnPerformSearch -> onPerformSearch()
-            is SearchEvent.OnBookTypeClick -> onBookTypeClick(event.bookType)
-            is SearchEvent.OnOrderByClick -> onOrderByClick(event.bookOrder)
-            is SearchEvent.OnPrintTypeClick -> onPrintTypeClick(event.printType)
+            is SearchEvent.OnBookTypeClick -> onBookTypeClick(intent.bookType)
+            is SearchEvent.OnOrderByClick -> onOrderByClick(intent.bookOrder)
+            is SearchEvent.OnPrintTypeClick -> onPrintTypeClick(intent.printType)
         }
     }
 }

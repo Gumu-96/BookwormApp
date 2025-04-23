@@ -13,14 +13,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
 @Composable
-fun <State, ScreenEvent> ScreenWrapper(
-    viewModel: BaseViewModel<State, ScreenEvent>,
+fun <S, I> ScreenWrapper(
+    viewModel: BaseViewModel<S, I>,
     navController: NavController,
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
 
-    ObserveAsEvents(viewModel.uiEvents) { event ->
+    ObserveAsEvents(viewModel.sideEffects) { event ->
         when (event) {
             is UiEvent.ShowToast -> {
                 Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
