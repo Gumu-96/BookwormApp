@@ -65,12 +65,12 @@ import com.gumu.bookwormapp.presentation.util.ReadingStatusUi
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookStatsScreen(
-    bookStatsId: String?,
+    bookStatsId: String,
     state: BookStatsState,
     onIntent: (BookStatsIntent) -> Unit
 ) {
     LaunchedEffect(key1 = Unit) {
-        if (state.book == null) onIntent(BookStatsIntent.OnLoadStats(bookStatsId))
+        if (state.initialStats == null) onIntent(BookStatsIntent.OnLoadStats(bookStatsId))
     }
 
     Scaffold(
@@ -385,7 +385,7 @@ fun ConfirmLeaveDialog(
 private fun BookStatsScreenPreview() {
     BookwormAppTheme {
         BookStatsScreen(
-            bookStatsId = null,
+            bookStatsId = "0",
             state = BookStatsState(
                 book = Book(
                     id = "ABC123",
