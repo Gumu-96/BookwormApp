@@ -6,10 +6,12 @@ import androidx.navigation.toRoute
 import com.gumu.bookwormapp.R
 import com.gumu.bookwormapp.domain.common.onFailure
 import com.gumu.bookwormapp.domain.common.onSuccess
+import com.gumu.bookwormapp.domain.model.BookStats
 import com.gumu.bookwormapp.domain.model.ReadingStatus
 import com.gumu.bookwormapp.domain.usecase.bookstats.DeleteBookStatsUseCase
 import com.gumu.bookwormapp.domain.usecase.bookstats.GetBookStatsUseCase
 import com.gumu.bookwormapp.domain.usecase.bookstats.UpdateBookStatsUseCase
+import com.gumu.bookwormapp.presentation.navigation.BookwormNavType
 import com.gumu.bookwormapp.presentation.navigation.Screen
 import com.gumu.bookwormapp.presentation.ui.common.BaseViewModel
 import com.gumu.bookwormapp.presentation.ui.common.UiEvent
@@ -21,6 +23,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.reflect.typeOf
 
 @HiltViewModel
 class BookStatsViewModel @Inject constructor(
@@ -30,7 +33,9 @@ class BookStatsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel<BookStatsState, BookStatsIntent>() {
 
-    private val args = savedStateHandle.toRoute<Screen.BookStatsScreen>()
+    private val args = savedStateHandle.toRoute<Screen.BookStatsScreen>(
+        typeMap = mapOf(typeOf<BookStats>() to BookwormNavType.BookStatsType)
+    )
     override val uiState: StateFlow<BookStatsState> = _uiState
         .onStart { loadStats() }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), defaultState())

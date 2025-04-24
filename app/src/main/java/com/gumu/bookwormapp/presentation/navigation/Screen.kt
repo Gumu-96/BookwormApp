@@ -1,5 +1,6 @@
 package com.gumu.bookwormapp.presentation.navigation
 
+import com.gumu.bookwormapp.domain.model.BookStats
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -17,7 +18,10 @@ sealed interface Screen {
     data object SearchScreen : Screen
 
     @Serializable
-    data class BookStatsScreen(val statsId: String) : Screen
+    data class BookStatsScreen(
+        val statsId: String,
+        val stats: BookStats
+    ) : Screen
 
     @Serializable
     data object UserStatsScreen : Screen

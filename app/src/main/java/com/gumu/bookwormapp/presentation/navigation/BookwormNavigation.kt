@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.gumu.bookwormapp.domain.model.BookStats
 import com.gumu.bookwormapp.presentation.ui.bookstats.BookStatsScreen
 import com.gumu.bookwormapp.presentation.ui.bookstats.BookStatsViewModel
 import com.gumu.bookwormapp.presentation.ui.common.ScreenWrapper
@@ -17,6 +18,7 @@ import com.gumu.bookwormapp.presentation.ui.signin.SignInScreen
 import com.gumu.bookwormapp.presentation.ui.signin.SignInViewModel
 import com.gumu.bookwormapp.presentation.ui.signup.SignUpScreen
 import com.gumu.bookwormapp.presentation.ui.signup.SignUpViewModel
+import kotlin.reflect.typeOf
 
 @Composable
 fun BookwormNavigation() {
@@ -65,7 +67,9 @@ fun BookwormNavigation() {
                 )
             }
         }
-        composable<Screen.BookStatsScreen> {
+        composable<Screen.BookStatsScreen>(
+            typeMap = mapOf(typeOf<BookStats>() to BookwormNavType.BookStatsType)
+        ) {
             val viewModel: BookStatsViewModel = hiltViewModel()
 
             ScreenWrapper(viewModel = viewModel, navController = navController) { state ->

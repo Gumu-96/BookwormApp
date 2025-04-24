@@ -35,7 +35,7 @@ class HomeViewModel @Inject constructor(
 
     private fun onBookStatsClick(bookStats: BookStats) {
         bookStats.id?.let {
-            sendEvent(UiEvent.Navigate(Screen.BookStatsScreen(it)))
+            sendEvent(UiEvent.Navigate(Screen.BookStatsScreen(it, bookStats)))
         }
     }
 
