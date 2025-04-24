@@ -18,10 +18,7 @@ sealed interface Screen {
     data object SearchScreen : Screen
 
     @Serializable
-    data class BookStatsScreen(
-        val statsId: String,
-        val stats: BookStats
-    ) : Screen
+    data class BookStatsScreen(val stats: BookStats) : Screen
 
     @Serializable
     data object UserStatsScreen : Screen

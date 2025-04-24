@@ -9,7 +9,6 @@ import com.gumu.bookwormapp.domain.common.onSuccess
 import com.gumu.bookwormapp.domain.model.BookStats
 import com.gumu.bookwormapp.domain.model.ReadingStatus
 import com.gumu.bookwormapp.domain.usecase.bookstats.DeleteBookStatsUseCase
-import com.gumu.bookwormapp.domain.usecase.bookstats.GetBookStatsUseCase
 import com.gumu.bookwormapp.domain.usecase.bookstats.UpdateBookStatsUseCase
 import com.gumu.bookwormapp.presentation.navigation.BookwormNavType
 import com.gumu.bookwormapp.presentation.navigation.Screen
@@ -27,7 +26,6 @@ import kotlin.reflect.typeOf
 
 @HiltViewModel
 class BookStatsViewModel @Inject constructor(
-    private val getBookStatsUseCase: GetBookStatsUseCase,
     private val updateBookStatsUseCase: UpdateBookStatsUseCase,
     private val deleteBookStatsUseCase: DeleteBookStatsUseCase,
     savedStateHandle: SavedStateHandle
@@ -44,26 +42,15 @@ class BookStatsViewModel @Inject constructor(
 
     private fun loadStats() {
         if (uiState.value.initialStats != null) return // Stats already loaded
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            getBookStatsUseCase(args.statsId).onSuccess { statsResult ->
-                statsResult?.let { stats ->
-                    _uiState.update { it.copy(
-                        book = stats.book,
-                        rating = stats.rating,
-                        thoughts = stats.thoughts,
-                        status = stats.status,
-                        isLoading = false,
-                        initialStats = stats
-                    ) }
-                } ?: run {
-                    _uiState.update { it.copy(isLoading = false) }
-                    sendEvent(UiEvent.ShowToast(R.string.stats_not_found_message))
-                }
-            }.onFailure {
-                _uiState.update { it.copy(isLoading = false) }
-                sendEvent(UiEvent.ShowToast(R.string.generic_error_message))
-            }
+
+        _uiState.update {
+            it.copy(
+                book = args.stats.book,
+                rating = args.stats.rating,
+                thoughts = args.stats.thoughts,
+                status = args.stats.status,
+                initialStats = args.stats
+            )
         }
     }
 

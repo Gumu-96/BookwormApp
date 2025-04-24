@@ -34,9 +34,7 @@ class HomeViewModel @Inject constructor(
     override fun defaultState(): HomeState = HomeState()
 
     private fun onBookStatsClick(bookStats: BookStats) {
-        bookStats.id?.let {
-            sendEvent(UiEvent.Navigate(Screen.BookStatsScreen(it, bookStats)))
-        }
+        sendEvent(UiEvent.Navigate(Screen.BookStatsScreen(bookStats)))
     }
 
     private fun onSignOutClick() {
