@@ -1,5 +1,10 @@
 package com.gumu.bookwormapp.presentation.ui.bookstats
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -53,6 +58,8 @@ import androidx.compose.ui.unit.sp
 import com.gumu.bookwormapp.R
 import com.gumu.bookwormapp.domain.model.Book
 import com.gumu.bookwormapp.domain.model.ReadingStatus
+import com.gumu.bookwormapp.presentation.animation.BookStatsSharedElementKey
+import com.gumu.bookwormapp.presentation.animation.BookStatsSharedElementType
 import com.gumu.bookwormapp.presentation.component.CustomAsyncImage
 import com.gumu.bookwormapp.presentation.component.CustomOutlinedTextField
 import com.gumu.bookwormapp.presentation.component.LoadingOverlay
@@ -61,68 +68,87 @@ import com.gumu.bookwormapp.presentation.component.SuchEmptyStats
 import com.gumu.bookwormapp.presentation.theme.BookwormAppTheme
 import com.gumu.bookwormapp.presentation.util.ReadingStatusUi
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun BookStatsScreen(
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     state: BookStatsState,
     onIntent: (BookStatsIntent) -> Unit
 ) {
-    Scaffold(
-        topBar = {
-            NavigateBackTopAppBar(
-                title = { Text(text = stringResource(id = R.string.book_stats_screen_title_label)) },
-                onBackClick = { onIntent(BookStatsIntent.OnBackClick) },
-                actions = {
-                    state.book?.let {
-                        IconButton(onClick = { onIntent(BookStatsIntent.OnDeleteClick) }) {
-                            Icon(
-                                imageVector = Icons.Default.DeleteForever,
-                                contentDescription = stringResource(id = R.string.delete_icon_desc),
-                                tint = MaterialTheme.colorScheme.error
-                            )
+    with(sharedTransitionScope) {
+        Scaffold(
+            topBar = {
+                NavigateBackTopAppBar(
+                    title = { Text(text = stringResource(id = R.string.book_stats_screen_title_label)) },
+                    onBackClick = { onIntent(BookStatsIntent.OnBackClick) },
+                    actions = {
+                        state.book?.let {
+                            IconButton(onClick = { onIntent(BookStatsIntent.OnDeleteClick) }) {
+                                Icon(
+                                    imageVector = Icons.Default.DeleteForever,
+                                    contentDescription = stringResource(id = R.string.delete_icon_desc),
+                                    tint = MaterialTheme.colorScheme.error
+                                )
+                            }
                         }
                     }
-                }
-            )
-        }
-    ) { padding ->
-        if (state.isLoading) {
-            LoadingOverlay()
-        } else {
-            state.book?.let { book ->
-                if (state.showDeleteDialog) {
-                    ConfirmDeleteDialog(
-                        onConfirm = { onIntent(BookStatsIntent.OnConfirmDelete) },
-                        onDismiss = { onIntent(BookStatsIntent.OnDismissDialog) }
-                    )
-                }
-                if (state.showLeaveDialog) {
-                    ConfirmLeaveDialog(
-                        onConfirm = { onIntent(BookStatsIntent.OnConfirmLeave) },
-                        onDismiss = { onIntent(BookStatsIntent.OnDismissDialog) }
-                    )
-                }
-                StatsContent(
-                    book = book,
-                    thoughts = state.thoughts,
-                    rating = state.rating,
-                    status = state.status,
-                    hasChanges = state.hasChanges,
-                    isSavingChanges = state.savingChanges,
-                    onThoughtsChange = { onIntent(BookStatsIntent.OnThoughtsChange(it)) },
-                    onStarClick = { onIntent(BookStatsIntent.OnSetRating(it)) },
-                    onStatusChange = { onIntent(BookStatsIntent.OnStatusChange(it)) },
-                    onSaveChanges = { onIntent(BookStatsIntent.OnSaveChangesClick) },
-                    modifier = Modifier.padding(padding)
                 )
-            } ?: SuchEmptyStats(modifier = Modifier.fillMaxSize())
+            },
+            modifier = Modifier
+                .sharedBounds(
+                    sharedContentState = rememberSharedContentState(
+                        key = BookStatsSharedElementKey(
+                            bookId = state.book?.id,
+                            type = BookStatsSharedElementType.Bounds
+                        )
+                    ),
+                    animatedVisibilityScope = animatedVisibilityScope
+                )
+        ) { padding ->
+            if (state.isLoading) {
+                LoadingOverlay()
+            } else {
+                state.book?.let { book ->
+                    if (state.showDeleteDialog) {
+                        ConfirmDeleteDialog(
+                            onConfirm = { onIntent(BookStatsIntent.OnConfirmDelete) },
+                            onDismiss = { onIntent(BookStatsIntent.OnDismissDialog) }
+                        )
+                    }
+                    if (state.showLeaveDialog) {
+                        ConfirmLeaveDialog(
+                            onConfirm = { onIntent(BookStatsIntent.OnConfirmLeave) },
+                            onDismiss = { onIntent(BookStatsIntent.OnDismissDialog) }
+                        )
+                    }
+                    StatsContent(
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        book = book,
+                        thoughts = state.thoughts,
+                        rating = state.rating,
+                        status = state.status,
+                        hasChanges = state.hasChanges,
+                        isSavingChanges = state.savingChanges,
+                        onThoughtsChange = { onIntent(BookStatsIntent.OnThoughtsChange(it)) },
+                        onStarClick = { onIntent(BookStatsIntent.OnSetRating(it)) },
+                        onStatusChange = { onIntent(BookStatsIntent.OnStatusChange(it)) },
+                        onSaveChanges = { onIntent(BookStatsIntent.OnSaveChangesClick) },
+                        modifier = Modifier.padding(padding)
+                    )
+                } ?: SuchEmptyStats(modifier = Modifier.fillMaxSize())
+            }
         }
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun StatsContent(
     modifier: Modifier = Modifier,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     book: Book,
     thoughts: String?,
     rating: Int,
@@ -140,7 +166,11 @@ fun StatsContent(
             .then(modifier)
             .verticalScroll(rememberScrollState())
     ) {
-        BookSection(book = book)
+        BookSection(
+            book = book,
+            sharedTransitionScope = sharedTransitionScope,
+            animatedVisibilityScope = animatedVisibilityScope
+        )
         Divider(
             modifier = Modifier
                 .fillMaxWidth()
@@ -150,7 +180,7 @@ fun StatsContent(
         RatingSection(
             rating = rating,
             onStarClick = onStarClick,
-            thoughts = thoughts ?: "",
+            thoughts = thoughts.orEmpty(),
             onThoughtsChange = onThoughtsChange
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -175,9 +205,12 @@ fun StatsContent(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun BookSection(
-    book: Book
+    book: Book,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -185,33 +218,64 @@ fun BookSection(
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        CustomAsyncImage(
-            model = book.thumbnail,
-            contentDescription = book.title,
-            modifier = Modifier
-                .clip(RoundedCornerShape(10))
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-                .size(width = 140.dp, height = 185.dp)
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        Column(verticalArrangement = Arrangement.Center) {
-            Text(
-                text = book.title,
-                maxLines = 6,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.titleMedium
+        with(sharedTransitionScope) {
+            CustomAsyncImage(
+                model = book.thumbnail,
+                contentDescription = book.title,
+                modifier = Modifier
+                    .sharedBounds(
+                        sharedContentState = rememberSharedContentState(
+                            key = BookStatsSharedElementKey(
+                                bookId = book.id,
+                                type = BookStatsSharedElementType.Image
+                            )
+                        ),
+                        animatedVisibilityScope = animatedVisibilityScope
+                    )
+                    .clip(RoundedCornerShape(10))
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .size(width = 140.dp, height = 185.dp)
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = stringResource(
-                    id = R.string.book_author_label,
-                    book.authors ?: stringResource(id = R.string.book_unknown_data)
-                ),
-                fontSize = 12.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                fontStyle = FontStyle.Italic
-            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Column(verticalArrangement = Arrangement.Center) {
+                Text(
+                    text = book.title,
+                    maxLines = 6,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier
+                        .sharedBounds(
+                            sharedContentState = rememberSharedContentState(
+                                key = BookStatsSharedElementKey(
+                                    bookId = book.id,
+                                    type = BookStatsSharedElementType.BookTitle
+                                )
+                            ),
+                            animatedVisibilityScope = animatedVisibilityScope
+                        )
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = stringResource(
+                        id = R.string.book_author_label,
+                        book.authors ?: stringResource(id = R.string.book_unknown_data)
+                    ),
+                    fontSize = 12.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    fontStyle = FontStyle.Italic,
+                    modifier = Modifier
+                        .sharedBounds(
+                            sharedContentState = rememberSharedContentState(
+                                key = BookStatsSharedElementKey(
+                                    bookId = book.id,
+                                    type = BookStatsSharedElementType.Author
+                                )
+                            ),
+                            animatedVisibilityScope = animatedVisibilityScope
+                        )
+                )
+            }
         }
     }
 }
@@ -278,7 +342,7 @@ fun ActionsSection(
                 append(stringResource(id = R.string.current_status_label))
                 append(" ")
                 withStyle(style = SpanStyle(fontWeight = FontWeight.SemiBold)) {
-                    append(stringResource(id = ReadingStatusUi.values().first { it.value == status }.label))
+                    append(stringResource(id = ReadingStatusUi.entries.first { it.value == status }.label))
                 }
             }
         )
@@ -374,23 +438,30 @@ fun ConfirmLeaveDialog(
     )
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Preview
 @Composable
 private fun BookStatsScreenPreview() {
     BookwormAppTheme {
-        BookStatsScreen(
-            state = BookStatsState(
-                book = Book(
-                    id = "ABC123",
-                    title = "Book item",
-                    authors = listOf("John", "Doe"),
-                    publishedDate = "May 2023",
-                    description = "This is a Book item",
-                    categories = listOf("Compose", "Preview"),
-                    thumbnail = null
+        AnimatedVisibility(true) {
+            SharedTransitionLayout {
+                BookStatsScreen(
+                    state = BookStatsState(
+                        book = Book(
+                            id = "ABC123",
+                            title = "Book item",
+                            authors = listOf("John", "Doe"),
+                            publishedDate = "May 2023",
+                            description = "This is a Book item",
+                            categories = listOf("Compose", "Preview"),
+                            thumbnail = null
+                        )
+                    ),
+                    onIntent = {},
+                    sharedTransitionScope = this@SharedTransitionLayout,
+                    animatedVisibilityScope = this@AnimatedVisibility
                 )
-            ),
-            onIntent = {}
-        )
+            }
+        }
     }
 }

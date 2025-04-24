@@ -1,5 +1,12 @@
 package com.gumu.bookwormapp.presentation.ui.home
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,21 +51,35 @@ import com.gumu.bookwormapp.presentation.component.LoadingOverlay
 import com.gumu.bookwormapp.presentation.component.SuchEmptyStats
 import com.gumu.bookwormapp.presentation.ui.home.component.BookStatusItem
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun HomeScreen(
     onQueueList: LazyPagingItems<BookStats>,
     readingList: LazyPagingItems<BookStats>,
     readList: LazyPagingItems<BookStats>,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     onIntent: (HomeIntent) -> Unit
 ) {
     val topBarScrollBehaviour = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
         topBar = {
-            HomeTopAppBar(
-                onAccountClick = { onIntent(HomeIntent.OnAccountClick) },
-                scrollBehavior = topBarScrollBehaviour
-            )
+            with(animatedVisibilityScope) {
+                with(sharedTransitionScope) {
+                    HomeTopAppBar(
+                        onAccountClick = { onIntent(HomeIntent.OnAccountClick) },
+                        scrollBehavior = topBarScrollBehaviour,
+                        modifier = Modifier
+                            .renderInSharedTransitionScopeOverlay(
+                                zIndexInOverlay = 1f
+                            )
+                            .animateEnterExit(
+                                enter = fadeIn() + slideInVertically { -it } ,
+                                exit = fadeOut() + slideOutVertically { -it }
+                            )
+                    )
+                }
+            }
         },
         floatingActionButton = {
             FloatingActionButton(onClick = { onIntent(HomeIntent.OnAddBookClick) }) {
@@ -85,6 +106,8 @@ fun HomeScreen(
                 val onBookStatsClick: (BookStats) -> Unit = { onIntent(HomeIntent.OnBookStatsClick(it)) }
                 if (readingList.itemCount > 0 && readingList.loadState.refresh !is LoadState.Error) {
                     BookStatsList(
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedVisibilityScope = animatedVisibilityScope,
                         label = stringResource(id = R.string.current_reading_activity_label),
                         items = readingList,
                         onBookStatsClick = onBookStatsClick
@@ -92,6 +115,8 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                 }
                 BookStatsList(
+                    sharedTransitionScope = sharedTransitionScope,
+                    animatedVisibilityScope = animatedVisibilityScope,
                     label = stringResource(id = R.string.reading_list_label),
                     items = onQueueList,
                     onBookStatsClick = onBookStatsClick,
@@ -100,6 +125,8 @@ fun HomeScreen(
                 if (readList.itemCount > 0 && readList.loadState.refresh !is LoadState.Error) {
                     Spacer(modifier = Modifier.height(16.dp))
                     BookStatsList(
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedVisibilityScope = animatedVisibilityScope,
                         label = stringResource(id = R.string.read_list_label),
                         items = readList,
                         onBookStatsClick = onBookStatsClick
@@ -110,8 +137,11 @@ fun HomeScreen(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun BookStatsList(
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     label: String,
     items: LazyPagingItems<BookStats>,
     onBookStatsClick: (BookStats) -> Unit,
@@ -158,6 +188,8 @@ fun BookStatsList(
                     items(items = items) { bookStats ->
                         bookStats?.let {
                             BookStatusItem(
+                                sharedTransitionScope = sharedTransitionScope,
+                                animatedVisibilityScope = animatedVisibilityScope,
                                 bookStats = it,
                                 onClick = onBookStatsClick
                             )
@@ -188,6 +220,7 @@ fun BookStatsList(
 @Composable
 fun HomeTopAppBar(
     onAccountClick: () -> Unit,
+    modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior? = null
 ) {
     TopAppBar(
@@ -209,6 +242,7 @@ fun HomeTopAppBar(
                 )
             }
         },
-        scrollBehavior = scrollBehavior
+        scrollBehavior = scrollBehavior,
+        modifier = modifier
     )
 }
