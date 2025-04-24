@@ -11,6 +11,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -22,6 +24,16 @@ object RemoteModule {
     @Provides
     fun provideRetrofitInstance(): Retrofit = Retrofit.Builder()
         .baseUrl(RemoteConstants.BOOKS_BASE_URL)
+        .client(
+            OkHttpClient
+                .Builder()
+                .addInterceptor(
+                    HttpLoggingInterceptor().apply {
+                        level = HttpLoggingInterceptor.Level.BODY
+                    }
+                )
+                .build()
+        )
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
