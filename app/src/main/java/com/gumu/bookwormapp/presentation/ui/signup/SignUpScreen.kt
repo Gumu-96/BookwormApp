@@ -1,5 +1,10 @@
 package com.gumu.bookwormapp.presentation.ui.signup
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -38,11 +43,13 @@ import com.gumu.bookwormapp.presentation.component.LoadingOverlay
 import com.gumu.bookwormapp.presentation.component.NavigateBackTopAppBar
 import com.gumu.bookwormapp.presentation.theme.BookwormAppTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun SignUpScreen(
     state: SignUpState,
-    onIntent: (SignUpIntent) -> Unit
+    onIntent: (SignUpIntent) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
     Scaffold(
         topBar = {
@@ -72,13 +79,16 @@ fun SignUpScreen(
                     emailError = state.errorState.emailError,
                     passwordError = state.errorState.passwordError,
                     repeatedPasswordError = state.errorState.repeatedPasswordError,
-                    onRegisterClick = { onIntent(SignUpIntent.OnRegisterClick) }
+                    onRegisterClick = { onIntent(SignUpIntent.OnRegisterClick) },
+                    sharedTransitionScope = sharedTransitionScope,
+                    animatedVisibilityScope = animatedVisibilityScope
                 )
             }
         }
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SignUpForm(
     firstname: String,
@@ -96,129 +106,150 @@ fun SignUpForm(
     emailError: UiText?,
     passwordError: UiText?,
     repeatedPasswordError: UiText?,
-    onRegisterClick: () -> Unit
+    onRegisterClick: () -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
     val localFocusManager = LocalFocusManager.current
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp)
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.bookworm),
-            contentDescription = stringResource(id = R.string.app_logo_desc),
-            contentScale = ContentScale.Fit,
-            modifier = Modifier.size(75.dp)
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        CustomOutlinedTextField(
-            value = firstname,
-            onValueChange = onFirstnameChange,
-            singleLine = true,
-            label = { Text(text = stringResource(id = R.string.sign_up_first_name_field_label)) },
-            keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Next
-            ),
-            keyboardActions = KeyboardActions(
-                onNext = { localFocusManager.moveFocus(FocusDirection.Down) }
-            ),
-            isError = firstnameError != null,
-            errorMessage = firstnameError?.asString(),
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        CustomOutlinedTextField(
-            value = lastname,
-            onValueChange = onLastnameChange,
-            singleLine = true,
-            label = { Text(text = stringResource(id = R.string.sign_up_last_name_field_label)) },
-            keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Next
-            ),
-            keyboardActions = KeyboardActions(
-                onNext = { localFocusManager.moveFocus(FocusDirection.Down) }
-            ),
-            isError = lastnameError != null,
-            errorMessage = lastnameError?.asString(),
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        CustomOutlinedTextField(
-            value = email,
-            onValueChange = onEmailChange,
-            singleLine = true,
-            label = { Text(text = stringResource(id = R.string.sign_up_email_field_label)) },
-            keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Next,
-                keyboardType = KeyboardType.Email
-            ),
-            keyboardActions = KeyboardActions(
-                onNext = { localFocusManager.moveFocus(FocusDirection.Down) }
-            ),
-            isError = emailError != null,
-            errorMessage = emailError?.asString(),
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        CustomOutlinedTextField(
-            value = password,
-            onValueChange = onPasswordChange,
-            singleLine = true,
-            label = { Text(text = stringResource(id = R.string.sign_up_password_field_label)) },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Next
-            ),
-            keyboardActions = KeyboardActions(
-                onNext = { localFocusManager.moveFocus(FocusDirection.Down) }
-            ),
-            isPassword = true,
-            isError = passwordError != null,
-            errorMessage = passwordError?.asString(),
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        CustomOutlinedTextField(
-            value = repeatedPassword,
-            onValueChange = onRepeatedPasswordChange,
-            singleLine = true,
-            label = { Text(text = stringResource(id = R.string.sign_up_confirm_password_field_label)) },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = { localFocusManager.clearFocus() }
-            ),
-            isPassword = true,
-            isError = repeatedPasswordError != null,
-            errorMessage = repeatedPasswordError?.asString(),
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        Button(
-            onClick = onRegisterClick,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.tertiary,
-                contentColor = MaterialTheme.colorScheme.onTertiary
-            ),
-            modifier = Modifier.fillMaxWidth()
+    with(sharedTransitionScope) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp)
         ) {
-            Text(text = stringResource(id = R.string.create_account_button_label))
+            Image(
+                painter = painterResource(id = R.drawable.bookworm),
+                contentDescription = stringResource(id = R.string.app_logo_desc),
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .size(75.dp)
+                    .sharedElement(
+                        state = rememberSharedContentState("bookworm_logo"),
+                        animatedVisibilityScope = animatedVisibilityScope
+                    )
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            CustomOutlinedTextField(
+                value = firstname,
+                onValueChange = onFirstnameChange,
+                singleLine = true,
+                label = { Text(text = stringResource(id = R.string.sign_up_first_name_field_label)) },
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = { localFocusManager.moveFocus(FocusDirection.Down) }
+                ),
+                isError = firstnameError != null,
+                errorMessage = firstnameError?.asString(),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            CustomOutlinedTextField(
+                value = lastname,
+                onValueChange = onLastnameChange,
+                singleLine = true,
+                label = { Text(text = stringResource(id = R.string.sign_up_last_name_field_label)) },
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = { localFocusManager.moveFocus(FocusDirection.Down) }
+                ),
+                isError = lastnameError != null,
+                errorMessage = lastnameError?.asString(),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            CustomOutlinedTextField(
+                value = email,
+                onValueChange = onEmailChange,
+                singleLine = true,
+                label = { Text(text = stringResource(id = R.string.sign_up_email_field_label)) },
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next,
+                    keyboardType = KeyboardType.Email
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = { localFocusManager.moveFocus(FocusDirection.Down) }
+                ),
+                isError = emailError != null,
+                errorMessage = emailError?.asString(),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            CustomOutlinedTextField(
+                value = password,
+                onValueChange = onPasswordChange,
+                singleLine = true,
+                label = { Text(text = stringResource(id = R.string.sign_up_password_field_label)) },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = { localFocusManager.moveFocus(FocusDirection.Down) }
+                ),
+                isPassword = true,
+                isError = passwordError != null,
+                errorMessage = passwordError?.asString(),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            CustomOutlinedTextField(
+                value = repeatedPassword,
+                onValueChange = onRepeatedPasswordChange,
+                singleLine = true,
+                label = { Text(text = stringResource(id = R.string.sign_up_confirm_password_field_label)) },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = { localFocusManager.clearFocus() }
+                ),
+                isPassword = true,
+                isError = repeatedPasswordError != null,
+                errorMessage = repeatedPasswordError?.asString(),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Button(
+                onClick = onRegisterClick,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.tertiary,
+                    contentColor = MaterialTheme.colorScheme.onTertiary
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .sharedElement(
+                        state = rememberSharedContentState("shared_button"),
+                        animatedVisibilityScope = animatedVisibilityScope
+                    )
+            ) {
+                Text(text = stringResource(id = R.string.create_account_button_label))
+            }
         }
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Preview
 @Composable
 private fun SignUpScreenPreview() {
     BookwormAppTheme {
-        SignUpScreen(
-            state = SignUpState(),
-            onIntent = {}
-        )
+        SharedTransitionLayout {
+            AnimatedVisibility(true) {
+                SignUpScreen(
+                    state = SignUpState(),
+                    onIntent = {},
+                    sharedTransitionScope = this@SharedTransitionLayout,
+                    animatedVisibilityScope = this@AnimatedVisibility
+                )
+            }
+        }
     }
 }

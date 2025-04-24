@@ -35,7 +35,9 @@ fun BookwormNavigation() {
                 ScreenWrapper(viewModel = viewModel, navController = navController) {
                     SignInScreen(
                         state = it,
-                        onIntent = viewModel::onIntent
+                        onIntent = viewModel::onIntent,
+                        sharedTransitionScope = this@SharedTransitionLayout,
+                        animatedVisibilityScope = this@composable
                     )
                 }
             }
@@ -45,7 +47,9 @@ fun BookwormNavigation() {
                 ScreenWrapper(viewModel = viewModel, navController = navController) {
                     SignUpScreen(
                         state = it,
-                        onIntent = viewModel::onIntent
+                        onIntent = viewModel::onIntent,
+                        sharedTransitionScope = this@SharedTransitionLayout,
+                        animatedVisibilityScope = this@composable
                     )
                 }
             }
@@ -58,7 +62,7 @@ fun BookwormNavigation() {
                         readingList = viewModel.readingBooks.collectAsLazyPagingItems(),
                         readList = viewModel.readBooks.collectAsLazyPagingItems(),
                         sharedTransitionScope = this@SharedTransitionLayout,
-                        animatedVisibilityScope = this,
+                        animatedVisibilityScope = this@composable,
                         onIntent = viewModel::onIntent
                     )
                 }
@@ -81,7 +85,7 @@ fun BookwormNavigation() {
                 ScreenWrapper(viewModel = viewModel, navController = navController) { state ->
                     BookStatsScreen(
                         sharedTransitionScope = this@SharedTransitionLayout,
-                        animatedVisibilityScope = this,
+                        animatedVisibilityScope = this@composable,
                         state = state,
                         onIntent = viewModel::onIntent
                     )

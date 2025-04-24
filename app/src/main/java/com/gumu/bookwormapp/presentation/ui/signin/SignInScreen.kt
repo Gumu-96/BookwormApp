@@ -1,6 +1,11 @@
 package com.gumu.bookwormapp.presentation.ui.signin
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -41,8 +46,11 @@ import com.gumu.bookwormapp.presentation.component.CustomOutlinedTextField
 import com.gumu.bookwormapp.presentation.component.LoadingOverlay
 import com.gumu.bookwormapp.presentation.theme.BookwormAppTheme
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SignInScreen(
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     state: SignInState,
     onIntent: (SignInIntent) -> Unit
 ) {
@@ -58,7 +66,10 @@ fun SignInScreen(
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
                 ) {
-                    LogoSection()
+                    LogoSection(
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedVisibilityScope = animatedVisibilityScope
+                    )
                     Spacer(modifier = Modifier.height(32.dp))
                     SignInSection(
                         modifier = Modifier
@@ -70,7 +81,9 @@ fun SignInScreen(
                         password = state.password,
                         onPasswordChange = { onIntent(SignInIntent.OnPasswordChange(it)) },
                         passwordError = state.errorState.passwordError,
-                        onSignInClick = { onIntent(SignInIntent.OnSignInClick) }
+                        onSignInClick = { onIntent(SignInIntent.OnSignInClick) },
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedVisibilityScope = animatedVisibilityScope
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     SignUpSection(
@@ -82,28 +95,40 @@ fun SignInScreen(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun LogoSection() {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.bookworm),
-            contentDescription = stringResource(id = R.string.app_logo_desc),
-            contentScale = ContentScale.Fit,
-            modifier = Modifier.size(150.dp)
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = stringResource(id = R.string.app_title_label),
-            style = MaterialTheme.typography.displayMedium.copy(
-                fontWeight = FontWeight.Bold
+fun LogoSection(
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+) {
+    with(sharedTransitionScope) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.bookworm),
+                contentDescription = stringResource(id = R.string.app_logo_desc),
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .size(150.dp)
+                    .sharedElement(
+                        state = rememberSharedContentState("bookworm_logo"),
+                        animatedVisibilityScope = animatedVisibilityScope
+                    )
             )
-        )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = stringResource(id = R.string.app_title_label),
+                style = MaterialTheme.typography.displayMedium.copy(
+                    fontWeight = FontWeight.Bold
+                )
+            )
+        }
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SignInSection(
     modifier: Modifier = Modifier,
@@ -113,7 +138,9 @@ fun SignInSection(
     password: String,
     onPasswordChange: (String) -> Unit,
     @StringRes passwordError: Int?,
-    onSignInClick: () -> Unit
+    onSignInClick: () -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
     val localFocusManager = LocalFocusManager.current
 
@@ -147,7 +174,7 @@ fun SignInSection(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done,
-                autoCorrect = false
+                autoCorrectEnabled = false
             ),
             keyboardActions = KeyboardActions(
                 onDone = { localFocusManager.clearFocus() }
@@ -159,11 +186,18 @@ fun SignInSection(
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            onClick = onSignInClick,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(text = stringResource(id = R.string.sign_in_button_label))
+        with(sharedTransitionScope) {
+            Button(
+                onClick = onSignInClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .sharedElement(
+                        state = rememberSharedContentState("shared_button"),
+                        animatedVisibilityScope = animatedVisibilityScope
+                    )
+            ) {
+                Text(text = stringResource(id = R.string.sign_in_button_label))
+            }
         }
     }
 }
@@ -186,13 +220,20 @@ fun SignUpSection(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Preview
 @Composable
 private fun SignInPreview() {
     BookwormAppTheme {
-        SignInScreen(
-            state = SignInState(),
-            onIntent = {}
-        )
+        SharedTransitionLayout {
+            AnimatedVisibility(true) {
+                SignInScreen(
+                    state = SignInState(),
+                    onIntent = {},
+                    sharedTransitionScope = this@SharedTransitionLayout,
+                    animatedVisibilityScope = this@AnimatedVisibility
+                )
+            }
+        }
     }
 }
