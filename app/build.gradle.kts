@@ -59,6 +59,7 @@ dependencies {
     implementation(libs.compose.tooling)
     implementation(libs.material3)
     implementation(libs.icons.extended)
+    implementation(libs.compose.animation)
 
     implementation(libs.androidx.ktx)
     implementation(libs.activity.compose)
