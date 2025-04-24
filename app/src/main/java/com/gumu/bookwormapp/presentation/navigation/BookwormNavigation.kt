@@ -5,7 +5,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.gumu.bookwormapp.presentation.ui.bookstats.BookStatsScreen
 import com.gumu.bookwormapp.presentation.ui.bookstats.BookStatsViewModel
@@ -68,11 +67,9 @@ fun BookwormNavigation() {
         }
         composable<Screen.BookStatsScreen> {
             val viewModel: BookStatsViewModel = hiltViewModel()
-            val args = it.toRoute<Screen.BookStatsScreen>()
 
             ScreenWrapper(viewModel = viewModel, navController = navController) { state ->
                 BookStatsScreen(
-                    bookStatsId = args.statsId,
                     state = state,
                     onIntent = viewModel::onIntent
                 )

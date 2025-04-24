@@ -37,7 +37,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -65,14 +64,9 @@ import com.gumu.bookwormapp.presentation.util.ReadingStatusUi
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookStatsScreen(
-    bookStatsId: String,
     state: BookStatsState,
     onIntent: (BookStatsIntent) -> Unit
 ) {
-    LaunchedEffect(key1 = Unit) {
-        if (state.initialStats == null) onIntent(BookStatsIntent.OnLoadStats(bookStatsId))
-    }
-
     Scaffold(
         topBar = {
             NavigateBackTopAppBar(
@@ -385,7 +379,6 @@ fun ConfirmLeaveDialog(
 private fun BookStatsScreenPreview() {
     BookwormAppTheme {
         BookStatsScreen(
-            bookStatsId = "0",
             state = BookStatsState(
                 book = Book(
                     id = "ABC123",

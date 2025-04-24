@@ -1,6 +1,8 @@
 package com.gumu.bookwormapp.presentation.ui.bookstats
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.gumu.bookwormapp.R
 import com.gumu.bookwormapp.domain.common.onFailure
 import com.gumu.bookwormapp.domain.common.onSuccess
@@ -8,11 +10,14 @@ import com.gumu.bookwormapp.domain.model.ReadingStatus
 import com.gumu.bookwormapp.domain.usecase.bookstats.DeleteBookStatsUseCase
 import com.gumu.bookwormapp.domain.usecase.bookstats.GetBookStatsUseCase
 import com.gumu.bookwormapp.domain.usecase.bookstats.UpdateBookStatsUseCase
+import com.gumu.bookwormapp.presentation.navigation.Screen
 import com.gumu.bookwormapp.presentation.ui.common.BaseViewModel
 import com.gumu.bookwormapp.presentation.ui.common.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,16 +26,22 @@ import javax.inject.Inject
 class BookStatsViewModel @Inject constructor(
     private val getBookStatsUseCase: GetBookStatsUseCase,
     private val updateBookStatsUseCase: UpdateBookStatsUseCase,
-    private val deleteBookStatsUseCase: DeleteBookStatsUseCase
+    private val deleteBookStatsUseCase: DeleteBookStatsUseCase,
+    savedStateHandle: SavedStateHandle
 ) : BaseViewModel<BookStatsState, BookStatsIntent>() {
-    override val uiState: StateFlow<BookStatsState> = _uiState.asStateFlow()
+
+    private val args = savedStateHandle.toRoute<Screen.BookStatsScreen>()
+    override val uiState: StateFlow<BookStatsState> = _uiState
+        .onStart { loadStats() }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), defaultState())
 
     override fun defaultState(): BookStatsState = BookStatsState()
 
-    private fun onLoadStats(statsId: String) {
+    private fun loadStats() {
+        if (uiState.value.initialStats != null) return // Stats already loaded
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            getBookStatsUseCase(statsId).onSuccess { statsResult ->
+            getBookStatsUseCase(args.statsId).onSuccess { statsResult ->
                 statsResult?.let { stats ->
                     _uiState.update { it.copy(
                         book = stats.book,
@@ -111,7 +122,6 @@ class BookStatsViewModel @Inject constructor(
 
     override fun onIntent(intent: BookStatsIntent) {
         when (intent) {
-            is BookStatsIntent.OnLoadStats -> onLoadStats(intent.statsId)
             BookStatsIntent.OnBackClick -> {
                 if (_uiState.value.hasChanges) {
                     _uiState.update { it.copy(showLeaveDialog = true) }
@@ -129,10 +139,12 @@ class BookStatsViewModel @Inject constructor(
             }
             BookStatsIntent.OnConfirmDelete -> onConfirmDelete()
             BookStatsIntent.OnDismissDialog -> {
-                _uiState.update { it.copy(
-                    showDeleteDialog = false,
-                    showLeaveDialog = false
-                ) }
+                _uiState.update {
+                    it.copy(
+                        showDeleteDialog = false,
+                        showLeaveDialog = false
+                    )
+                }
             }
             is BookStatsIntent.OnSetRating -> onSetRating(intent.rating)
             is BookStatsIntent.OnThoughtsChange -> onThoughtsChange(intent.thoughts)

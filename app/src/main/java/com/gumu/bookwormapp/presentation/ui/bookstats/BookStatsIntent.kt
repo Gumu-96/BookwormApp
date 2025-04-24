@@ -3,7 +3,6 @@ package com.gumu.bookwormapp.presentation.ui.bookstats
 import com.gumu.bookwormapp.domain.model.ReadingStatus
 
 sealed class BookStatsIntent {
-    data class OnLoadStats(val statsId: String) : BookStatsIntent()
     data object OnBackClick : BookStatsIntent()
     data object OnConfirmLeave : BookStatsIntent()
     data object OnDeleteClick : BookStatsIntent()
