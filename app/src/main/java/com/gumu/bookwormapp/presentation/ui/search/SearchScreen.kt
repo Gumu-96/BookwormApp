@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -120,6 +121,7 @@ fun SearchScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface)
+            .safeDrawingPadding()
     ) {
         BooksSearchBar(
             searchQuery = state.searchQuery,
@@ -257,7 +259,7 @@ fun BookPrintTypeFilter(
     val context = LocalContext.current
     FilterCategory(
         title = stringResource(id = R.string.filter_print_type_title),
-        options = BookPrintTypeFilterUi.values().toList(),
+        options = BookPrintTypeFilterUi.entries,
         optionLabel = { context.resources.getString(it.label) },
         isOptionSelected = { it.value == currentOption },
         onSelectOption = { onSelectOption(it.value) },
@@ -274,7 +276,7 @@ fun BookOrderFilter(
     val context = LocalContext.current
     FilterCategory(
         title = stringResource(id = R.string.filter_order_by_title),
-        options = BookOrderByFilterUi.values().toList(),
+        options = BookOrderByFilterUi.entries,
         optionLabel = { context.resources.getString(it.label) },
         isOptionSelected = { it.value == currentOption },
         onSelectOption = { onSelectOption(it.value) },
@@ -291,7 +293,7 @@ fun BookTypeFilter(
     val context = LocalContext.current
     FilterCategory(
         title = stringResource(id = R.string.filter_book_type_title),
-        options = BookTypeFilterUi.values().toList(),
+        options = BookTypeFilterUi.entries,
         optionLabel = { context.resources.getString(it.label) },
         isOptionSelected = { it.value == currentOption },
         onSelectOption = { onSelectOption(it.value) },

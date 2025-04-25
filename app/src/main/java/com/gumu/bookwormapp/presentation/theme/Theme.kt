@@ -1,10 +1,15 @@
 package com.gumu.bookwormapp.presentation.theme
 
+import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
     primary = md_theme_dark_primary,
@@ -76,6 +81,12 @@ fun BookwormAppTheme(
     content: @Composable () -> Unit
 ) {
     val colorScheme = if (!darkTheme) LightColorScheme else DarkColorScheme
+    val window = (LocalContext.current as Activity).window
+    val view = LocalView.current
+
+    SideEffect {
+        WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+    }
 
     MaterialTheme(
         colorScheme = colorScheme,
