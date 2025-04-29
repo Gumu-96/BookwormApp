@@ -43,7 +43,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -80,7 +79,6 @@ import com.gumu.bookwormapp.presentation.ui.search.component.SuchEmptyResults
 import com.gumu.bookwormapp.presentation.util.BookOrderByFilterUi
 import com.gumu.bookwormapp.presentation.util.BookPrintTypeFilterUi
 import com.gumu.bookwormapp.presentation.util.BookTypeFilterUi
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -89,23 +87,19 @@ fun SearchScreen(
     onIntent: (SearchEvent) -> Unit
 ) {
     val books = state.books?.collectAsLazyPagingItems()
-    val bottomSheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true
-    )
-    val scope = rememberCoroutineScope()
-    fun dismissDetails() {
-        scope.launch { bottomSheetState.hide() }.invokeOnCompletion {
-            if (bottomSheetState.isVisible.not()) onIntent(SearchEvent.OnHideBookDetails)
-        }
+    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    LaunchedEffect(bottomSheetState.isVisible) {
+        if (!bottomSheetState.isVisible) onIntent(SearchEvent.OnHideBookDetails)
     }
 
     LaunchedEffect(state.isAddingBook) {
-        if (state.isAddingBook.not()) dismissDetails()
+        if (!state.isAddingBook) bottomSheetState.hide()
     }
 
     if (state.showBookDetails) {
         ModalBottomSheet(
-            onDismissRequest = { dismissDetails() },
+            onDismissRequest = {},
             sheetState = bottomSheetState
         ) {
             state.displayBook?.let { book ->
@@ -165,7 +159,7 @@ fun BooksSearchBar(
     onPrintTypeClick: (BookPrintTypeFilter) -> Unit,
     onBookTypeClick: (BookTypeFilter) -> Unit
 ) {
-    var isSearching by rememberSaveable { mutableStateOf(false) }
+    var isSearching by rememberSaveable { mutableStateOf(true) }
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
