@@ -6,6 +6,10 @@ import androidx.compose.material.icons.filled.BrokenImage
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -25,6 +29,8 @@ fun CustomAsyncImage(
     contentDescription: String?,
     contentScale: ContentScale = ContentScale.Crop
 ) {
+    var painterState by remember { mutableStateOf<AsyncImagePainter.State>(AsyncImagePainter.State.Empty) }
+
     SubcomposeAsyncImage(
         model = ImageRequest.Builder(LocalContext.current)
             .data(model)
@@ -33,9 +39,12 @@ fun CustomAsyncImage(
             .build(),
         contentDescription = contentDescription,
         contentScale = contentScale,
-        modifier = modifier
+        modifier = modifier,
+        onState = {
+            painterState = it
+        }
     ) {
-        when (painter.state) {
+        when (painterState) {
             is AsyncImagePainter.State.Loading -> Icon(
                 imageVector = Icons.Default.Image,
                 contentDescription = null,
