@@ -78,70 +78,58 @@ fun BookStatsScreen(
     state: BookStatsState,
     onIntent: (BookStatsIntent) -> Unit
 ) {
-    with(sharedTransitionScope) {
-        Scaffold(
-            contentWindowInsets = WindowInsets.safeDrawing,
-            topBar = {
-                NavigateBackTopAppBar(
-                    title = { Text(text = stringResource(id = R.string.book_stats_screen_title_label)) },
-                    onBackClick = { onIntent(BookStatsIntent.OnBackClick) },
-                    actions = {
-                        state.book?.let {
-                            IconButton(onClick = { onIntent(BookStatsIntent.OnDeleteClick) }) {
-                                Icon(
-                                    imageVector = Icons.Default.DeleteForever,
-                                    contentDescription = stringResource(id = R.string.delete_icon_desc),
-                                    tint = MaterialTheme.colorScheme.error
-                                )
-                            }
+    Scaffold(
+        contentWindowInsets = WindowInsets.safeDrawing,
+        topBar = {
+            NavigateBackTopAppBar(
+                title = { Text(text = stringResource(id = R.string.book_stats_screen_title_label)) },
+                onBackClick = { onIntent(BookStatsIntent.OnBackClick) },
+                actions = {
+                    state.book?.let {
+                        IconButton(onClick = { onIntent(BookStatsIntent.OnDeleteClick) }) {
+                            Icon(
+                                imageVector = Icons.Default.DeleteForever,
+                                contentDescription = stringResource(id = R.string.delete_icon_desc),
+                                tint = MaterialTheme.colorScheme.error
+                            )
                         }
                     }
-                )
-            },
-            modifier = Modifier
-                .sharedBounds(
-                    sharedContentState = rememberSharedContentState(
-                        key = BookStatsSharedElementKey(
-                            bookId = state.book?.id,
-                            type = BookStatsSharedElementType.Bounds
-                        )
-                    ),
-                    animatedVisibilityScope = animatedVisibilityScope
-                )
-        ) { padding ->
-            if (state.isLoading) {
-                LoadingOverlay()
-            } else {
-                state.book?.let { book ->
-                    if (state.showDeleteDialog) {
-                        ConfirmDeleteDialog(
-                            onConfirm = { onIntent(BookStatsIntent.OnConfirmDelete) },
-                            onDismiss = { onIntent(BookStatsIntent.OnDismissDialog) }
-                        )
-                    }
-                    if (state.showLeaveDialog) {
-                        ConfirmLeaveDialog(
-                            onConfirm = { onIntent(BookStatsIntent.OnConfirmLeave) },
-                            onDismiss = { onIntent(BookStatsIntent.OnDismissDialog) }
-                        )
-                    }
-                    StatsContent(
-                        sharedTransitionScope = sharedTransitionScope,
-                        animatedVisibilityScope = animatedVisibilityScope,
-                        book = book,
-                        thoughts = state.thoughts,
-                        rating = state.rating,
-                        status = state.status,
-                        hasChanges = state.hasChanges,
-                        isSavingChanges = state.savingChanges,
-                        onThoughtsChange = { onIntent(BookStatsIntent.OnThoughtsChange(it)) },
-                        onStarClick = { onIntent(BookStatsIntent.OnSetRating(it)) },
-                        onStatusChange = { onIntent(BookStatsIntent.OnStatusChange(it)) },
-                        onSaveChanges = { onIntent(BookStatsIntent.OnSaveChangesClick) },
-                        modifier = Modifier.padding(padding)
+                }
+            )
+        }
+    ) { padding ->
+        if (state.isLoading) {
+            LoadingOverlay()
+        } else {
+            state.book?.let { book ->
+                if (state.showDeleteDialog) {
+                    ConfirmDeleteDialog(
+                        onConfirm = { onIntent(BookStatsIntent.OnConfirmDelete) },
+                        onDismiss = { onIntent(BookStatsIntent.OnDismissDialog) }
                     )
-                } ?: SuchEmptyStats(modifier = Modifier.fillMaxSize())
-            }
+                }
+                if (state.showLeaveDialog) {
+                    ConfirmLeaveDialog(
+                        onConfirm = { onIntent(BookStatsIntent.OnConfirmLeave) },
+                        onDismiss = { onIntent(BookStatsIntent.OnDismissDialog) }
+                    )
+                }
+                StatsContent(
+                    sharedTransitionScope = sharedTransitionScope,
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    book = book,
+                    thoughts = state.thoughts,
+                    rating = state.rating,
+                    status = state.status,
+                    hasChanges = state.hasChanges,
+                    isSavingChanges = state.savingChanges,
+                    onThoughtsChange = { onIntent(BookStatsIntent.OnThoughtsChange(it)) },
+                    onStarClick = { onIntent(BookStatsIntent.OnSetRating(it)) },
+                    onStatusChange = { onIntent(BookStatsIntent.OnStatusChange(it)) },
+                    onSaveChanges = { onIntent(BookStatsIntent.OnSaveChangesClick) },
+                    modifier = Modifier.padding(padding)
+                )
+            } ?: SuchEmptyStats(modifier = Modifier.fillMaxSize())
         }
     }
 }

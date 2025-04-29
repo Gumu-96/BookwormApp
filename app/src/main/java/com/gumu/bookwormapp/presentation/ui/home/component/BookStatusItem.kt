@@ -57,17 +57,6 @@ fun BookStatusItem(
         ElevatedCard(
             onClick = { onClick(bookStats) },
             modifier = modifier
-                .sharedBounds(
-                    sharedContentState = rememberSharedContentState(
-                        key = BookStatsSharedElementKey(
-                            bookId = bookStats.book.id,
-                            type = BookStatsSharedElementType.Bounds
-                        )
-                    ),
-                    animatedVisibilityScope = animatedVisibilityScope,
-                    resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
-                    clipInOverlayDuringTransition = OverlayClip(MaterialTheme.shapes.medium)
-                )
         ) {
             Column(
                 modifier = Modifier.width(160.dp)
