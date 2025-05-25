@@ -23,8 +23,8 @@ kotlin-serialization = "1.8.0"
 
 # Plugin versions
 androidGradlePlugin = "8.6.1"
-kotlin = "2.0.0"
-ksp = "2.0.0-1.0.24" # <kotlin version>-<ksp version>
+kotlin = "2.1.0"
+ksp = "2.1.0-1.0.29" # <kotlin version>-<ksp version>
 crashlytics = "2.9.9"
 
 [libraries]
