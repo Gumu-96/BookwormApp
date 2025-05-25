@@ -6,7 +6,7 @@ plugins {
     alias(libs.plugins.google.ksp)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.firebase.crashlytics)
-    id("com.google.gms.google-services")
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -75,7 +75,6 @@ dependencies {
     // Coroutines
     implementation(libs.coroutines.core)
     implementation(libs.coroutines.android)
-    implementation(libs.coroutines.play.services)
 
     // Dagger-Hilt
     implementation(libs.hilt.nav.compose)
@@ -99,6 +98,7 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
+    implementation(libs.firebase.crashlytics)
 
     // Testing
     testImplementation(libs.junit)

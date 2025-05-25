@@ -62,7 +62,6 @@ import androidx.compose.ui.unit.sp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.items
 import com.gumu.bookwormapp.R
 import com.gumu.bookwormapp.domain.common.BookOrderByFilter
 import com.gumu.bookwormapp.domain.common.BookPrintTypeFilter
@@ -308,8 +307,8 @@ fun BooksList(
         modifier = Modifier.fillMaxSize()
     ) {
         books?.let { items ->
-            items(items = items) { book ->
-                book?.let {
+            items(count = items.itemCount) { index ->
+                items[index]?.let {
                     BookItem(
                         book = it,
                         onClick = onBookClick

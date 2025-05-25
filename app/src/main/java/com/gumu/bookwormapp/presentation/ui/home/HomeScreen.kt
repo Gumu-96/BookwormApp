@@ -44,7 +44,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.items
 import com.gumu.bookwormapp.R
 import com.gumu.bookwormapp.domain.model.BookStats
 import com.gumu.bookwormapp.presentation.component.ErrorItem
@@ -188,8 +187,8 @@ fun BookStatsList(
                     contentPadding = PaddingValues(16.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    items(items = items) { bookStats ->
-                        bookStats?.let {
+                    items(count = items.itemCount) { index ->
+                        items[index]?.let {
                             BookStatusItem(
                                 sharedTransitionScope = sharedTransitionScope,
                                 animatedVisibilityScope = animatedVisibilityScope,
