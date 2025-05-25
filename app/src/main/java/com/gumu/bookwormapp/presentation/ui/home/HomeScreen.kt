@@ -22,9 +22,9 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Logout
-import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -231,7 +231,7 @@ fun HomeTopAppBar(
         },
         navigationIcon = {
             Icon(
-                imageVector = Icons.Default.MenuBook,
+                imageVector = Icons.AutoMirrored.Default.MenuBook,
                 contentDescription = null,
                 modifier = Modifier.padding(12.dp)
             )
@@ -239,7 +239,7 @@ fun HomeTopAppBar(
         actions = {
             IconButton(onClick = onAccountClick) {
                 Icon(
-                    imageVector = Icons.Default.Logout,
+                    imageVector = Icons.AutoMirrored.Default.Logout,
                     contentDescription = stringResource(id = R.string.sign_out_icon_desc)
                 )
             }

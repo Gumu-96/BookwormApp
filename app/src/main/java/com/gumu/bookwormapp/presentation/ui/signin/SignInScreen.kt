@@ -113,7 +113,7 @@ fun LogoSection(
                 modifier = Modifier
                     .size(150.dp)
                     .sharedElement(
-                        state = rememberSharedContentState("bookworm_logo"),
+                        sharedContentState = rememberSharedContentState("bookworm_logo"),
                         animatedVisibilityScope = animatedVisibilityScope
                     )
             )
@@ -192,7 +192,7 @@ fun SignInSection(
                 modifier = Modifier
                     .fillMaxWidth()
                     .sharedElement(
-                        state = rememberSharedContentState("shared_button"),
+                        sharedContentState = rememberSharedContentState("shared_button"),
                         animatedVisibilityScope = animatedVisibilityScope
                     )
             ) {

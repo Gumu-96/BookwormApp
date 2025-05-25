@@ -14,9 +14,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -137,13 +137,13 @@ fun StatsSummarySection() {
     ) {
         PillShapedText(
             text = "Reading: 5 books",
-            leadingIcon = { Icon(imageVector = Icons.Default.MenuBook, contentDescription = null) }
+            leadingIcon = { Icon(imageVector = Icons.AutoMirrored.Default.MenuBook, contentDescription = null) }
         )
         Spacer(modifier = Modifier.height(8.dp))
         PillShapedText(
             text = "On queue: 12 books",
             color = MaterialTheme.colorScheme.surfaceVariant,
-            leadingIcon = { Icon(imageVector = Icons.Default.List, contentDescription = null) }
+            leadingIcon = { Icon(imageVector = Icons.AutoMirrored.Default.List, contentDescription = null) }
         )
         Spacer(modifier = Modifier.height(8.dp))
         PillShapedText(

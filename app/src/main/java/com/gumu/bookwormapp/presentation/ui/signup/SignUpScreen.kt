@@ -130,7 +130,7 @@ fun SignUpForm(
                 modifier = Modifier
                     .size(75.dp)
                     .sharedElement(
-                        state = rememberSharedContentState("bookworm_logo"),
+                        sharedContentState = rememberSharedContentState("bookworm_logo"),
                         animatedVisibilityScope = animatedVisibilityScope
                     )
             )
@@ -229,7 +229,7 @@ fun SignUpForm(
                 modifier = Modifier
                     .fillMaxWidth()
                     .sharedElement(
-                        state = rememberSharedContentState("shared_button"),
+                        sharedContentState = rememberSharedContentState("shared_button"),
                         animatedVisibilityScope = animatedVisibilityScope
                     )
             ) {

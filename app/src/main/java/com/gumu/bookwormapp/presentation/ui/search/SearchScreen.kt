@@ -20,18 +20,18 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Print
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DockedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -192,7 +192,7 @@ fun BooksSearchBar(
                 }
             ) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Default.ArrowBack,
                     contentDescription = stringResource(id = R.string.arrow_back_icon_desc)
                 )
             }
@@ -222,7 +222,7 @@ fun BooksSearchBar(
                 currentOption = currentFilters.bookOrder,
                 onSelectOption = onOrderByClick
             )
-            Divider(
+            HorizontalDivider(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 16.dp)
@@ -231,7 +231,7 @@ fun BooksSearchBar(
                 currentOption = currentFilters.bookPrintType,
                 onSelectOption = onPrintTypeClick
             )
-            Divider(
+            HorizontalDivider(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 16.dp)
@@ -274,7 +274,9 @@ fun BookOrderFilter(
         isOptionSelected = { it.value == currentOption },
         onSelectOption = { onSelectOption(it.value) },
         modifier = Modifier.fillMaxWidth(),
-        leadingIcon = { Icon(imageVector = Icons.Default.Sort, contentDescription = null) }
+        leadingIcon = {
+            Icon(imageVector = Icons.AutoMirrored.Default.Sort, contentDescription = null)
+        }
     )
 }
 
@@ -414,7 +416,7 @@ fun BookBottomSheetContent(
                 fontSize = 14.sp
             )
             Text(
-                text = book.categories?.toString() ?: "",
+                text = book.categories?.toString().orEmpty(),
                 fontSize = 14.sp
             )
             Spacer(modifier = Modifier.height(16.dp))
